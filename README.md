@@ -16,7 +16,7 @@ As `review`'s podem ser registradas por `users`'s. Cada uma terá um `title`, `d
 
 ### Registro de *Tags*
 
-As `Tag`'s podem ser registradas por `user`'s `admin` a fim de categorizar os `product`'s. Desta forma os `user`'s `standart` podem utilizá-las para quando forem registrar um `product` ou atualizá-lo.
+As `Tag`'s podem ser registradas por `user`'s `admin` a fim de categorizar os `product`'s. Desta forma os `user`'s `standart` podem utilizá-las para quando forem registrar um `product` ou atualizá-lo. Cada Tag terá um `name` e um `description`.
 
 ### Cadastramamento de Usuários e *Login*
 

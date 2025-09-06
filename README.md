@@ -8,11 +8,15 @@ Sistema (aplicativo) de avaliações de produtos, que mostra similares e garanta
 
 ### Registro de Produtos
 
-Os `product`'s podem ser registrados por `user`'s `standart` ou `admim`. Nesta primeira versão, os produtos cadastrados consistirão de eletrônicos como *smartphones*, *smartwatches*, *video games* etc. Cada um terá um `name`, `description`, `overallRating`, `createdAt`, `updatedAt` e uma lista de `review`'s associadas feitas por um `user` sobre o produto em questão.
+Os `product`'s podem ser registrados por `user`'s `standart` ou `admim`. Nesta primeira versão, os produtos cadastrados consistirão de eletrônicos como *smartphones*, *smartwatches*, *video games* etc. Cada um terá um `name`, `description`, `overallRating`, `tag`, `createdAt`, `updatedAt` e uma lista de `review`'s associadas feitas por um `user` sobre o produto em questão.
 
 ### Registro de *Reviews*
 
 As `review`'s podem ser registradas por `users`'s. Cada uma terá um `title`, `description`, `pros`, `cons`, `rating`, `isUsefull`, `createdAt`, `updatedAt`.
+
+### Registro de *Tags*
+
+As `Tag`'s podem ser registradas por `user`'s `admin` a fim de categorizar os `product`'s. Desta forma os `user`'s `standart` podem utilizá-las para quando forem registrar um `product` ou atualizá-lo.
 
 ### Cadastramamento de Usuários e *Login*
 

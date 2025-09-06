@@ -12,7 +12,7 @@ Os `product`'s podem ser registrados por `user`'s `standart` ou `admim`. Nesta p
 
 ### Registro de *Reviews*
 
-As `review`'s podem ser registradas por `users`'s. Cada uma terá um `title`, `description`, `pros`, `cons`, `rating`, `isUsefull`, `createdAt`, `updatedAt`.
+As `review`'s podem ser registradas por `users`'s. Cada uma terá um `title`, `description`, `pros`, `cons`, `rating`, `isUsefull`, `notUsefull`, `createdAt`, `updatedAt`.
 
 ### Registro de *Tags*
 

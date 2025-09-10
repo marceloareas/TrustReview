@@ -8,19 +8,19 @@ Sistema (aplicativo) de avaliações de produtos, que mostra similares e garanta
 
 ### Registro de Produtos
 
-Os `product`'s podem ser registrados por `user`'s `standart` ou `admim`. Nesta primeira versão, os produtos cadastrados consistirão de eletrônicos como *smartphones*, *smartwatches*, *video games* etc. Cada um terá um `name`, `description`, `overallRating`, `tag`, `createdAt`, `updatedAt` e uma lista de `review`'s associadas feitas por um `user` sobre o produto em questão.
+Os `product`'s podem ser registrados por `user`'s `standart` ou `admim`. Nesta primeira versão, os produtos cadastrados consistirão de eletrônicos como *smartphones*, *smartwatches*, *video games* etc. Cada um terá uma lista de `review`'s associadas feitas por vários `user`'s diferentes sobre o produto em questão.
 
 ### Registro de *Reviews*
 
-As `review`'s podem ser registradas por `users`'s. Cada uma terá um `title`, `description`, `pros`, `cons`, `rating`, `isUsefull`, `notUsefull`, `createdAt`, `updatedAt`.
+As `review`'s podem ser registradas por `users`'s para **cada um** `product`. Nesta `review`, o `user` descreverá sua experiência com o `product`.
 
 ### Registro de *Tags*
 
-As `Tag`'s podem ser registradas por `user`'s `admin` a fim de categorizar os `product`'s. Desta forma os `user`'s `standart` podem utilizá-las para quando forem registrar um `product` ou atualizá-lo. Cada Tag terá um `name` e um `description`.
+As `Tag`'s podem ser registradas por `user`'s `admin` ou `standart` a fim de categorizar os `product`'s. Desta forma os `user`'s `standart` podem utilizá-las para quando forem registrar um `product` ou atualizá-lo.
 
 ### Cadastramamento de Usuários e *Login*
 
-Um `user` deve ser cadastrado caso o usuário queira fazer uma `review`, registrar um `product` ou avaliar uma `review` de outro `user`. Cada user terá um `name`, `email`, `password`.
+Um `user` deve ser cadastrado, caso o mesmo queira fazer uma `review`, registrar um `product` ou avaliar uma `review` de outro `user`. 
 
 Para mais informações, veja na [Documentação do repositório](https://github.com/marceloareas/TrustReview/wiki).
 

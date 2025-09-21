@@ -66,12 +66,12 @@ public class Product {
     )
     private Set<Tag> tags = new HashSet<>();
 
-    @Column(name = "overallRating", nullable = true, updatable = true)
+    @Column(name = "overall_rating", nullable = true, updatable = true)
     private Double overallRating;
 
-    @Column(name = "createdAt", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
 
-    @Column(name = "updatedAt", nullable = false, updatable = true)
+    @Column(name = "updated_at", nullable = false, updatable = true)
     private Timestamp updatedAt;
 }

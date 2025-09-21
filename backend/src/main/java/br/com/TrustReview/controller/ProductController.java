@@ -2,8 +2,11 @@ package br.com.TrustReview.controller;
 
 import br.com.TrustReview.dto.ProductRequestDTO;
 import br.com.TrustReview.dto.ProductResponseDTO;
+import br.com.TrustReview.exception.ApiError;
 import br.com.TrustReview.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,9 +28,12 @@ public class ProductController {
 
     @Operation(summary = "Cria um novo produto")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Produto criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro de validação"),
-            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+            @ApiResponse(responseCode = "201", description = "Produto criado com sucesso",
+            content = @Content(schema = @Schema(implementation = ProductResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Erro de validação",
+            content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+            content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     @PostMapping
     public ResponseEntity<ProductResponseDTO> create(@RequestBody @Valid ProductRequestDTO request) {
@@ -37,9 +43,12 @@ public class ProductController {
 
     @Operation(summary = "Busca um produto pelo id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Produto encontrado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Produto não encontrado"),
-            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+            @ApiResponse(responseCode = "200", description = "Produto encontrado com sucesso",
+            content = @Content(schema = @Schema(implementation = ProductResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Produto não encontrado",
+            content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+            content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     @GetMapping("/{product-id}")
     public ResponseEntity<ProductResponseDTO> getById(@PathVariable("product-id") UUID id) {

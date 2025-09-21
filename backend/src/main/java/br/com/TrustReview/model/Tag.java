@@ -53,6 +53,6 @@ public class Tag {
     @Column(name = "description", length = 500)
     private String description;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "tags")
     private Set<Product> products = new HashSet<>();
 }

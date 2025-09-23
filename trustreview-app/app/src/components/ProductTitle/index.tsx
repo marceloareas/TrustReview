@@ -4,7 +4,7 @@ import titleBg from '../../assets/titleBg.svg';
 const ProductTitle = () => {
 
     return (
-        <>
+        <Box sx={{ position: 'relative', width: '100%', mb: 2 }}>
             <Box
                 component="img"
                 src={titleBg}
@@ -12,20 +12,20 @@ const ProductTitle = () => {
                 sx={{
                     objectFit: "cover",
                     width: '100%',
+                    opacity: 0.9,
                     height: 50,
                 }}
             />
             <Typography variant="h5"
                 sx={{
-                    marginTop: '-46px',
-                    paddingBottom: '46px',
-                    paddingLeft: '16px',
+                    position: 'absolute',
+                    top: '8px',
+                    left: '16px',
                     fontWeight: 'bold',
-                    zIndex: 1000
                 }}>
                 Produtos
             </Typography>
-        </>
+        </Box>
 
     );
 }

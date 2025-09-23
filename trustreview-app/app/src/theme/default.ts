@@ -41,28 +41,28 @@ export const defaultTheme = createTheme({
     typography: {
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
         h1: {
-            color: '#E6E0E9',
+            color: '#FFFFFF',
         },
         h2: {
-            color: '#E6E0E9',
+            color: '#FFFFFF',
         },
         h3: {
-            color: '#E6E0E9',
+            color: '#FFFFFF',
         },
         h4: {
-            color: '#E6E0E9',
+            color: '#FFFFFF',
         },
         h5: {
-            color: '#E6E0E9',
+            color: '#FFFFFF',
         },
         h6: {
-            color: '#E6E0E9',
+            color: '#FFFFFF',
         },
         body1: {
-            color: '#E6E0E9',
+            color: '#FFFFFF',
         },
         body2: {
-            color: '#CAC4D0',
+            color: '#FFFFFF',
         },
         button: {
             color: '#FFFFFF',

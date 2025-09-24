@@ -96,7 +96,7 @@ public class ProductService {
      * @return DTO de resposta com os dados do produto encontrado
      * @throws ProductNotFound se o produto não for encontrado
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public ProductResponseDTO getById(UUID id) {
         log.info("Buscando produto por id: {}", id);
         Optional<Product> existingProduct = findById(id);
@@ -245,7 +245,7 @@ public class ProductService {
 
         Set<Tag> foundTags = new HashSet<>(tagRepository.findAllById(tagIds));
 
-        if (tags.size() != foundTags.size()) {
+        if (tagIds.size() != foundTags.size()) {
             log.error("Alguma tag não foi encontrada");
             throw new TagNotFoundException("Alguma tag não foi encontrada!");
         }

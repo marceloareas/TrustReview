@@ -17,9 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Serviço responsável pela lógica de negócio relacionada à entidade {@link Product}.
@@ -64,6 +66,7 @@ public class ProductService {
      * @throws IllegalArgumentException se o nome do produto for nulo ou vazio
      * @throws ProductNameAlreadyExists se já existir produto com o mesmo nome
      */
+    @Transactional
     public ProductResponseDTO create(ProductRequestDTO request) {
         log.info("Criando um novo produto para name: {}", request.getName());
 
@@ -93,6 +96,7 @@ public class ProductService {
      * @return DTO de resposta com os dados do produto encontrado
      * @throws ProductNotFound se o produto não for encontrado
      */
+    @Transactional
     public ProductResponseDTO getById(UUID id) {
         log.info("Buscando produto por id: {}", id);
         Optional<Product> existingProduct = findById(id);
@@ -113,6 +117,7 @@ public class ProductService {
      * @return DTO de resposta com os dados do produto atualizado
      * @throws ProductNotFound se o produto não for encontrado
      */
+    @Transactional
     public ProductResponseDTO update(UUID productId, ProductRequestDTO request) {
         log.info("Atualizando produto para id: {}", productId);
         Optional<Product> existingProduct = findById(productId);
@@ -151,7 +156,7 @@ public class ProductService {
 
             // Lança exceção se alguma tag não existir
             log.info("Validando tags do produto");
-            validateTags(tags);
+            tags = validateTags(tags);
             log.info("Tags do produto atualizadas");
             productToUpdate.setTags(tags);
         }
@@ -169,6 +174,7 @@ public class ProductService {
      * @param productId UUID do produto a ser removido
      * @throws ProductNotFound se o produto não for encontrado
      */
+    @Transactional
     public void delete(UUID productId) {
         log.info("Deletando produto para id: {}", productId);
         Optional<Product> existingProduct = findById(productId);
@@ -187,7 +193,6 @@ public class ProductService {
      * @param name Nome do produto a ser buscado
      * @return Optional contendo o produto encontrado ou vazio se não existir
      */
-    @Transactional(readOnly = true)
     private Optional<Product> findByName(String name) {
         log.info("Buscando produto por name: {}", name);
         Optional<Product> product = repository.findByName(name);
@@ -207,7 +212,6 @@ public class ProductService {
      * @param id UUID do produto a ser buscado
      * @return Optional contendo o produto encontrado ou vazio se não existir
      */
-    @Transactional(readOnly = true)
     private Optional<Product> findById(UUID id) {
         log.info("Buscando produto por id: {}", id);
         Optional<Product> product = repository.findById(id);
@@ -226,21 +230,36 @@ public class ProductService {
      *
      * @param tags Conjunto de tags a serem validadas
      * @return true se todas as tags forem válidas
-     * @throws NullPointerException   se alguma tag tiver ID nulo
+     * @throws IllegalArgumentException   se alguma tag tiver ID nulo
      * @throws TagNotFoundException   se alguma tag não for encontrada
      */
-    @Transactional
-    private void validateTags(Set<Tag> tags) {
-        for (Tag tag : tags) {
-            if (tag.getTagId() == null) {
-                log.error("Tag inválida: ID nulo");
-                throw new NullPointerException("Tag inválida: ID nulo");
-            }
-            boolean exists = tagRepository.existsById(tag.getTagId());
-            if (!exists) {
-                log.error("Tag não encontrada para id: {}", tag.getTagId());
-                throw new TagNotFoundException("Tag não encontrada para id: " + tag.getTagId());
-            }
+    private Set<Tag> validateTags(Set<Tag> tags) {
+        Set<UUID> tagIds = tags.stream()
+                .map(tag -> {
+                    if (tag.getTagId() == null) {
+                        throw new IllegalArgumentException("Tag sem ID ou ID null não é permitida");
+                    }
+                    return tag.getTagId();
+                })
+                .collect(Collectors.toSet());
+
+        Set<Tag> foundTags = new HashSet<>(tagRepository.findAllById(tagIds));
+
+        if (tags.size() != foundTags.size()) {
+            log.error("Alguma tag não foi encontrada");
+            throw new TagNotFoundException("Alguma tag não foi encontrada!");
         }
+//        for (Tag tag : tags) {
+//            if (tag.getTagId() == null) {
+//                log.error("Tag inválida: ID nulo");
+//                throw new IllegalArgumentException("Tag inválida: ID nulo");
+//            }
+//            boolean exists = tagRepository.existsById(tag.getTagId());
+//            if (!exists) {
+//                log.error("Tag não encontrada para id: {}", tag.getTagId());
+//                throw new TagNotFoundException("Tag não encontrada para id: " + tag.getTagId());
+//            }
+//        }
+        return foundTags;
     }
 }

@@ -4,9 +4,13 @@ import br.com.TrustReview.dto.ProductRequestDTO;
 import br.com.TrustReview.dto.ProductResponseDTO;
 import br.com.TrustReview.exception.ProductNameAlreadyExists;
 import br.com.TrustReview.exception.ProductNotFound;
+import br.com.TrustReview.exception.TagNotFoundException;
 import br.com.TrustReview.mapper.ProductMapper;
+import br.com.TrustReview.mapper.TagMapper;
 import br.com.TrustReview.model.Product;
+import br.com.TrustReview.model.Tag;
 import br.com.TrustReview.repository.ProductRepository;
+import br.com.TrustReview.repository.TagRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -46,7 +51,9 @@ import java.util.UUID;
 public class ProductService {
 
     private final ProductRepository repository;
+    private final TagRepository tagRepository;
     private final ProductMapper productMapper;
+    private final TagMapper tagMapper;
 
     /**
      * Cria um novo produto a partir dos dados informados.
@@ -113,11 +120,42 @@ public class ProductService {
         if (existingProduct.isEmpty()) {
             throw new ProductNotFound("Produto não encontrado para id: " + productId);
         }
-
         Product productToUpdate = existingProduct.get();
-        productToUpdate.setName(request.getName());
-        productToUpdate.setDescription(request.getDescription());
-        productToUpdate.setOverallRating(request.getOverallRating());
+
+        if (request.getName() != null || !request.getName().isBlank()) {
+            Optional<Product> productWithSameName = findByName(request.getName());
+            if (productWithSameName.isPresent() && !productWithSameName.get().getProductId().equals(productId)) {
+                log.error("Falha ao atualizar produto: nome já existe - {}", request.getName());
+                throw new ProductNameAlreadyExists("Produto já existe para name: " + request.getName());
+            } else {
+                log.info("Nome do produto atualizado para name: {}", request.getName());
+                productToUpdate.setName(request.getName());
+            }
+        }
+
+        if (request.getDescription() != null) {
+            log.info("Descrição do produto atualizada para description: {}", request.getDescription());
+            productToUpdate.setDescription(request.getDescription());
+        }
+
+        if (request.getOverallRating() != null) {
+            log.info("Avaliação geral do produto atualizada para overallRating: {}", request.getOverallRating());
+            productToUpdate.setOverallRating(request.getOverallRating());
+        }
+
+        // Lógica de validação de tags pode ser adicionada aqui
+        if (request.getTags() != null && !request.getTags().isEmpty()) {
+            Set<Tag> tags = request.getTags().stream()
+                    .map(tagMapper::toTag)
+                    .collect(java.util.stream.Collectors.toSet());
+
+            // Lança exceção se alguma tag não existir
+            log.info("Validando tags do produto");
+            validateTags(tags);
+            log.info("Tags do produto atualizadas");
+            productToUpdate.setTags(tags);
+        }
+
         productToUpdate.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
         Product updatedProduct = repository.save(productToUpdate);
@@ -181,5 +219,28 @@ public class ProductService {
 
         log.info("Produto encontrado para id: {}", id);
         return product;
+    }
+
+    /**
+     * Valida se todas as tags informadas existem no sistema.
+     *
+     * @param tags Conjunto de tags a serem validadas
+     * @return true se todas as tags forem válidas
+     * @throws NullPointerException   se alguma tag tiver ID nulo
+     * @throws TagNotFoundException   se alguma tag não for encontrada
+     */
+    @Transactional
+    private void validateTags(Set<Tag> tags) {
+        for (Tag tag : tags) {
+            if (tag.getTagId() == null) {
+                log.error("Tag inválida: ID nulo");
+                throw new NullPointerException("Tag inválida: ID nulo");
+            }
+            boolean exists = tagRepository.existsById(tag.getTagId());
+            if (!exists) {
+                log.error("Tag não encontrada para id: {}", tag.getTagId());
+                throw new TagNotFoundException("Tag não encontrada para id: " + tag.getTagId());
+            }
+        }
     }
 }

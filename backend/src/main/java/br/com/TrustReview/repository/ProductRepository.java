@@ -1,6 +1,7 @@
 package br.com.TrustReview.repository;
 
 import br.com.TrustReview.model.Product;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -33,7 +34,25 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * Busca um produto pelo nome.
      *
      * @param name Nome do produto
-     * @return Optional contendo o produto, se encontrado
+     * @return Optional contendo o produto, se encontrado, se não, vazio
      */
     Optional<Product> findByName(String name);
+
+    /**
+     * Busca um produto pelo nome, carregando também suas tags associadas.
+     *
+     * @param name Nome do produto
+     * @return Optional contendo o produto com tags, se encontrado, se não, vazio
+     */
+    @EntityGraph(attributePaths = {"tags"})
+    Optional<Product> findWithTagsByName(String name);
+
+    /**
+     * Busca um produto pelo ID, carregando também suas tags associadas.
+     *
+     * @param id ID do produto
+     * @return Optional contendo o produto com tags, se encontrado, se não, vazio
+     */
+    @EntityGraph(attributePaths = {"tags"})
+    Optional<Product> findWithTagsById(UUID id);
 }

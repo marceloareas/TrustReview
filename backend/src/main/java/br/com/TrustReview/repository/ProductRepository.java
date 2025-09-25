@@ -3,6 +3,7 @@ package br.com.TrustReview.repository;
 import br.com.TrustReview.model.Product;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -45,6 +46,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * @return Optional contendo o produto com tags, se encontrado, se não, vazio
      */
     @EntityGraph(attributePaths = {"tags"})
+    @Query("SELECT p FROM Product p WHERE LOWER(p.name) = LOWER(:name)")
     Optional<Product> findWithTagsByName(String name);
 
     /**
@@ -54,5 +56,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * @return Optional contendo o produto com tags, se encontrado, se não, vazio
      */
     @EntityGraph(attributePaths = {"tags"})
+    @Query("SELECT p FROM Product p WHERE p.productId = :id")
     Optional<Product> findWithTagsById(UUID id);
 }

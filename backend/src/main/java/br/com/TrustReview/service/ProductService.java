@@ -27,22 +27,24 @@ import java.util.stream.Collectors;
  * Serviço responsável pela lógica de negócio relacionada à entidade {@link Product}.
  *
  * <p>
- * Esta classe centraliza as operações de criação, busca, atualização e remoção de produtos,
- * além de realizar validações e lançar exceções customizadas para cenários de erro.
+ * Centraliza as operações de criação, busca, atualização e remoção de produtos,
+ * realizando validações de unicidade, existência e integridade de dados,
+ * além de lançar exceções customizadas para cenários de erro.
  * </p>
  *
  * <ul>
  *   <li><b>create</b>: Cria um novo produto, garantindo unicidade pelo nome.</li>
  *   <li><b>getById</b>: Busca um produto pelo seu identificador único (UUID).</li>
- *   <li><b>update</b>: Atualiza os dados de um produto existente.</li>
+ *   <li><b>update</b>: Atualiza os dados de um produto existente, validando nome e tags.</li>
  *   <li><b>delete</b>: Remove um produto do sistema.</li>
  *   <li><b>findByName</b>: Busca auxiliar por nome de produto.</li>
  *   <li><b>findById</b>: Busca auxiliar por ID de produto.</li>
+ *   <li><b>validateTags</b>: Valida se todas as tags informadas existem no sistema.</li>
  * </ul>
  *
  * <p>
- * Utiliza o {@link ProductMapper} para conversão entre entidades e DTOs, e o {@link ProductRepository}
- * para acesso ao banco de dados via Spring Data JPA.
+ * Utiliza o {@link ProductMapper} e o {@link TagMapper} para conversão entre entidades e DTOs,
+ * {@link ProductRepository} para acesso a dados de produtos e {@link TagRepository} para validação de tags.
  * </p>
  *
  * @author HernaniFilho
@@ -59,7 +61,7 @@ public class ProductService {
 
     /**
      * Cria um novo produto a partir dos dados informados.
-     * Caso já exista um produto com o mesmo nome, lança exceção.
+     * Garante que não exista outro produto com o mesmo nome.
      *
      * @param request DTO contendo os dados do produto a ser criado
      * @return DTO de resposta com os dados do produto criado
@@ -111,11 +113,14 @@ public class ProductService {
 
     /**
      * Atualiza os dados de um produto existente.
+     * Valida unicidade do nome e existência das tags informadas.
      *
      * @param productId UUID do produto a ser atualizado
      * @param request   DTO contendo os novos dados do produto
      * @return DTO de resposta com os dados do produto atualizado
      * @throws ProductNotFound se o produto não for encontrado
+     * @throws ProductNameAlreadyExists se já existir produto com o mesmo nome
+     * @throws TagNotFoundException se alguma tag informada não existir
      */
     @Transactional
     public ProductResponseDTO update(UUID productId, ProductRequestDTO request) {
@@ -148,13 +153,12 @@ public class ProductService {
             productToUpdate.setOverallRating(request.getOverallRating());
         }
 
-        // Lógica de validação de tags pode ser adicionada aqui
+        // Validação e atualização das tags associadas ao produto
         if (request.getTags() != null && !request.getTags().isEmpty()) {
             Set<Tag> tags = request.getTags().stream()
                     .map(tagMapper::toTag)
-                    .collect(java.util.stream.Collectors.toSet());
+                    .collect(Collectors.toSet());
 
-            // Lança exceção se alguma tag não existir
             log.info("Validando tags do produto");
             tags = validateTags(tags);
             log.info("Tags do produto atualizadas");
@@ -227,11 +231,12 @@ public class ProductService {
 
     /**
      * Valida se todas as tags informadas existem no sistema.
+     * Lança exceção se alguma tag não for encontrada ou tiver ID nulo.
      *
      * @param tags Conjunto de tags a serem validadas
-     * @return true se todas as tags forem válidas
-     * @throws IllegalArgumentException   se alguma tag tiver ID nulo
-     * @throws TagNotFoundException   se alguma tag não for encontrada
+     * @return Conjunto de tags válidas encontradas no banco
+     * @throws IllegalArgumentException se alguma tag tiver ID nulo
+     * @throws TagNotFoundException se alguma tag não for encontrada
      */
     private Set<Tag> validateTags(Set<Tag> tags) {
         Set<UUID> tagIds = tags.stream()
@@ -249,17 +254,6 @@ public class ProductService {
             log.error("Alguma tag não foi encontrada");
             throw new TagNotFoundException("Alguma tag não foi encontrada!");
         }
-//        for (Tag tag : tags) {
-//            if (tag.getTagId() == null) {
-//                log.error("Tag inválida: ID nulo");
-//                throw new IllegalArgumentException("Tag inválida: ID nulo");
-//            }
-//            boolean exists = tagRepository.existsById(tag.getTagId());
-//            if (!exists) {
-//                log.error("Tag não encontrada para id: {}", tag.getTagId());
-//                throw new TagNotFoundException("Tag não encontrada para id: " + tag.getTagId());
-//            }
-//        }
         return foundTags;
     }
 }

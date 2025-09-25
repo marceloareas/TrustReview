@@ -15,22 +15,25 @@ import java.util.UUID;
  *
  * <p>
  * Esta interface fornece métodos para manipulação de produtos no banco de dados,
- * incluindo operações CRUD padrão e consultas customizadas.
+ * incluindo operações CRUD padrão e consultas customizadas, com suporte ao carregamento
+ * de relacionamentos (tags) via {@link EntityGraph}.
  * </p>
  *
  * <ul>
  *   <li><b>findByName</b>: Busca um produto pelo nome.</li>
+ *   <li><b>findWithTagsByName</b>: Busca um produto pelo nome, carregando também suas tags associadas.</li>
+ *   <li><b>findWithTagsById</b>: Busca um produto pelo ID, carregando também suas tags associadas.</li>
  * </ul>
  *
  * <p>
- * Utiliza Spring Data JPA para geração automática das implementações.
+ * Utiliza Spring Data JPA para geração automática das implementações e otimização de queries.
  * </p>
  *
  * @author HernaniFilho
  */
 @Repository
 public interface ProductRepository extends JpaRepository<Product, UUID> {
-    
+
     /**
      * Busca um produto pelo nome.
      *

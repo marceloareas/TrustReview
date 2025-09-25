@@ -1,7 +1,6 @@
 package br.com.TrustReview.dto;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Set;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,12 +21,19 @@ import lombok.Setter;
  *
  * <ul>
  *   <li><b>name</b>: Nome do produto (obrigatório, entre 2 e 255 caracteres).</li>
+ *   <li><b>description</b>: Descrição detalhada do produto (opcional, até 1000 caracteres).</li>
+ *   <li><b>tags</b>: Lista de tags associadas ao produto (mínimo 1 tag).</li>
+ *   <li><b>overallRating</b>: Avaliação geral do produto (opcional).</li>
+ *   <li><b>createdAt</b>: Data/hora de criação do produto (opcional).</li>
+ *   <li><b>updatedAt</b>: Data/hora da última atualização do produto (opcional).</li>
  * </ul>
  *
  * <p>
  * Utiliza anotações do Swagger para documentação automática, do Lombok para reduzir boilerplate
  * e do Jakarta Validation para validação dos campos.
  * </p>
+ *
+ * @author HernaniFilho
  */
 @Getter
 @Setter
@@ -45,7 +51,7 @@ public class ProductRequestDTO {
     @Schema(description = "Descrição do produto", example = "Um notebook potente e leve da Dell")
     private String description;
 
-    // @NotBlank(message = "As tags do produto são obrigatórias")
+    // @NotBlank(message = "O produto deve ter pelo menos uma tag")
     @Size(min = 1, message = "O produto deve ter pelo menos uma tag")
     @Schema(description = "Lista de tags associadas ao produto")
     private Set<TagResponseDTO> tags;

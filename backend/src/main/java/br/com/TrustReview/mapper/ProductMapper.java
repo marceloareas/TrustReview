@@ -82,7 +82,7 @@ public class ProductMapper {
      */
     public Product toProduct(ProductResponseDTO response) {
         Product product = new Product();
-        product.setProductId(response.getProductId());
+        product.setId(response.getProductId());
         product.setName(response.getName());
         product.setDescription(response.getDescription());
         product.setOverallRating(response.getOverallRating());
@@ -111,7 +111,7 @@ public class ProductMapper {
      */
     public ProductResponseDTO toResponse(Product product) {
         ProductResponseDTO response = new ProductResponseDTO();
-        response.setProductId(product.getProductId());
+        response.setProductId(product.getId());
         response.setName(product.getName());
         response.setDescription(product.getDescription());
         response.setOverallRating(product.getOverallRating());

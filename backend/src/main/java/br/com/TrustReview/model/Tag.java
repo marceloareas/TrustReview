@@ -45,7 +45,7 @@ public class Tag {
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID tagId;
+    private UUID id;
 
     @Column(name = "name", length = 100, nullable = false, unique = true)
     private String name;

@@ -1,9 +1,11 @@
 package br.com.TrustReview.repository;
 
 import br.com.TrustReview.model.Product;
+import br.com.TrustReview.model.Tag;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.UUID;
  *
  * <ul>
  *   <li><b>findByName</b>: Busca um produto pelo nome.</li>
+ *   <li><b>findAllByTagId</b>: Busca todos os produtos associados a uma determinada tag pelo seu ID.</li>
  * </ul>
  *
  * <p>
@@ -38,4 +41,12 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * @return Optional contendo o produto, se encontrado, se não, vazio
      */
     Optional<Product> findByName(String name);
+
+    /**
+     * Busca todos os produtos associadas a uma tag específica.
+     *
+     * @param tagId UUID da tag cujos produtos devem ser retornadas
+     * @return Lista de products associadas ao produto
+     */
+    List<Product> findProductsByTagsId(UUID tagId);
 }

@@ -50,7 +50,7 @@ public class Product {
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID productId;
+    private UUID id;
 
     @Column(name = "name", length = 255, nullable = false, unique = true)
     private String name;

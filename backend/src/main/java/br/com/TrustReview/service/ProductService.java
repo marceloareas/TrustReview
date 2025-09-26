@@ -70,6 +70,7 @@ public class ProductService {
         log.info("Criando um novo produto para name: {}", request.getName());
 
         if (request.getName() == null || request.getName().isBlank()) {
+            log.error("O nome do produto não pode ser nulo ou vazio");
             throw new IllegalArgumentException("O nome do produto não pode ser nulo ou vazio");
         }
 
@@ -98,7 +99,6 @@ public class ProductService {
      */
     @Transactional(readOnly = true)
     public ProductResponseDTO getById(UUID id, List<String> include) {
-        log.info("Buscando produto por id: {}", id);
         Optional<Product> existingProduct = findById(id);
 
         if (existingProduct.isEmpty()) {
@@ -112,9 +112,9 @@ public class ProductService {
                         //TODO: Pode virar uma outra função pública separada no futuro
                         log.info("Buscando Tags associadas ao produto: {}", id);
                         existingProduct.get().setTags(
-                                new HashSet<>(tagRepository.findAllByProductId(id))
+                                new HashSet<>(tagRepository.findTagsByProductsId(id))
                         );
-                        log.info("Tags carregadas para prouto: {}", id);
+                        log.info("Tags carregadas para produto: {}", id);
                         break;
 //                    case "reviews":
 //                        log.info("Buscando Reviews associadas ao produto: {}", id);
@@ -155,7 +155,7 @@ public class ProductService {
 
         if (request.getName() != null || !request.getName().isBlank()) {
             Optional<Product> productWithSameName = findByName(request.getName());
-            if (productWithSameName.isPresent() && !productWithSameName.get().getProductId().equals(productId)) {
+            if (productWithSameName.isPresent() && !productWithSameName.get().getId().equals(productId)) {
                 log.error("Falha ao atualizar produto: nome já existe - {}", request.getName());
                 throw new ProductNameAlreadyExists("Produto já existe para name: " + request.getName());
             } else {
@@ -262,10 +262,10 @@ public class ProductService {
     private Set<Tag> validateTags(Set<Tag> tags) {
         Set<UUID> tagIds = tags.stream()
                 .map(tag -> {
-                    if (tag.getTagId() == null) {
+                    if (tag.getId() == null) {
                         throw new IllegalArgumentException("Tag sem ID ou ID null não é permitida");
                     }
-                    return tag.getTagId();
+                    return tag.getId();
                 })
                 .collect(Collectors.toSet());
 

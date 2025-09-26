@@ -6,6 +6,8 @@ const ProductCard = ({ productData }: { productData?: Partial<IProduct> }) => {
 
     return (
         <Box sx={{
+            width: '200px',
+            height: '200px',
             cursor: 'pointer', "&:hover": {
                 transform: 'scale(1.02)',
             }
@@ -16,9 +18,10 @@ const ProductCard = ({ productData }: { productData?: Partial<IProduct> }) => {
                 alt={productData?.imageUrl ? `${productData.name}` : "Default Image"}
                 sx={{
                     objectFit: "cover",
-                    width: 120,
-                    height: 120,
+                    width: '100%',
+                    height: '100%',
                     borderRadius: 4,
+                    boxShadow: 3,
                 }}
             />
         </Box>

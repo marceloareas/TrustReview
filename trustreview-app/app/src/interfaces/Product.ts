@@ -1,5 +1,5 @@
 export interface IProduct {
-    productId?: string;
+    id?: string;
     name: string;
     description: string;
     tags?: ITag[];
@@ -8,7 +8,7 @@ export interface IProduct {
 }
 
 export interface ITag {
-    tagId?: string;
+    id?: string;
     name: string;
     description?: string;
 }

@@ -143,10 +143,7 @@ public class ProductMapper {
         response.setName(request.getName());
         response.setDescription(request.getDescription());
         response.setOverallRating(request.getOverallRating());
-
-        if (Hibernate.isInitialized(request.getTags())) {
-            response.setTags(request.getTags());
-        }
+        response.setTags(request.getTags());
         response.setCreatedAt(request.getCreatedAt());
         response.setUpdatedAt(request.getUpdatedAt());
         return response;

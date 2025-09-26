@@ -59,7 +59,7 @@ public class ProductMapper {
         product.setDescription(request.getDescription());
         product.setOverallRating(request.getOverallRating());
 
-        if (request.getTags() != null && Hibernate.isInitialized(product.getTags())) {
+        if (request.getTags() != null) {
             Set<Tag> tags = request.getTags().stream()
                                 .map(tagMapper::toTag)
                                 .collect(Collectors.toSet());
@@ -87,7 +87,7 @@ public class ProductMapper {
         product.setDescription(response.getDescription());
         product.setOverallRating(response.getOverallRating());
 
-        if (response.getTags() != null && Hibernate.isInitialized(product.getTags())) {
+        if (response.getTags() != null) {
             Set<Tag> tags = response.getTags()
                 .stream()
                 .map(tagMapper::toTag)

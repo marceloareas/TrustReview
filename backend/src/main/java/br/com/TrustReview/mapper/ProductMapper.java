@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -58,7 +59,7 @@ public class ProductMapper {
         product.setDescription(request.getDescription());
         product.setOverallRating(request.getOverallRating());
 
-        if (request.getTags() != null) {
+        if (request.getTags() != null && Hibernate.isInitialized(product.getTags())) {
             Set<Tag> tags = request.getTags().stream()
                                 .map(tagMapper::toTag)
                                 .collect(Collectors.toSet());
@@ -86,7 +87,7 @@ public class ProductMapper {
         product.setDescription(response.getDescription());
         product.setOverallRating(response.getOverallRating());
 
-        if (response.getTags() != null) {
+        if (response.getTags() != null && Hibernate.isInitialized(product.getTags())) {
             Set<Tag> tags = response.getTags()
                 .stream()
                 .map(tagMapper::toTag)
@@ -115,7 +116,7 @@ public class ProductMapper {
         response.setDescription(product.getDescription());
         response.setOverallRating(product.getOverallRating());
 
-        if (product.getTags() != null) {
+        if (product.getTags() != null && Hibernate.isInitialized(product.getTags())) {
             Set<TagResponseDTO> tagDTOs = product.getTags()
                 .stream()
                 .map(tagMapper::toResponse)
@@ -142,7 +143,10 @@ public class ProductMapper {
         response.setName(request.getName());
         response.setDescription(request.getDescription());
         response.setOverallRating(request.getOverallRating());
-        response.setTags(request.getTags());
+
+        if (Hibernate.isInitialized(request.getTags())) {
+            response.setTags(request.getTags());
+        }
         response.setCreatedAt(request.getCreatedAt());
         response.setUpdatedAt(request.getUpdatedAt());
         return response;

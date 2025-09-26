@@ -15,14 +15,11 @@ import java.util.UUID;
  *
  * <p>
  * Esta interface fornece métodos para manipulação de produtos no banco de dados,
- * incluindo operações CRUD padrão e consultas customizadas, com suporte ao carregamento
- * de relacionamentos (tags) via {@link EntityGraph}.
+ * incluindo operações CRUD padrão e consultas customizadas
  * </p>
  *
  * <ul>
  *   <li><b>findByName</b>: Busca um produto pelo nome.</li>
- *   <li><b>findWithTagsByName</b>: Busca um produto pelo nome, carregando também suas tags associadas.</li>
- *   <li><b>findWithTagsById</b>: Busca um produto pelo ID, carregando também suas tags associadas.</li>
  * </ul>
  *
  * <p>
@@ -41,24 +38,4 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * @return Optional contendo o produto, se encontrado, se não, vazio
      */
     Optional<Product> findByName(String name);
-
-    /**
-     * Busca um produto pelo nome, carregando também suas tags associadas.
-     *
-     * @param name Nome do produto
-     * @return Optional contendo o produto com tags, se encontrado, se não, vazio
-     */
-    @EntityGraph(attributePaths = {"tags"})
-    @Query("SELECT p FROM Product p WHERE LOWER(p.name) = LOWER(:name)")
-    Optional<Product> findWithTagsByName(String name);
-
-    /**
-     * Busca um produto pelo ID, carregando também suas tags associadas.
-     *
-     * @param id ID do produto
-     * @return Optional contendo o produto com tags, se encontrado, se não, vazio
-     */
-    @EntityGraph(attributePaths = {"tags"})
-    @Query("SELECT p FROM Product p WHERE p.productId = :id")
-    Optional<Product> findWithTagsById(UUID id);
 }

@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +51,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ProductService {
 
-    private final ProductRepository repository;
+    private final ProductRepository productRepository;
     private final TagRepository tagRepository;
     private final ProductMapper productMapper;
     private final TagMapper tagMapper;
@@ -86,7 +83,7 @@ public class ProductService {
         Product product = productMapper.toProduct(request);
         product.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         product.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        Product savedProduct = repository.save(product);
+        Product savedProduct = productRepository.save(product);
         log.info("Produto criado com sucesso para name: {}", savedProduct.getName());
         return productMapper.toResponse(savedProduct);
     }
@@ -95,11 +92,12 @@ public class ProductService {
      * Busca um produto pelo ID informado.
      *
      * @param id UUID do produto a ser buscado
+     * @param include Lista de relacionamentos a incluir (ex: "tags")
      * @return DTO de resposta com os dados do produto encontrado
      * @throws ProductNotFound se o produto não for encontrado
      */
     @Transactional(readOnly = true)
-    public ProductResponseDTO getById(UUID id) {
+    public ProductResponseDTO getById(UUID id, List<String> include) {
         log.info("Buscando produto por id: {}", id);
         Optional<Product> existingProduct = findById(id);
 
@@ -107,7 +105,30 @@ public class ProductService {
             throw new ProductNotFound("Produto não encontrado para id: " + id);
         }
 
-        log.info("Produto encontrado com sucesso para id: {}", id);
+        if (include != null) {
+            for (String inc : include) {
+                switch (inc) {
+                    case "tags":
+                        //TODO: Pode virar uma outra função pública separada no futuro
+                        log.info("Buscando Tags associadas ao produto: {}", id);
+                        existingProduct.get().setTags(
+                                new HashSet<>(tagRepository.findAllByProductId(id))
+                        );
+                        log.info("Tags carregadas para prouto: {}", id);
+                        break;
+//                    case "reviews":
+//                        log.info("Buscando Reviews associadas ao produto: {}", id);
+//                        existingProduct.get().setReviews(
+//                                new HashSet<>(reviewRepository.findAllByProductId(id))
+//                        );
+//                        break;
+                    default:
+                        log.warn("Campo {} para incluir inválido", inc);
+                        break;
+                }
+            }
+        }
+
         return productMapper.toResponse(existingProduct.get());
     }
 
@@ -167,7 +188,7 @@ public class ProductService {
 
         productToUpdate.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
-        Product updatedProduct = repository.save(productToUpdate);
+        Product updatedProduct = productRepository.save(productToUpdate);
         log.info("Produto atualizado com sucesso para id: {}", productId);
         return productMapper.toResponse(updatedProduct);
     }
@@ -187,7 +208,7 @@ public class ProductService {
             throw new ProductNotFound("Produto não encontrado para id: " + productId);
         }
 
-        repository.deleteById(productId);
+        productRepository.deleteById(productId);
         log.info("Produto deletado com sucesso para id: {}", productId);
     }
 
@@ -199,7 +220,7 @@ public class ProductService {
      */
     private Optional<Product> findByName(String name) {
         log.info("Buscando produto por name: {}", name);
-        Optional<Product> product = repository.findByName(name);
+        Optional<Product> product = productRepository.findByName(name);
 
         if (product.isEmpty()) {
             log.warn("Produto não encontrado para name: {}", name);
@@ -218,7 +239,7 @@ public class ProductService {
      */
     private Optional<Product> findById(UUID id) {
         log.info("Buscando produto por id: {}", id);
-        Optional<Product> product = repository.findById(id);
+        Optional<Product> product = productRepository.findById(id);
 
         if (product.isEmpty()) {
             log.warn("Produto não encontrado para id: {}", id);

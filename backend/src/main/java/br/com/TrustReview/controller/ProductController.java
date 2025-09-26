@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -86,8 +87,9 @@ public class ProductController {
             content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     @GetMapping("/{product-id}")
-    public ResponseEntity<ProductResponseDTO> getById(@PathVariable("product-id") UUID id) {
-        return ResponseEntity.ok(service.getById(id));
+    public ResponseEntity<ProductResponseDTO> getById(@PathVariable("product-id") UUID id,
+                                                      @RequestParam(name = "include", required = false) List<String> include) {
+        return ResponseEntity.ok(service.getById(id, include));
     }
 
     /**

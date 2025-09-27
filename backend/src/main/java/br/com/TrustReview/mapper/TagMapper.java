@@ -52,7 +52,7 @@ public class TagMapper {
      */
     public Tag toTag(TagResponseDTO response) {
         Tag tag = new Tag();
-        tag.setId(response.getTagId());
+        tag.setId(response.getId());
         tag.setName(response.getName());
         tag.setDescription(response.getDescription());
         return tag;
@@ -66,7 +66,7 @@ public class TagMapper {
      */
     public TagResponseDTO toResponse(Tag tag) {
         TagResponseDTO response = new TagResponseDTO();
-        response.setTagId(tag.getId());
+        response.setId(tag.getId());
         response.setName(tag.getName());
         response.setDescription(tag.getDescription());
         return response;

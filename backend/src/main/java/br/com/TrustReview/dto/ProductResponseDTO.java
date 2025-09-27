@@ -42,7 +42,7 @@ import java.util.UUID;
 public class ProductResponseDTO {
 
     @Schema(description = "ID do produto", example = "3fa85f64-5717-4562-b3fc-2c963f66afa6" )
-    private UUID productId;
+    private UUID id;
 
     @Schema(description = "Nome do produto", example = "Notebook Dell XPS 13")
     private String name;

@@ -84,6 +84,16 @@ public class ProductService {
         Product product = productMapper.toProduct(request);
         product.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         product.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        if (request.getTags() != null && !request.getTags().isEmpty()) {
+            Set<Tag> managedTags = validateTags(
+                request.getTags().stream()
+                    .map(tagMapper::toTag) 
+                    .collect(Collectors.toSet())
+            );
+            product.setTags(managedTags);
+        }
+
         Product savedProduct = productRepository.save(product);
         log.info("Produto criado com sucesso para name: {}", savedProduct.getName());
         return productMapper.toResponse(savedProduct);
@@ -263,6 +273,7 @@ public class ProductService {
         Set<UUID> tagIds = tags.stream()
                 .map(tag -> {
                     if (tag.getId() == null) {
+                        log.error("Tag sem ID ou ID null não é permitida");
                         throw new IllegalArgumentException("Tag sem ID ou ID null não é permitida");
                     }
                     return tag.getId();

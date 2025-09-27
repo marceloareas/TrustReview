@@ -5,13 +5,19 @@ import { IconButton, InputAdornment, TextField } from "@mui/material";
 interface SearchProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSearchSubmit?: () => void;
 }
 
-const Search = ({ value, onChange }: SearchProps) => {
+const Search = ({ value, onChange, handleSearchSubmit }: SearchProps) => {
   return (
     <TextField
       value={value}
       onChange={onChange}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && handleSearchSubmit) {
+          handleSearchSubmit();
+        }
+      }}
       variant="outlined"
       placeholder="Buscar"
       fullWidth

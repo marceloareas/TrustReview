@@ -1,12 +1,11 @@
-import { Box, Stack, Typography } from "@mui/material";
-import AppTitle from "../../components/AppTitle";
+import { Stack } from "@mui/material";
+import ProductTitle from "../../components/ProductTitle";
+import ProductCardList from "../../components/ProductCardList";
+import { products } from "../../shared/constants/products";
 import Search from "../../components/Search";
-import SearchIcon from "../../assets/icons/Search.svg";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-const SearchSection = () => {
-  const navigate = useNavigate();
+const SearchedProducts = () => {
   const [searchValue, setSearchValue] = useState("");
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,7 +14,6 @@ const SearchSection = () => {
 
   const handleSearchSubmit = () => {
     console.log("Search submitted:", searchValue);
-    navigate("/products");
   };
 
   return (
@@ -26,16 +24,15 @@ const SearchSection = () => {
       alignItems={"center"}
       width={"100%"}
     >
-      <AppTitle />
-      <Box component="img" src={SearchIcon} width={64} />
-      <Typography variant="h6">Busque um produto para avaliar</Typography>
       <Search
         value={searchValue}
         onChange={handleSearchChange}
         handleSearchSubmit={handleSearchSubmit}
       />
+      <ProductTitle />
+      <ProductCardList productList={products} />
     </Stack>
   );
 };
 
-export default SearchSection;
+export default SearchedProducts;

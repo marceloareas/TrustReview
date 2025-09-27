@@ -5,16 +5,20 @@ import ProductCard from "../ProductCard";
 const ProductCardList = ({
   productList,
 }: {
-  productList?: Partial<IProduct>[];
+  productList: Partial<IProduct>[];
 }) => {
   return (
     <Grid
       container
       spacing={2}
       py={2}
-      sx={{ overflowY: "auto", overflowX: "hidden" }}
+      sx={{
+        overflowY: "auto",
+        overflowX: "hidden",
+        maxHeight: "70vh",
+      }}
     >
-      {productList?.map((product) => (
+      {productList.map((product) => (
         <Grid size={{ xs: 6, md: 4 }} key={product.id}>
           <Stack direction={"row"} justifyContent={"center"}>
             <ProductCard productData={product} />

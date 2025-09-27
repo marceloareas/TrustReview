@@ -1,4 +1,4 @@
-import { Box, Container } from "@mui/material";
+import { Box } from "@mui/material";
 import SearchSection from "../Sections/Search";
 
 const SearchPage = () => {
@@ -12,14 +12,11 @@ const SearchPage = () => {
           justifyContent: "center",
           alignItems: "center",
           bgcolor: "background.default",
-          p: 2,
         }}
       >
-        <Container maxWidth="md">
-          <Box sx={{ width: "100%", textAlign: "center", mb: "15%" }}>
+          <Box sx={{ width: "100%", textAlign: "center", mb: "10%" }}>
             <SearchSection />
           </Box>
-        </Container>
       </Box>
     </>
   );

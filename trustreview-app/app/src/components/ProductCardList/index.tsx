@@ -15,16 +15,16 @@ const ProductCardList = ({
       sx={{
         overflowY: "auto",
         overflowX: "hidden",
-        maxHeight: "70vh",
+        maxHeight: "60vh",
       }}
     >
       {productList.map((product) => (
-        <Grid size={{ xs: 6, md: 4 }} key={product.id}>
+        <Grid size={{ xs: 6, md: 4, lg: 2 }} key={product.id}>
           <Stack direction={"row"} justifyContent={"center"}>
             <ProductCard productData={product} />
           </Stack>
         </Grid>
-      ))}
+      ))} 
     </Grid>
   );
 };

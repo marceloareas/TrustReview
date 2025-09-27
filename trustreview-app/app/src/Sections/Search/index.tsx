@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import AppTitle from "../../components/AppTitle";
 import Search from "../../components/Search";
 import SearchIcon from "../../assets/icons/Search.svg";
@@ -19,22 +19,24 @@ const SearchSection = () => {
   };
 
   return (
-    <Stack
-      flex={1}
-      spacing={3}
-      justifyContent={"center"}
-      alignItems={"center"}
-      width={"100%"}
-    >
-      <AppTitle />
-      <Box component="img" src={SearchIcon} width={64} />
-      <Typography variant="h6">Busque um produto para avaliar</Typography>
-      <Search
-        value={searchValue}
-        onChange={handleSearchChange}
-        handleSearchSubmit={handleSearchSubmit}
-      />
-    </Stack>
+    <Container maxWidth="md">
+      <Stack
+        flex={1}
+        spacing={4}
+        justifyContent={"center"}
+        alignItems={"center"}
+        width={"100%"}
+      >
+        <AppTitle />
+        <Box component="img" src={SearchIcon} width={64} />
+        <Typography variant="h6">Busque um produto para avaliar</Typography>
+        <Search
+          value={searchValue}
+          onChange={handleSearchChange}
+          handleSearchSubmit={handleSearchSubmit}
+        />
+      </Stack>
+    </Container>
   );
 };
 

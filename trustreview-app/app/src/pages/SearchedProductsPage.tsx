@@ -1,4 +1,4 @@
-import { Box, Container } from "@mui/material";
+import { Box } from "@mui/material";
 import SearchedProducts from "../Sections/SearchedProducts";
 
 const SearchedProductsPage = () => {
@@ -11,12 +11,9 @@ const SearchedProductsPage = () => {
         justifyContent: "center",
         alignItems: "center",
         bgcolor: "background.default",
-        p: 2,
       }}
     >
-      <Container maxWidth="md">
         <SearchedProducts />
-      </Container>
     </Box>
   );
 };

@@ -1,9 +1,18 @@
 import MuiAppBar from "@mui/material/AppBar";
 import { Avatar, IconButton, Stack } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 export default function AppBar() {
-  const isRoot = window.location.pathname === "/";
+  const navigate = useNavigate();
+  const path = window.location.pathname;
+  const isRoot = path === "/";
+
+  const handleNavigate = () => {
+    const index = path.lastIndexOf("/");
+    const newPath = index !== -1 ? path.slice(0, index) : path;
+    navigate(newPath);
+  };
 
   return (
     <MuiAppBar
@@ -18,7 +27,12 @@ export default function AppBar() {
         px={2}
       >
         {!isRoot && (
-          <IconButton size="large" aria-label="search" color="inherit">
+          <IconButton
+            size="large"
+            aria-label="search"
+            color="inherit"
+            onClick={() => handleNavigate()}
+          >
             <ArrowBack />
           </IconButton>
         )}

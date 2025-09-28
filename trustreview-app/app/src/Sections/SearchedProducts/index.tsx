@@ -3,38 +3,39 @@ import ProductTitle from "../../components/ProductTitle";
 import ProductCardList from "../../components/ProductCardList";
 import { products } from "../../shared/constants/products";
 import Search from "../../components/Search";
-import { useState } from "react";
+import { useSearch } from "../../hooks/useSearch";
+import { useQuery } from "../../hooks/useQuery";
 
 const SearchedProducts = () => {
-    const [searchValue, setSearchValue] = useState("");
+  const query = useQuery();
+  const initialSearch = query.get("search") || "";
+  const { searchTerm, setSearchTerm, filteredItems } = useSearch(
+    products,
+    ["name"],
+    initialSearch
+  );
 
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchValue(event.target.value);
-    };
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
 
-    const handleSearchSubmit = () => {
-        console.log("Search submitted:", searchValue);
-    };
-
-    return (
-        <Container maxWidth="xl">
-            <Stack
-                flex={1}
-                spacing={4}
-                justifyContent={"center"}
-                alignItems={"center"}
-                width={"100%"}
-            >
-                <Search
-                    value={searchValue}
-                    onChange={handleSearchChange}
-                    handleSearchSubmit={handleSearchSubmit}
-                />
-                <ProductTitle />
-                <ProductCardList productList={products} />
-            </Stack>
-        </Container>
-    );
+  return (
+    <Container
+      maxWidth="xl"
+      sx={{ height: "calc(100vh - 64px)", width: "100%", py: 4 }}
+    >
+      <Stack
+        flex={1}
+        spacing={4}
+        justifyContent={"center"}
+        alignItems={"flex-start"}
+      >
+        <Search value={searchTerm} onChange={handleSearchChange} />
+        <ProductTitle />
+        <ProductCardList productList={filteredItems} />
+      </Stack>
+    </Container>
+  );
 };
 
 export default SearchedProducts;

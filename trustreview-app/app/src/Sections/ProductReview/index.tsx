@@ -50,7 +50,7 @@ const ProductReviewSection = ({ reviews }: { reviews: IReview[] }) => {
             <Card
               sx={{
                 borderRadius: 4,
-                p: 0.5,
+                p: 0.2,
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
@@ -66,12 +66,18 @@ const ProductReviewSection = ({ reviews }: { reviews: IReview[] }) => {
                   <Typography variant="h6" fontWeight={100} flexGrow={1}>
                     {review?.title}
                   </Typography>
-                  <Stack direction={"row"} pt={0.5}>
+                  <Stack
+                    direction="row"
+                    pt={0.5}
+                    spacing={0.5}
+                    alignItems="center"
+                  >
                     <Rating
                       name="Product rating"
                       value={review.rating}
                       precision={0.5}
                       readOnly
+                      size="small"
                     />
                   </Stack>
                 </Stack>

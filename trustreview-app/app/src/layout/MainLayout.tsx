@@ -6,7 +6,16 @@ const MainLayout = () => {
   return (
     <>
       <AppBar />
-      <Box sx={{ height: "calc(100vh - 64px)", width: "100%" }}>
+      <Box
+        sx={{
+          height: "calc(100vh - 64px)",
+          width: "100%",
+          backgroundColor: "background.default",
+          py: 4,
+          overflowY: "auto",
+          overflowX: "hidden",
+        }}
+      >
         <Outlet />
       </Box>
     </>

@@ -1,24 +1,19 @@
-import { Box } from "@mui/material";
+import { Stack } from "@mui/material";
 import SearchSection from "../Sections/Search";
 
 const SearchPage = () => {
   return (
-    <>
-      <Box
-        sx={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          bgcolor: "background.default",
-        }}
-      >
-        <Box sx={{ width: "100%", textAlign: "center", mb: "10%" }}>
-          <SearchSection />
-        </Box>
-      </Box>
-    </>
+    <Stack
+      sx={{
+        width: "100%",
+        height: "100%",
+        bgcolor: "background.default",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <SearchSection />
+    </Stack>
   );
 };
 

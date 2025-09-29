@@ -1,12 +1,13 @@
-import { Box } from "@mui/material";
-import ProductDetails from "../Sections/ProductDetails";
+import { Box, Stack } from "@mui/material";
+import ProductDetailsSection from "../Sections/ProductDetails";
 import { products } from "../shared/constants/products";
 import { useParams } from "react-router-dom";
+import ProductReviewSection from "../Sections/ProductReview";
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
 
-  let product = products.find((p) => p.id === id);
+  const product = products.find((p) => p.id === id);
 
   if (!product) {
     return (
@@ -26,18 +27,19 @@ const ProductDetailsPage = () => {
   }
 
   return (
-    <Box
+    <Stack
+      spacing={4}
       sx={{
         width: "100%",
         height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         bgcolor: "background.default",
+        justifyContent: "flex-start",
+        alignItems: "center",
       }}
     >
-      <ProductDetails product={product} />
-    </Box>
+      <ProductDetailsSection product={product} />
+      <ProductReviewSection reviews={product.reviews || []} />
+    </Stack>
   );
 };
 

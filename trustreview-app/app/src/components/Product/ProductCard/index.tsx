@@ -32,6 +32,7 @@ const ProductCard = ({
           height: "180px",
           p: 1,
         }}
+        draggable={false}
         image={productData?.imageUrl || CardImage}
         title={productData?.name}
       />

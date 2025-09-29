@@ -26,7 +26,8 @@ const SearchSection = () => {
         spacing={4}
         justifyContent={"center"}
         alignItems={"center"}
-        width={"100%"}
+        height={"100%"}
+        mt={"-64px"}
       >
         <AppTitle />
         <Box component="img" src={SearchIcon} width={64} />

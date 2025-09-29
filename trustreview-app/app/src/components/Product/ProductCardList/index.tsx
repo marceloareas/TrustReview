@@ -33,8 +33,8 @@ const ProductCardList = ({
         width: "100%",
         overflowY: "auto",
         overflowX: "hidden",
-        paddingRight: 2,
-        marginRight: -2,
+        paddingRight: 1,
+        marginRight: -1,
         pl: 0.5,
         maxHeight: "60vh",
       }}

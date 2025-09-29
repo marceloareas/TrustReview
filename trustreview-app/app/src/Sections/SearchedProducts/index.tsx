@@ -26,7 +26,7 @@ const SearchedProducts = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ height: "100%", width: "100%", py: 4 }}>
+    <Container maxWidth="xl">
       <Stack
         flex={1}
         spacing={4}

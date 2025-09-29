@@ -24,6 +24,7 @@ const ProductImage = ({
           width: "100%",
           p: 2,
         }}
+        draggable={false}
         image={imageUrl || CardImage}
         title={name}
       />

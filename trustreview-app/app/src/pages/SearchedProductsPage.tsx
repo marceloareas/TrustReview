@@ -1,20 +1,19 @@
-import { Box } from "@mui/material";
+import { Stack } from "@mui/material";
 import SearchedProducts from "../Sections/SearchedProducts";
 
 const SearchedProductsPage = () => {
   return (
-    <Box
+    <Stack
       sx={{
         width: "100%",
         height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         bgcolor: "background.default",
+        justifyContent: "flex-start",
+        alignItems: "center",
       }}
     >
       <SearchedProducts />
-    </Box>
+    </Stack>
   );
 };
 

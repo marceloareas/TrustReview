@@ -17,7 +17,7 @@ export interface ITag {
   description?: string;
 }
 
-interface IReview {
+export interface IReview {
   id?: string;
   userId: string;
   productId: string;
@@ -27,4 +27,6 @@ interface IReview {
   cons: string;
   rating: number;
   comment?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

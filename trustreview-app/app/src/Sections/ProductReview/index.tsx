@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -10,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { IReview } from "../../interfaces/Product";
+import LikeOrNot from "../../components/LikeOrNot";
 
 const ProductReviewSection = ({ reviews }: { reviews: IReview[] }) => {
   return (
@@ -79,7 +79,7 @@ const ProductReviewSection = ({ reviews }: { reviews: IReview[] }) => {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button size="small">Learn More</Button>
+                <LikeOrNot onClick={() => {}} />
               </CardActions>
             </Card>
           </Grid>

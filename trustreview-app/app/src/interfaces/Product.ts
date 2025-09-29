@@ -27,6 +27,8 @@ export interface IReview {
   cons: string;
   rating: number;
   comment?: string;
+  likeCount?: number;
+  dislikeCount?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

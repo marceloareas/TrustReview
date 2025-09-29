@@ -10,13 +10,43 @@ import {
 } from "@mui/material";
 import type { IReview } from "../../interfaces/Product";
 import LikeOrNot from "../../components/LikeOrNot";
+import { useCallback, useState } from "react";
 
 const ProductReviewSection = ({ reviews }: { reviews: IReview[] }) => {
+  const [likes, setLikes] = useState<{
+    [key: string]: { isLike: boolean; isDislike: boolean };
+  }>({});
+
+  const handleClick = useCallback((reviewId: string, opt: string) => {
+    setLikes((prev) => {
+      const current = prev[reviewId] || { isLike: false, isDislike: false };
+      if (opt === "like") {
+        return {
+          ...prev,
+          [reviewId]: {
+            isLike: !current.isLike,
+            isDislike: false,
+          },
+        };
+      }
+      if (opt === "dislike") {
+        return {
+          ...prev,
+          [reviewId]: {
+            isLike: false,
+            isDislike: !current.isDislike,
+          },
+        };
+      }
+      return prev;
+    });
+  }, []);
+
   return (
     <Container maxWidth="xl">
       <Grid container spacing={4} pb={4}>
         {reviews.map((review) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+          <Grid key={review.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
             <Card
               sx={{
                 borderRadius: 4,
@@ -78,8 +108,14 @@ const ProductReviewSection = ({ reviews }: { reviews: IReview[] }) => {
                     : review?.createdAt?.toLocaleDateString()}
                 </Typography>
               </CardContent>
-              <CardActions>
-                <LikeOrNot onClick={() => {}} />
+              <CardActions key={review.id}>
+                <LikeOrNot
+                  onClick={(opt) => handleClick(review.id as string, opt)}
+                  isLike={likes[review.id as string]?.isLike || false}
+                  isDislike={likes[review.id as string]?.isDislike || false}
+                  likesCount={review.likeCount}
+                  dislikesCount={review.dislikeCount}
+                />
               </CardActions>
             </Card>
           </Grid>

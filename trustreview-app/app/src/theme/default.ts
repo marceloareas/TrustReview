@@ -170,15 +170,6 @@ export const defaultTheme = createTheme({
         root: {
           color: "#fff",
           fontWeight: 600,
-          "&:hover": {
-            backgroundColor: "#251846ff",
-            color: "#fff", 
-          },
-        },
-        clickable: {
-          "&:hover, &:focus": {
-            backgroundColor: "#E01B68",
-          },
         },
       },
     },

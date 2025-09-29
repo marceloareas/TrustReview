@@ -1,5 +1,5 @@
-import { Grid, Stack } from "@mui/material";
-import type { IProduct } from "../../interfaces/Product";
+import { Box, Grid, Stack, Typography } from "@mui/material";
+import type { IProduct } from "../../../interfaces/Product";
 import ProductCard from "../ProductCard";
 
 const ProductCardList = ({
@@ -7,6 +7,24 @@ const ProductCardList = ({
 }: {
   productList: Partial<IProduct>[];
 }) => {
+
+  if (productList.length === 0) {
+    return (
+      <Stack
+        width={"100%"}
+        height={'60vh'}
+        alignItems={"center"}
+        justifyContent={'center'}
+      >
+        <Box>
+          <Typography>
+            No products found.
+          </Typography>
+        </Box>
+      </Stack>
+    );
+  }
+
   return (
     <Grid
       container

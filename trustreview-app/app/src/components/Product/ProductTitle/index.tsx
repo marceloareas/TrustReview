@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import titleBg from "../../assets/titleBg.svg";
+import titleBg from "../../../assets/titleBg.svg";
 
 const ProductTitle = () => {
   return (

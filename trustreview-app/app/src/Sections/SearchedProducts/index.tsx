@@ -1,6 +1,6 @@
 import { Container, Stack } from "@mui/material";
-import ProductTitle from "../../components/ProductTitle";
-import ProductCardList from "../../components/ProductCardList";
+import ProductTitle from "../../components/Product/ProductTitle";
+import ProductCardList from "../../components/Product/ProductCardList";
 import { products } from "../../shared/constants/products";
 import Search from "../../components/Search";
 import { useSearch } from "../../hooks/useSearch";
@@ -22,7 +22,7 @@ const SearchedProducts = () => {
   return (
     <Container
       maxWidth="xl"
-      sx={{ height: "calc(100vh - 64px)", width: "100%", py: 4 }}
+      sx={{ height: "100%", width: "100%", py: 4 }}
     >
       <Stack
         flex={1}

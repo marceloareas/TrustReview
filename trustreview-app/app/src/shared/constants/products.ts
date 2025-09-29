@@ -118,7 +118,6 @@ export const products: IProduct[] = [
       { id: "9", name: "Tag 9" },
     ],
     overallRating: 4.6,
-    imageUrl:
-      "https://eu-images.contentstack.com/v3/assets/blt9ca8222b5acaa556/blt654a09ba7d41c100/6602f5b58c2083040ac176fa/imagem-produto-veja-banheiro-antibac-trigger-500ml.png?width=550&height=550&format=png&quality=80",
+    imageUrl: ""
   },
 ];

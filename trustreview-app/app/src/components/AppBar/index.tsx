@@ -1,7 +1,8 @@
 import MuiAppBar from "@mui/material/AppBar";
 import { Avatar, IconButton, Stack } from "@mui/material";
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBack, AddBox } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+
 
 export default function AppBar() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export default function AppBar() {
     >
       <Stack
         direction={"row"}
+        width={"100%"}
         spacing={3}
         justifyContent={isRoot ? "flex-end" : "space-between"}
         alignItems={"center"}
@@ -36,9 +38,14 @@ export default function AppBar() {
             <ArrowBack />
           </IconButton>
         )}
-        <IconButton size="large" aria-label="search" color="inherit">
-          <Avatar />
-        </IconButton>
+        <Stack direction={"row"} flex={1} justifyContent={"flex-end"} spacing={2}>
+          <IconButton size="large" aria-label="Add" color="inherit">
+            <AddBox sx={{ fontSize: 30 }} />
+          </IconButton>
+          <IconButton size="large" aria-label="Avatar" color="inherit">
+            <Avatar />
+          </IconButton>
+        </Stack>
       </Stack>
     </MuiAppBar>
   );

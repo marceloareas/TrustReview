@@ -1,4 +1,4 @@
-import { createTheme, type TypeBackground } from "@mui/material/styles";
+import { createTheme, type TypeBackground, type TypeText } from "@mui/material/styles";
 
 export const defaultTheme = createTheme({
   palette: {
@@ -13,13 +13,14 @@ export const defaultTheme = createTheme({
     },
     background: {
       default: "#FEF7FF",
-      paper: "#FFFFFF",
+      paper: "#FEF7FF",
       cardContent: "#F3EDF7",
     } as Partial<TypeBackground>,
     text: {
       primary: "#E6E0E9",
-      secondary: "#CAC4D0",
-    },
+      secondary: "#49454F",
+      tertiary: "#85858fff",
+    } as Partial<TypeText>,
     action: {
       selected: "#6750A4",
       disabled: "#CBC6CC",
@@ -75,7 +76,7 @@ export const defaultTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: 28,
           textTransform: "none",
           fontWeight: 600,
         },

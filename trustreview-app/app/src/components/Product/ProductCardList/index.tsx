@@ -4,8 +4,10 @@ import ProductCard from "../ProductCard";
 
 const ProductCardList = ({
   productList,
+  onClick
 }: {
   productList: Partial<IProduct>[];
+  onClick: (id: string) => void;
 }) => {
 
   if (productList.length === 0) {
@@ -42,7 +44,7 @@ const ProductCardList = ({
       {productList.map((product) => (
         <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }} key={product.id}>
           <Stack direction={"row"} justifyContent={"center"}>
-            <ProductCard key={product.id} productData={product} />
+            <ProductCard key={product.id} productData={product} onClick={() => onClick(product.id || "")} />
           </Stack>
         </Grid>
       ))}

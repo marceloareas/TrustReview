@@ -2,7 +2,7 @@ import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import CardImage from "../../../assets/card-image.svg";
 import type { IProduct } from "../../../interfaces/Product";
 
-const ProductCard = ({ productData }: { productData?: Partial<IProduct> }) => {
+const ProductCard = ({ productData,onClick }: { productData?: Partial<IProduct>, onClick: () => void }) => {
   return (
     <Card
       sx={{
@@ -15,6 +15,7 @@ const ProductCard = ({ productData }: { productData?: Partial<IProduct> }) => {
           transform: "scale(1.02)",
         },
       }}
+      onClick={onClick}
     >
       <CardMedia
         component={"img"}

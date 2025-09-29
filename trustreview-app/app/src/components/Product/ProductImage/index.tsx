@@ -20,7 +20,6 @@ const ProductImage = ({ name, imageUrl }: { name?: string; imageUrl?: string }) 
         sx={{
           objectFit: "contain",
           width: "100%",
-          height: "180px",
           p: 2,
         }}
         image={imageUrl || CardImage}

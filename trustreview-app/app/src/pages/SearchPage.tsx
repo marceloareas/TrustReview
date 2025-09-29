@@ -14,9 +14,9 @@ const SearchPage = () => {
           bgcolor: "background.default",
         }}
       >
-          <Box sx={{ width: "100%", textAlign: "center", mb: "10%" }}>
-            <SearchSection />
-          </Box>
+        <Box sx={{ width: "100%", textAlign: "center", mb: "10%" }}>
+          <SearchSection />
+        </Box>
       </Box>
     </>
   );

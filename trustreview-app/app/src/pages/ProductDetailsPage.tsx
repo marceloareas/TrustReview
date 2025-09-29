@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
 
-  let product = products.find(p => p.id === id);
+  let product = products.find((p) => p.id === id);
 
   if (!product) {
     return (
@@ -36,7 +36,7 @@ const ProductDetailsPage = () => {
         bgcolor: "background.default",
       }}
     >
-        <ProductDetails product={product} />
+      <ProductDetails product={product} />
     </Box>
   );
 };

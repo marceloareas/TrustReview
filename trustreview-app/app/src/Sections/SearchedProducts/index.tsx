@@ -8,40 +8,40 @@ import { useQuery } from "../../hooks/useQuery";
 import { useNavigate } from "react-router-dom";
 
 const SearchedProducts = () => {
-    const query = useQuery();
-    const navigate = useNavigate();
-    const initialSearch = query.get("search") || "";
-    const { searchTerm, setSearchTerm, filteredItems } = useSearch(
-        products,
-        ["name"],
-        initialSearch
-    );
+  const query = useQuery();
+  const navigate = useNavigate();
+  const initialSearch = query.get("search") || "";
+  const { searchTerm, setSearchTerm, filteredItems } = useSearch(
+    products,
+    ["name"],
+    initialSearch
+  );
 
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(event.target.value);
-    };
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
 
-    const handleClickProduct = (id: string) => {
-        navigate(`/products/${id}`);
-    };
+  const handleClickProduct = (id: string) => {
+    navigate(`/products/${id}`);
+  };
 
-    return (
-        <Container
-            maxWidth="xl"
-            sx={{ height: "100%", width: "100%", py: 4 }}
-        >
-            <Stack
-                flex={1}
-                spacing={4}
-                justifyContent={"center"}
-                alignItems={"flex-start"}
-            >
-                <Search value={searchTerm} onChange={handleSearchChange} />
-                <ProductTitle />
-                <ProductCardList productList={filteredItems} onClick={handleClickProduct} />
-            </Stack>
-        </Container>
-    );
+  return (
+    <Container maxWidth="xl" sx={{ height: "100%", width: "100%", py: 4 }}>
+      <Stack
+        flex={1}
+        spacing={4}
+        justifyContent={"center"}
+        alignItems={"flex-start"}
+      >
+        <Search value={searchTerm} onChange={handleSearchChange} />
+        <ProductTitle />
+        <ProductCardList
+          productList={filteredItems}
+          onClick={handleClickProduct}
+        />
+      </Stack>
+    </Container>
+  );
 };
 
 export default SearchedProducts;

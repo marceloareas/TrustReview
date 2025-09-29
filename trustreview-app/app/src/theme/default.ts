@@ -1,4 +1,8 @@
-import { createTheme, type TypeBackground, type TypeText } from "@mui/material/styles";
+import {
+  createTheme,
+  type TypeBackground,
+  type TypeText,
+} from "@mui/material/styles";
 
 export const defaultTheme = createTheme({
   palette: {
@@ -13,7 +17,7 @@ export const defaultTheme = createTheme({
     },
     background: {
       default: "#FEF7FF",
-      paper: "#FEF7FF",
+      paper: "#FFFFFF",
       cardContent: "#F3EDF7",
     } as Partial<TypeBackground>,
     text: {

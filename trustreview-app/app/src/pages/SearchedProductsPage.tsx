@@ -13,7 +13,7 @@ const SearchedProductsPage = () => {
         bgcolor: "background.default",
       }}
     >
-        <SearchedProducts />
+      <SearchedProducts />
     </Box>
   );
 };

@@ -2,7 +2,13 @@ import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import CardImage from "../../../assets/card-image.svg";
 import type { IProduct } from "../../../interfaces/Product";
 
-const ProductCard = ({ productData,onClick }: { productData?: Partial<IProduct>, onClick: () => void }) => {
+const ProductCard = ({
+  productData,
+  onClick,
+}: {
+  productData?: Partial<IProduct>;
+  onClick: () => void;
+}) => {
   return (
     <Card
       sx={{
@@ -10,6 +16,7 @@ const ProductCard = ({ productData,onClick }: { productData?: Partial<IProduct>,
         height: "240px",
         borderRadius: 4,
         flex: 1,
+        backgroundColor: "#fff",
         cursor: "pointer",
         "&:hover": {
           transform: "scale(1.02)",
@@ -23,7 +30,7 @@ const ProductCard = ({ productData,onClick }: { productData?: Partial<IProduct>,
           objectFit: "contain",
           width: "100%",
           height: "180px",
-          p: 2,
+          p: 1,
         }}
         image={productData?.imageUrl || CardImage}
         title={productData?.name}

@@ -3,7 +3,6 @@ import { Avatar, IconButton, Stack } from "@mui/material";
 import { ArrowBack, AddBox } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-
 export default function AppBar() {
   const navigate = useNavigate();
   const path = window.location.pathname;
@@ -38,7 +37,12 @@ export default function AppBar() {
             <ArrowBack />
           </IconButton>
         )}
-        <Stack direction={"row"} flex={1} justifyContent={"flex-end"} spacing={2}>
+        <Stack
+          direction={"row"}
+          flex={1}
+          justifyContent={"flex-end"}
+          spacing={2}
+        >
           <IconButton size="large" aria-label="Add" color="inherit">
             <AddBox sx={{ fontSize: 30 }} />
           </IconButton>

@@ -4,7 +4,7 @@ import { products } from "../shared/constants/products";
 import { useParams } from "react-router-dom";
 import ProductReviewSection from "../Sections/ProductReview";
 import { useState } from "react";
-import CreateProductSection from "../Sections/CreateProduct";
+import CreateReviewSection from "../Sections/CreateReview";
 
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,14 +40,15 @@ const ProductPage = () => {
         alignItems: "center",
       }}
     >
-       <ProductDetailsSection product={product} isReviewing={isReviewing} onReview={() => setIsReviewing(true)} />
-      {!isReviewing && (
-        <ProductReviewSection reviews={product.reviews || []} />
-      )}
+      <ProductDetailsSection
+        product={product}
+        isReviewing={isReviewing}
+        onReview={() => setIsReviewing(true)}
+      />
+      {!isReviewing && <ProductReviewSection reviews={product.reviews || []} />}
       {isReviewing && (
-        <CreateProductSection onReview={() => setIsReviewing(false)}/>
+        <CreateReviewSection onReview={() => setIsReviewing(false)} />
       )}
-    
     </Stack>
   );
 };

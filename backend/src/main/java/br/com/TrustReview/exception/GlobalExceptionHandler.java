@@ -73,8 +73,8 @@ public class GlobalExceptionHandler {
      * @param ex Exceção lançada
      * @return ResponseEntity com detalhes do erro de tag não encontrada
      */
-    @ExceptionHandler(TagNotFoundException.class)
-    public ResponseEntity<ApiError> handleTagNotFound(TagNotFoundException ex) {
+    @ExceptionHandler(TagNotFound.class)
+    public ResponseEntity<ApiError> handleTagNotFound(TagNotFound ex) {
         ApiError error = new ApiError(
                 HttpStatus.NOT_FOUND.value(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(),

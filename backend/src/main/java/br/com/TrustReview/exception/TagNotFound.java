@@ -10,8 +10,8 @@ package br.com.TrustReview.exception;
  *
  * @author HernaniFilho
  */
-public class TagNotFoundException extends RuntimeException {
-    public TagNotFoundException(String message) {
+public class TagNotFound extends RuntimeException {
+    public TagNotFound(String message) {
         super(message);
     }
 }

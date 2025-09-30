@@ -4,7 +4,7 @@ import br.com.TrustReview.dto.ProductRequestDTO;
 import br.com.TrustReview.dto.ProductResponseDTO;
 import br.com.TrustReview.exception.ProductNameAlreadyExists;
 import br.com.TrustReview.exception.ProductNotFound;
-import br.com.TrustReview.exception.TagNotFoundException;
+import br.com.TrustReview.exception.TagNotFound;
 import br.com.TrustReview.mapper.ProductMapper;
 import br.com.TrustReview.mapper.TagMapper;
 import br.com.TrustReview.model.Product;
@@ -151,7 +151,7 @@ public class ProductService {
      * @return DTO de resposta com os dados do produto atualizado
      * @throws ProductNotFound se o produto não for encontrado
      * @throws ProductNameAlreadyExists se já existir produto com o mesmo nome
-     * @throws TagNotFoundException se alguma tag informada não existir
+     * @throws TagNotFound se alguma tag informada não existir
      */
     @Transactional
     public ProductResponseDTO update(UUID productId, ProductRequestDTO request) {
@@ -267,7 +267,7 @@ public class ProductService {
      * @param tags Conjunto de tags a serem validadas
      * @return Conjunto de tags válidas encontradas no banco
      * @throws IllegalArgumentException se alguma tag tiver ID nulo
-     * @throws TagNotFoundException se alguma tag não for encontrada
+     * @throws TagNotFound se alguma tag não for encontrada
      */
     private Set<Tag> validateTags(Set<Tag> tags) {
         Set<UUID> tagIds = tags.stream()
@@ -284,7 +284,7 @@ public class ProductService {
 
         if (tagIds.size() != foundTags.size()) {
             log.error("Alguma tag não foi encontrada");
-            throw new TagNotFoundException("Alguma tag não foi encontrada!");
+            throw new TagNotFound("Alguma tag não foi encontrada!");
         }
         return foundTags;
     }

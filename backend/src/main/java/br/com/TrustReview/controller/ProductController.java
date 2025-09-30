@@ -96,7 +96,7 @@ public class ProductController {
      * Atualiza um produto existente pelo seu ID.
      *
      * @param productId UUID do produto
-     * @param request   DTO com os novos dados do produto
+     * @param request DTO com os novos dados do produto
      * @return Produto atualizado
      */
     @Operation(summary = "Atualiza um produto pelo id")

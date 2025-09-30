@@ -19,7 +19,7 @@ export const defaultTheme = createTheme({
       default: "#FEF7FF",
       paper: "#FFFFFF",
       cardContent: "#F3EDF7",
-      discard: "#e74545ff",
+      discard: "rgba(179, 44, 44, 0.79)",
     } as Partial<TypeBackground>,
     text: {
       primary: "#E6E0E9",

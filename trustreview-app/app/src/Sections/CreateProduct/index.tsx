@@ -63,7 +63,12 @@ const CreateProductSection = ({ onReview }: { onReview: () => void }) => {
                 </Stack>
                 <Stack direction={'row'} spacing={4} justifyContent={'flex-end'} alignItems={'flex-end'} sx={{ width: "100%" }}>
 
-                    <Button variant="contained" size="large" sx={{backgroundColor: "background.discard"}} onClick={handleSave}>
+                    <Button variant="contained" size="large" sx={{
+                        backgroundColor: "background.discard", 
+                        "&:hover": {
+                            backgroundColor: "#e74545d2",
+                        },
+                    }} onClick={onReview}>
                         Descartar Review
                     </Button>
 

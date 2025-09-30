@@ -3,9 +3,12 @@ import ProductDetailsSection from "../Sections/ProductDetails";
 import { products } from "../shared/constants/products";
 import { useParams } from "react-router-dom";
 import ProductReviewSection from "../Sections/ProductReview";
+import { useState } from "react";
+import CreateProductSection from "../Sections/CreateProduct";
 
-const ProductDetailsPage = () => {
+const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
+  const [isReviewing, setIsReviewing] = useState(false);
 
   const product = products.find((p) => p.id === id);
 
@@ -37,10 +40,16 @@ const ProductDetailsPage = () => {
         alignItems: "center",
       }}
     >
-      <ProductDetailsSection product={product} />
-      <ProductReviewSection reviews={product.reviews || []} />
+       <ProductDetailsSection product={product} isReviewing={isReviewing} onReview={() => setIsReviewing(true)} />
+      {!isReviewing && (
+        <ProductReviewSection reviews={product.reviews || []} />
+      )}
+      {isReviewing && (
+        <CreateProductSection onReview={() => setIsReviewing(false)}/>
+      )}
+    
     </Stack>
   );
 };
 
-export default ProductDetailsPage;
+export default ProductPage;

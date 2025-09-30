@@ -2,6 +2,7 @@ package br.com.TrustReview.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,7 @@ import lombok.Setter;
 public class TagRequestDTO {
     
     @NotBlank(message = "O nome da tag é obrigatório")
+    @Size(min = 2, max = 255, message = "O nome da tag deve ter entre 2 e 255 caracteres")
     @Schema(description = "Nome da tag", example = "Eletrônicos", required = true)
     private String name;
 

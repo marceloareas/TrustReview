@@ -10,7 +10,7 @@ import {
 import Review from '../../assets/icons/Review.svg'
 import { useState } from "react";
 
-const CreateProductSection = ({onReview}: {onReview: () => void}) => {
+const CreateProductSection = ({ onReview }: { onReview: () => void }) => {
     const [rating, setRating] = useState<number | null>(0);
     const [comment, setComment] = useState<string>("");
     const [pros, setPros] = useState<string>("");
@@ -46,32 +46,31 @@ const CreateProductSection = ({onReview}: {onReview: () => void}) => {
                         {rating || ""}
                     </Typography>
                 </Stack>
-                <Stack sx={{ width: "100%" }}>
+                <Stack spacing={1} sx={{ width: "100%" }}>
                     <Typography>Comment</Typography>
                     <TextField multiline
                         minRows={5} onChange={(e) => setComment(e.target.value)} />
                 </Stack>
-                <Stack sx={{ width: "100%" }}>
+                <Stack spacing={1} sx={{ width: "100%" }}>
                     <Typography>Pros</Typography>
                     <TextField multiline
                         minRows={5} onChange={(e) => setPros(e.target.value)} />
                 </Stack>
-                <Stack sx={{ width: "100%" }}>
+                <Stack spacing={1} sx={{ width: "100%" }}>
                     <Typography>Cons</Typography>
                     <TextField multiline
                         minRows={5} onChange={(e) => setCons(e.target.value)} />
                 </Stack>
-                <Box
-                    width={"100%"}
-                    height={"100%"}
-                    display={"flex"}
-                    justifyContent={"flex-end"}
-                    alignItems={"flex-end"}
-                >
+                <Stack direction={'row'} spacing={4} justifyContent={'flex-end'} alignItems={'flex-end'} sx={{ width: "100%" }}>
+
+                    <Button variant="contained" size="large" sx={{backgroundColor: "background.discard"}} onClick={handleSave}>
+                        Descartar Review
+                    </Button>
+
                     <Button variant="contained" size="large" onClick={handleSave}>
                         Publicar Review
                     </Button>
-                </Box>
+                </Stack>
             </Stack>
         </Container>
     );

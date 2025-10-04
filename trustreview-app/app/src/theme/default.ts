@@ -132,7 +132,7 @@ export const defaultTheme = createTheme({
               borderColor: "#6750A4",
             },
             "& .MuiInputAdornment-root .MuiSvgIcon-root": {
-              color: "#1E1E1E",
+              color: "#4A4458",
             },
           },
           "& .MuiInputLabel-root": {
@@ -142,9 +142,16 @@ export const defaultTheme = createTheme({
             color: "#6750A4",
           },
           "& input": {
-            color: "#1E1E1E",
+            color: "#1D1B20",
           },
           "& input::placeholder": {
+            color: "#4A4458",
+            opacity: 1,
+          },
+          "& textarea": {
+            color: "#1E1E1E",
+          },
+          "& textarea::placeholder": {
             color: "#4A4458",
             opacity: 1,
           },

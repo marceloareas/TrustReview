@@ -1,9 +1,9 @@
-import { Box, Stack } from "@mui/material";
 import ProductDetailsSection from "../Sections/ProductDetails";
-import { useParams } from "react-router-dom";
-import ProductReviewSection from "../Sections/ProductReview";
-import { useEffect, useState } from "react";
 import CreateReviewSection from "../Sections/CreateReview";
+import ProductReviewSection from "../Sections/ProductReview";
+import { Box, Stack } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { productService } from "../services";
 import type { IProduct } from "../interfaces/Product";
 

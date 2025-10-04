@@ -22,7 +22,6 @@ export interface IReview {
   userId: string;
   productId: string;
   userName: string;
-  title: string;
   pros: string;
   cons: string;
   rating: number;

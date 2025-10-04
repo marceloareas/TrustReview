@@ -10,7 +10,15 @@ import type { IProduct } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
 import TagsList from "../../components/TagList";
 
-const ProductDetailsSection = ({ product, isReviewing, onReview }: { product: Partial<IProduct>, isReviewing: boolean, onReview: () => void }) => {
+const ProductDetailsSection = ({
+  product,
+  isReviewing,
+  onReview,
+}: {
+  product: Partial<IProduct>;
+  isReviewing: boolean;
+  onReview: () => void;
+}) => {
   return (
     <Container maxWidth="xl" sx={{ flex: 1 }}>
       <Stack
@@ -71,17 +79,19 @@ const ProductDetailsSection = ({ product, isReviewing, onReview }: { product: Pa
             {product?.description}
           </Typography>
         </Stack>
-        {!isReviewing && <Box
-          width={"100%"}
-          height={"100%"}
-          display={"flex"}
-          justifyContent={"flex-end"}
-          alignItems={"flex-end"}
-        >
-          <Button variant="contained" size="large" onClick={onReview}>
-            Fazer Review
-          </Button>
-        </Box>}
+        {!isReviewing && (
+          <Box
+            width={"100%"}
+            height={"100%"}
+            display={"flex"}
+            justifyContent={"flex-end"}
+            alignItems={"flex-end"}
+          >
+            <Button variant="contained" size="large" onClick={onReview}>
+              Fazer Review
+            </Button>
+          </Box>
+        )}
       </Stack>
     </Container>
   );

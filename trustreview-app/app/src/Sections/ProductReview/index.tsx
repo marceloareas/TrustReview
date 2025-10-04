@@ -106,12 +106,11 @@ const ProductReviewSection = ({ reviews }: { reviews: IReview[] }) => {
                   {review.cons}
                 </Typography>
 
-                <Typography fontSize={12} color="text.secondary" pt={1}>
-                  {review?.userName} -{" "}
-                  {review?.updatedAt ? "Atualizado" : "Criado"}:{" "}
-                  {review?.updatedAt
-                    ? review?.updatedAt?.toLocaleDateString()
-                    : review?.createdAt?.toLocaleDateString()}
+                <Typography variant="body2" color="text.tertiary">
+                  {review?.createdAt &&
+                    `${new Date(review.createdAt).toLocaleString("pt-BR")}`}
+                  {review?.updatedAt &&
+                    ` | ${new Date(review.updatedAt).toLocaleString("pt-BR")}`}
                 </Typography>
               </CardContent>
               <CardActions key={review.id}>

@@ -68,8 +68,10 @@ const ProductDetailsSection = ({
         </Stack>
         <Stack spacing={2} sx={{ width: "100%" }}>
           <Typography variant="body2" color="text.tertiary">
-            {product?.createdAt?.toLocaleDateString()} -{" "}
-            {product?.updatedAt?.toLocaleDateString()}
+            {product?.createdAt &&
+              `Criado em: ${new Date(product.createdAt).toLocaleString("pt-BR")}`}
+            {product?.updatedAt &&
+              ` | Atualizado em: ${new Date(product.updatedAt).toLocaleString("pt-BR")}`}
           </Typography>
           <Typography
             variant="body1"

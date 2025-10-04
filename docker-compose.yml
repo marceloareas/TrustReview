@@ -41,7 +41,7 @@ services:
       - VITE_API_URL=http://localhost:8080/api/v1
 
   nginx:
-    image: nginx:latest
+    build: ./trustreview-app/nginx
     container_name: nginx-trustreview
     ports:
       - "80:80"

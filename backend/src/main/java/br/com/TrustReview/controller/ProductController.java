@@ -3,8 +3,10 @@ package br.com.TrustReview.controller;
 import br.com.TrustReview.dto.ProductRequestDTO;
 import br.com.TrustReview.dto.ProductResponseDTO;
 import br.com.TrustReview.exception.ApiError;
+import br.com.TrustReview.exception.ProductNotFound;
 import br.com.TrustReview.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -90,6 +92,25 @@ public class ProductController {
     public ResponseEntity<ProductResponseDTO> getById(@PathVariable("product-id") UUID id,
                                                       @RequestParam(name = "include", required = false) List<String> include) {
         return ResponseEntity.ok(service.getById(id, include));
+    }
+
+    /**
+     * Busca todos os produtos.
+     * @param
+     * @return Lista com todos os produtos
+     */
+    @Operation(summary = "Busca todos os produtos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Produtos encontrados com sucesso",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProductResponseDTO.class)))),
+            @ApiResponse(responseCode = "404", description = "Produtos não encontrados",
+            content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+            content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
+    @GetMapping
+    public ResponseEntity<List<ProductResponseDTO>> getAll(@RequestParam(name = "includeTags", defaultValue = "false") boolean include) {
+        return ResponseEntity.ok(service.getAll(include));
     }
 
     /**

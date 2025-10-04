@@ -10,6 +10,8 @@ import java.sql.Timestamp;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * DTO de resposta para informações detalhadas de um produto.
  *
@@ -57,8 +59,10 @@ public class ProductResponseDTO {
     private Double overallRating;
 
     @Schema(description = "Timestamp de criação do produto", example = "2023-10-01T12:00:00Z")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")
     private Timestamp createdAt;
 
     @Schema(description = "Timestamp da última atualização do produto", example = "2023-10-10T15:30:00Z")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")
     private Timestamp updatedAt;
 }

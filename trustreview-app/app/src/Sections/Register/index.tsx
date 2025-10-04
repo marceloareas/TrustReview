@@ -11,6 +11,7 @@ import {
   Button,
 } from "@mui/material";
 import AppTitle from "../../components/AppTitle";
+import { Link } from "react-router-dom";
 
 const RegisterSection = () => {
   const [name, setName] = useState("");
@@ -50,7 +51,13 @@ const RegisterSection = () => {
               gutterBottom
               textAlign="center"
             >
-              Já possui uma conta? Faça Login
+              Já possui uma conta?{" "}
+              <Link
+                to="/login"
+                style={{ textDecoration: "none", color: "#1976d2" }}
+              >
+                Faça login
+              </Link>
             </Typography>
             <Box component="form" onSubmit={handleSubmit} noValidate>
               <Stack spacing={2}>

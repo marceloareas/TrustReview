@@ -11,6 +11,7 @@ import {
   Button,
 } from "@mui/material";
 import AppTitle from "../../components/AppTitle";
+import { Link } from "react-router-dom";
 
 const LoginSection = () => {
   const [email, setEmail] = useState("");
@@ -49,7 +50,13 @@ const LoginSection = () => {
               gutterBottom
               textAlign="center"
             >
-              Ainda não tem uma conta? Cadastre-se
+              Ainda não tem uma conta?{" "}
+              <Link
+                to="/register"
+                style={{ textDecoration: "none", color: "#1976d2" }}
+              >
+                Cadastre-se
+              </Link>
             </Typography>
             <Box component="form" onSubmit={handleSubmit} noValidate>
               <Stack spacing={2}>

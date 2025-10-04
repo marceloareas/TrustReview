@@ -1,4 +1,5 @@
 import type IApiClient from "../interfaces/IApiClient";
+import type { IProduct } from "../interfaces/Product";
 
 export default class ProductService {
   private api: IApiClient;
@@ -7,19 +8,19 @@ export default class ProductService {
     this.api = api;
   }
 
-  async getProducts() {
-    const response = await this.api.post("/products");
-    return response.data;
+  async getProducts(): Promise<IProduct[]> {
+    const response = await this.api.get("/products");
+    return response.data as IProduct[];
   }
 
 
-  async getProductsByTerm(term: string) {
-    const response = await this.api.post("/products/search", { term });
-    return response.data;
+  async getProductsByTerm(term: string): Promise<IProduct[]> {
+    const response = await this.api.get("/products/search", { params: { term } });
+    return response.data as IProduct[];
   }
 
-  async getProductById(productId: string) {
-    const response = await this.api.post("/products", { productId });
-    return response.data;
+  async getProductById(productId: string): Promise<IProduct> {
+    const response = await this.api.get(`/products/${productId}`);
+    return response.data as IProduct;
   }
 }

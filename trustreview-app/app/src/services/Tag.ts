@@ -1,4 +1,5 @@
 import type IApiClient from "../interfaces/IApiClient";
+import type { ITag } from "../interfaces/Product";
 
 export default class TagService {
     private api: IApiClient;
@@ -7,8 +8,8 @@ export default class TagService {
     this.api = api;
   }
 
-  async getTagsByProductId(productId: string) {
-    const response = await this.api.post('/tags', { productId });
-    return response.data;
+  async getTags(): Promise<ITag[]> {
+    const response = await this.api.get('/tags');
+    return response.data as ITag[];
   }
 }

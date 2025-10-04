@@ -7,8 +7,8 @@ export interface IProduct {
   imageUrl?: string;
   reviewsCount?: number;
   reviews?: IReview[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ITag {
@@ -29,6 +29,6 @@ export interface IReview {
   comment?: string;
   likeCount?: number;
   dislikeCount?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }

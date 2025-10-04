@@ -115,6 +115,7 @@ public class ProductService {
             throw new ProductNotFound("Produto não encontrado para id: " + id);
         }
 
+        //TODO: Melhorar logica
         if (include != null) {
             for (String inc : include) {
                 switch (inc) {
@@ -140,6 +141,32 @@ public class ProductService {
         }
 
         return productMapper.toResponse(existingProduct.get());
+    }
+
+    /**
+     * Busca todos os produtos.
+     * @return Lista de DTO com todos os produtos
+     * @throws ProductNotFound se não encontrar nenhum produto
+     */
+    public List<ProductResponseDTO> getAll(boolean includeTags) {
+        List<Product> all = null;
+        if (includeTags) {
+            log.info("Buscando todos os produtos com tags.");
+            all = productRepository.findAllWithTags();
+
+        } else {
+            log.info("Buscando todos os produtos.");
+            all = productRepository.findAll();
+        }
+
+
+        if (all.isEmpty()) {
+            log.error("Nenhum produto encontrado!");
+            throw new ProductNotFound("Nenhum produto encontrado!");
+        }
+        return all.stream()
+                .map(productMapper::toResponse)
+                .toList();
     }
 
     /**

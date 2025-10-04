@@ -43,6 +43,13 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     Optional<Product> findByName(String name);
 
     /**
+     * Busca todos os produtos com tags
+     * @return List contendo os produtos com tags, se encontrado, se não, vazio
+     */
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.tags")
+    List<Product> findAllWithTags();
+
+    /**
      * Busca todos os produtos associadas a uma tag específica.
      *
      * @param tagId UUID da tag cujos produtos devem ser retornadas

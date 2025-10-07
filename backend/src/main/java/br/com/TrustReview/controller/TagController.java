@@ -23,23 +23,21 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Controller responsável pelo gerenciamento dos endpoints de tags.
+ * Controller responsável pelo gerenciamento dos endpoints de {@link br.com.TrustReview.model.Tag}.
  *
  * <p>
- * Disponibiliza operações para criação, consulta, atualização e remoção de tags,
- * utilizando o serviço {@link TagService} para a lógica de negócio.
+ * Disponibiliza operações REST para criação, consulta, atualização e remoção de tags,
+ * delegando a lógica de negócio ao serviço {@link br.com.TrustReview.service.TagService}.
+ * Utiliza anotações Swagger/OpenAPI para documentação automática dos endpoints.
  * </p>
  *
  * <ul>
- *   <li><b>POST /api/v1/tags</b>: Cria uma nova tag.</li>
- *   <li><b>GET /api/v1/tags/{tag-id}</b>: Busca uma tag pelo ID.</li>
- *   <li><b>PATCH /api/v1/tags/{tag-id}</b>: Atualiza uma tag existente.</li>
- *   <li><b>DELETE /api/v1/tags/{tag-id}</b>: Remove uma tag pelo ID.</li>
+ *   <li><b>create</b>: Cria uma nova tag.</li>
+ *   <li><b>getById</b>: Busca uma tag pelo ID.</li>
+ *   <li><b>getAll</b>: Lista todas as tags, podendo incluir produtos associados.</li>
+ *   <li><b>update</b>: Atualiza uma tag existente pelo ID.</li>
+ *   <li><b>delete</b>: Remove uma tag pelo ID.</li>
  * </ul>
- *
- * <p>
- * Utiliza anotações do Swagger/OpenAPI para documentação automática dos endpoints.
- * </p>
  *
  * @author HernaniFilho
  */
@@ -74,7 +72,6 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
     /**
      * Busca uma tag pelo seu ID.
      *
@@ -93,6 +90,26 @@ public class TagController {
     @GetMapping("/{tag-id}")
     public ResponseEntity<TagResponseDTO> getById(@PathVariable("tag-id") UUID id) {
         return ResponseEntity.ok(service.getById(id));
+    }
+
+    /**
+     * Busca todas as tags.
+     *
+     * @param includeProducts Indica se os produtos associados às tags devem ser incluídos na resposta
+     * @return Lista de tags encontradas
+     */
+    @Operation(summary = "Busca todas as tags")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tags encontradas com sucesso",
+                    content = @Content(schema = @Schema(implementation = TagResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Nenhuma tag encontrada",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                    content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
+    @GetMapping
+    public ResponseEntity<List<TagResponseDTO>> getAll(@RequestParam(name = "includeProducts", required = false, defaultValue = "false") boolean includeProducts){
+        return ResponseEntity.ok(service.getAll(includeProducts));
     }
 
     /**

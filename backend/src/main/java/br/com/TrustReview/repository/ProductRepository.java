@@ -1,8 +1,8 @@
 package br.com.TrustReview.repository;
 
 import br.com.TrustReview.model.Product;
-import br.com.TrustReview.model.Tag;
-import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,21 +13,20 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Repositório para operações de acesso a dados da entidade {@link Product}.
+ * Repositório responsável pelas operações de persistência da entidade {@link Product}.
  *
  * <p>
- * Esta interface fornece métodos para manipulação de produtos no banco de dados,
- * incluindo operações CRUD padrão e consultas customizadas
+ * Disponibiliza métodos para manipulação e consulta de produtos no banco de dados,
+ * incluindo buscas customizadas por nome, tags e produtos relacionados.
+ * Utiliza o Spring Data JPA para abstração das operações CRUD e geração automática das implementações.
  * </p>
  *
  * <ul>
  *   <li><b>findByName</b>: Busca um produto pelo nome.</li>
- *   <li><b>findAllByTagId</b>: Busca todos os produtos associados a uma determinada tag pelo seu ID.</li>
+ *   <li><b>findAllWithTags</b>: Lista todos os produtos com suas tags associadas.</li>
+ *   <li><b>findProductsByTagsId</b>: Lista produtos vinculados a uma tag específica.</li>
+ *   <li><b>findRelatedProducts</b>: Busca produtos relacionados por tags compartilhadas, excluindo o produto de origem.</li>
  * </ul>
- *
- * <p>
- * Utiliza Spring Data JPA para geração automática das implementações e otimização de queries.
- * </p>
  *
  * @author HernaniFilho
  */
@@ -35,25 +34,42 @@ import java.util.UUID;
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     /**
-     * Busca um produto pelo nome.
+     * Retorna um produto pelo nome.
      *
      * @param name Nome do produto
-     * @return Optional contendo o produto, se encontrado, se não, vazio
+     * @return Optional contendo o produto, se encontrado
      */
     Optional<Product> findByName(String name);
 
     /**
-     * Busca todos os produtos com tags
-     * @return List contendo os produtos com tags, se encontrado, se não, vazio
+     * Retorna todos os produtos com suas tags associadas.
+     *
+     * @return Lista de produtos com tags
      */
     @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.tags")
     List<Product> findAllWithTags();
 
     /**
-     * Busca todos os produtos associadas a uma tag específica.
+     * Retorna todos os produtos associados a uma tag específica.
      *
-     * @param tagId UUID da tag cujos produtos devem ser retornadas
-     * @return Lista de products associadas ao produto
+     * @param tagId UUID da tag
+     * @return Lista de produtos associados à tag informada
      */
     List<Product> findProductsByTagsId(UUID tagId);
+
+    @Query("""
+        SELECT DISTINCT p
+        FROM Product p
+        JOIN p.tags t
+        WHERE t IN (
+            SELECT t2 FROM Product p2 JOIN p2.tags t2 WHERE p2.id = :productId
+        )
+        AND p.id <> :productId
+        GROUP BY p
+        ORDER BY COUNT(t) DESC
+        """)
+    Page<Product> findRelatedProducts(
+            @Param("productId") UUID productId,
+            Pageable pageable
+    );
 }

@@ -1,5 +1,5 @@
-import { Stack } from "@mui/material";
 import SearchSection from "../Sections/Search";
+import { Stack } from "@mui/material";
 
 const SearchPage = () => {
   return (

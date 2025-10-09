@@ -1,5 +1,6 @@
 package br.com.TrustReview.service;
 
+import br.com.TrustReview.dto.ProductPageDTO;
 import br.com.TrustReview.dto.ProductRequestDTO;
 import br.com.TrustReview.dto.ProductResponseDTO;
 import br.com.TrustReview.exception.ProductNameAlreadyExists;
@@ -13,35 +14,35 @@ import br.com.TrustReview.repository.ProductRepository;
 import br.com.TrustReview.repository.TagRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Serviço responsável pela lógica de negócio relacionada à entidade {@link Product}.
+ * Serviço responsável pela lógica de negócio da entidade {@link Product}.
  *
  * <p>
- * Centraliza as operações de criação, busca, atualização e remoção de produtos,
- * realizando validações de unicidade, existência e integridade de dados,
- * além de lançar exceções customizadas para cenários de erro.
+ * Realiza operações de criação, consulta, atualização e remoção de produtos,
+ * garantindo validações de unicidade, existência e integridade dos dados.
+ * Lança exceções customizadas para cenários de erro e utiliza mapeadores para conversão entre entidades e DTOs.
  * </p>
  *
  * <ul>
- *   <li><b>create</b>: Cria um novo produto, garantindo unicidade pelo nome.</li>
- *   <li><b>getById</b>: Busca um produto pelo seu identificador único (UUID).</li>
- *   <li><b>update</b>: Atualiza os dados de um produto existente, validando nome e tags.</li>
- *   <li><b>delete</b>: Remove um produto do sistema.</li>
- *   <li><b>findByName</b>: Busca auxiliar por nome de produto.</li>
- *   <li><b>findById</b>: Busca auxiliar por ID de produto.</li>
- *   <li><b>validateTags</b>: Valida se todas as tags informadas existem no sistema.</li>
+ *   <li><b>create</b>: Cria um novo produto, validando unicidade do nome e existência das tags.</li>
+ *   <li><b>getById</b>: Busca produto por ID, podendo incluir relacionamentos.</li>
+ *   <li><b>getAll</b>: Lista todos os produtos, com opção de incluir tags.</li>
+ *   <li><b>findRelatedProducts</b>: Busca produtos relacionados por tags compartilhadas.</li>
+ *   <li><b>update</b>: Atualiza dados de um produto existente, validando nome e tags.</li>
+ *   <li><b>delete</b>: Remove produto pelo ID.</li>
  * </ul>
  *
  * <p>
- * Utiliza o {@link ProductMapper} e o {@link TagMapper} para conversão entre entidades e DTOs,
- * {@link ProductRepository} para acesso a dados de produtos e {@link TagRepository} para validação de tags.
+ * Utiliza {@link ProductRepository} e {@link TagRepository} para acesso aos dados,
+ * {@link ProductMapper} e {@link TagMapper} para conversão de objetos.
  * </p>
  *
  * @author HernaniFilho
@@ -144,7 +145,9 @@ public class ProductService {
     }
 
     /**
-     * Busca todos os produtos.
+     * Busca todos os produtos cadastrados no sistema.
+     * Permite opcionalmente incluir as tags associadas a cada produto.
+     *
      * @return Lista de DTO com todos os produtos
      * @throws ProductNotFound se não encontrar nenhum produto
      */
@@ -169,6 +172,37 @@ public class ProductService {
                 .toList();
     }
 
+    /**
+     * Busca produtos relacionados com base nas tags compartilhadas.
+     * Retorna uma página de produtos que compartilham tags com o produto especificado.
+     *
+     * @param productId UUID do produto base para encontrar relacionados
+     * @param page Número da página a ser retornada (0-indexed)
+     * @param size Tamanho da página (número máximo de produtos por página)
+     * @return Página de produtos relacionados
+     * @throws ProductNotFound se o produto base não for encontrado
+     */
+    @Transactional(readOnly = true)
+    public ProductPageDTO getRelatedProducts(UUID productId, int page, int size) {
+        log.info("Buscando produtos relacionados para id: {}", productId);
+        Optional<Product> existingProduct = findById(productId);
+
+        if (existingProduct.isEmpty()) {
+            throw new ProductNotFound("Produto não encontrado para id: " + productId);
+        }
+
+        var pageable = PageRequest.of(page, size);
+        Page<Product> relatedProducts = productRepository.findRelatedProducts(productId, pageable);
+        return new ProductPageDTO(
+                relatedProducts.getContent(),
+                relatedProducts.getNumber(),
+                relatedProducts.getSize(),
+                relatedProducts.getTotalElements(),
+                relatedProducts.getTotalPages(),
+                relatedProducts.isLast()
+        );
+    }
+    
     /**
      * Atualiza os dados de um produto existente.
      * Valida unicidade do nome e existência das tags informadas.

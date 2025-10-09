@@ -12,21 +12,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Repositório para operações de acesso a dados da entidade {@link Tag}.
+ * Interface de repositório para operações de persistência da entidade {@link Tag}.
  *
  * <p>
- * Esta interface fornece métodos para manipulação de tags no banco de dados,
- * incluindo operações CRUD padrão e consultas customizadas.
+ * Fornece métodos para manipulação de tags no banco de dados,
+ * incluindo consultas customizadas e operações CRUD padrão.
+ * Utiliza Spring Data JPA para geração automática das implementações.
  * </p>
  *
  * <ul>
- *   <li><b>findByName</b>: Busca uma tag pelo nome.</li>
- *   <li><b>findAllByProductId</b>: Busca todas as tags associadas a um determinado produto pelo seu ID.</li>
+ *   <li><b>findByName</b>: Retorna uma tag pelo nome.</li>
+ *   <li><b>findAllWithProducts</b>: Retorna todas as tags com seus produtos associados.</li>
+ *   <li><b>findTagsByProductsId</b>: Retorna todas as tags associadas a um produto específico.</li>
  * </ul>
- *
- * <p>
- * Utiliza Spring Data JPA para geração automática das implementações e otimização de queries.
- * </p>
  *
  * @author HernaniFilho
  */
@@ -34,18 +32,26 @@ import java.util.UUID;
 public interface TagRepository extends JpaRepository<Tag, UUID> {
 
     /**
-     * Busca uma tag pelo nome.
+     * Retorna uma tag pelo nome informado.
      *
      * @param name Nome da tag
-     * @return Optional contendo a tag, se encontrado, se não, vazio
+     * @return Optional contendo a tag, se encontrada
      */
     Optional<Tag> findByName(String name);
 
     /**
-     * Busca todas as tags associadas a um produto específico.
+     * Retorna todas as tags com seus produtos associados.
      *
-     * @param productId UUID do produto cujas tags devem ser retornadas
-     * @return Lista de tags associadas ao produto
+     * @return Lista de tags com produtos
+     */
+    @Query("SELECT DISTINCT t FROM Tag t LEFT JOIN FETCH t.products")
+    List<Tag> findAllWithProducts();
+
+    /**
+     * Retorna todas as tags associadas a um produto específico.
+     *
+     * @param productId UUID do produto
+     * @return Lista de tags associadas ao produto informado
      */
     List<Tag> findTagsByProductsId(UUID productId);
 }

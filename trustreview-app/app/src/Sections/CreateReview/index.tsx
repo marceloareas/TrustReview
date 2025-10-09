@@ -16,7 +16,7 @@ const CreateReviewSection = ({ onReview }: { onReview: () => void }) => {
   const [pros, setPros] = useState<string>("");
   const [cons, setCons] = useState<string>("");
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log(comment, rating, pros, cons);
     onReview();
   };

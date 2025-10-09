@@ -148,6 +148,13 @@ export const defaultTheme = createTheme({
             color: "#4A4458",
             opacity: 1,
           },
+          "& textarea": {
+            color: "#1E1E1E",
+          },
+          "& textarea::placeholder": {
+            color: "#4A4458",
+            opacity: 1,
+          },
         },
       },
     },

@@ -15,30 +15,33 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.toList;
+
 /**
- * Serviço responsável pela lógica de negócio relacionada à entidade {@link Tag}.
+ * Serviço responsável pela lógica de negócio da entidade {@link Tag}.
  *
  * <p>
- * Centraliza as operações de criação, busca, atualização e remoção de tags,
- * realizando validações de unicidade, existência e integridade de dados,
- * além de lançar exceções customizadas para cenários de erro.
+ * Realiza operações de criação, consulta, atualização e remoção de tags,
+ * garantindo validações de unicidade, existência e integridade dos dados.
+ * Lança exceções customizadas para cenários de erro e utiliza mapeadores para conversão entre entidades e DTOs.
  * </p>
  *
  * <ul>
- *   <li><b>create</b>: Cria uma nova tag, garantindo unicidade pelo nome.</li>
- *   <li><b>getById</b>: Busca uma tag pelo seu identificador único (UUID).</li>
- *   <li><b>update</b>: Atualiza os dados de uma tag existente, validando nome.</li>
- *   <li><b>delete</b>: Remove uma tag do sistema.</li>
+ *   <li><b>create</b>: Cria uma nova tag, validando unicidade do nome.</li>
+ *   <li><b>getById</b>: Busca tag por ID.</li>
+ *   <li><b>getAll</b>: Lista todas as tags, com opção de incluir produtos.</li>
+ *   <li><b>update</b>: Atualiza dados de uma tag existente, validando nome.</li>
+ *   <li><b>delete</b>: Remove tag pelo ID.</li>
  *   <li><b>findByName</b>: Busca auxiliar por nome de tag.</li>
  *   <li><b>findById</b>: Busca auxiliar por ID de tag.</li>
  * </ul>
  *
  * <p>
- * Utiliza o {@link TagMapper} para conversão entre entidades e DTOs,
- * {@link TagRepository} para acesso a dados de tags.
+ * Utiliza {@link TagRepository} para acesso aos dados e {@link TagMapper} para conversão de objetos.
  * </p>
  *
  * @author HernaniFilho
@@ -100,6 +103,34 @@ public class TagService {
         return tagMapper.toResponse(existingTag.get());
     }
 
+    /**
+     * Busca todas as tags cadastradas no sistema.
+     *
+     * @return Lista de DTOs de resposta com os dados das tags encontradas
+     * @throws TagNotFound se nenhuma tag for encontrada
+     */
+    @Transactional
+    public List<TagResponseDTO> getAll(boolean includeProducts) {
+        List<Tag> tags = null;
+
+        if (includeProducts) {
+            log.info("Buscando todas as tags com produtos");
+            tags = tagRepository.findAllWithProducts();
+        } else {
+            log.info("Buscando todas as tags");
+            tags = tagRepository.findAll();
+        }
+
+        if (tags.isEmpty()) {
+            log.error("Nenhuma tag encontrada!");
+            throw new TagNotFound("Nenhuma tag encontrada!");
+        }
+
+        log.info("Tags encontradas: {}", tags.size());
+        return tags.stream()
+                .map(tagMapper::toResponse)
+                .toList();
+    }
     /**
      * Atualiza os dados de uma tag existente
      *

@@ -63,9 +63,6 @@ const ProductReviewSection = ({ reviews }: { reviews: IReview[] }) => {
                   justifyContent={"space-between"}
                   pb={1}
                 >
-                  <Typography variant="h6" fontWeight={100} flexGrow={1}>
-                    {review?.title}
-                  </Typography>
                   <Stack
                     direction="row"
                     pt={0.5}

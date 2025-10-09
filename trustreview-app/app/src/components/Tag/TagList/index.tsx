@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
-import Tag from "../Tag";
-import type { ITag } from "../../interfaces/Product";
+import Tag from "..";
+import type { ITag } from "../../../interfaces/Product";
 
 const TagsList = ({ tags, isEdit }: { tags: ITag[]; isEdit?: boolean }) => {
   const handleDelete = (tagId: string) => {

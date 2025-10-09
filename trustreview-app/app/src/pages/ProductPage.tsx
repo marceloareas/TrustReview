@@ -1,16 +1,43 @@
-import { Box, Stack } from "@mui/material";
 import ProductDetailsSection from "../Sections/ProductDetails";
-import { products } from "../shared/constants/products";
-import { useParams } from "react-router-dom";
-import ProductReviewSection from "../Sections/ProductReview";
-import { useState } from "react";
 import CreateReviewSection from "../Sections/CreateReview";
+import ProductReviewSection from "../Sections/ProductReview";
+import { Box, Container, Stack } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { productService } from "../services";
+import type { IProduct } from "../interfaces/Product";
+import ProductCardStackList from "../components/Product/ProductCardStackList";
 
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
+  const [product, setProduct] = useState<IProduct | null>(null);
+  const [products, setProducts] = useState<IProduct[]>([]);
   const [isReviewing, setIsReviewing] = useState(false);
 
-  const product = products.find((p) => p.id === id);
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!id) return;
+      try {
+        const res = await productService.getProductById(id);
+        setProduct(res);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    };
+
+    const fetchRelatedProducts = async () => {
+      if (!id) return;
+      try {
+        const relatedRes = await productService.getRelatedProducts(id);
+        setProducts(relatedRes);
+      } catch (error) {
+        console.error("Error fetching related products:", error);
+      }
+    };
+
+    fetchProduct();
+    fetchRelatedProducts();
+  }, [id]);
 
   if (!product) {
     return (
@@ -49,6 +76,9 @@ const ProductPage = () => {
       {isReviewing && (
         <CreateReviewSection onReview={() => setIsReviewing(false)} />
       )}
+      <Container maxWidth="xl">
+        <ProductCardStackList productList={products} />
+      </Container>
     </Stack>
   );
 };

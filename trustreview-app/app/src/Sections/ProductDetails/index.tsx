@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import type { IProduct } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
-import TagsList from "../../components/TagList";
+import TagsList from "../../components/Tag/TagList";
 
 const ProductDetailsSection = ({
   product,

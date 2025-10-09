@@ -1,14 +1,19 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import type { IProduct } from "../../../interfaces/Product";
 import ProductCard from "../ProductCard";
+import { useNavigate } from "react-router-dom";
 
-const ProductCardList = ({
+const ProductCardGridList = ({
   productList,
-  onClick,
 }: {
   productList: Partial<IProduct>[];
-  onClick: (id: string) => void;
 }) => {
+  const navigate = useNavigate();
+
+  const handleClickProduct = (id: string) => {
+    navigate(`/products/${id}`);
+  };
+
   if (productList.length === 0) {
     return (
       <Stack
@@ -45,7 +50,7 @@ const ProductCardList = ({
             <ProductCard
               key={product.id}
               productData={product}
-              onClick={() => onClick(product.id || "")}
+              onClick={() => handleClickProduct(product.id || "")}
             />
           </Stack>
         </Grid>
@@ -54,4 +59,4 @@ const ProductCardList = ({
   );
 };
 
-export default ProductCardList;
+export default ProductCardGridList;

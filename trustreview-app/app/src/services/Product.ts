@@ -14,12 +14,21 @@ export default class ProductService {
   }
 
   async getProductsByTerm(term: string): Promise<IProduct[]> {
-    const response = await this.api.get("/products/search", { params: { term } });
+    const response = await this.api.get("/products/search", {
+      params: { term },
+    });
     return response.data as IProduct[];
   }
 
   async getProductById(productId: string): Promise<IProduct> {
-    const response = await this.api.get(`/products/${productId}`, { params: { include: "tags" } });
+    const response = await this.api.get(`/products/${productId}`, {
+      params: { include: "tags" },
+    });
     return response.data as IProduct;
+  }
+
+  async getRelatedProducts(productId: string): Promise<IProduct[]> {
+    const response = await this.api.get(`/products/${productId}/related`);
+    return response.data as IProduct[];
   }
 }

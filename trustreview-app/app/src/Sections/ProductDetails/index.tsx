@@ -9,6 +9,10 @@ import {
 import type { IProduct } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
 import TagsList from "../../components/TagList";
+import { useEffect, useState } from "react";
+import { productService } from "../../services";
+import { useNavigate } from "react-router-dom";
+import ProductCardStackList from "../../components/Product/ProductCardStackList";
 
 const ProductDetailsSection = ({
   product,
@@ -19,6 +23,26 @@ const ProductDetailsSection = ({
   isReviewing: boolean;
   onReview: () => void;
 }) => {
+  const navigate = useNavigate();
+  const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
+
+  useEffect(() => {
+    const fetchRelatedProducts = async () => {
+      try {
+        const res = await productService.getRelatedProducts(product.id || "");
+        setRelatedProducts(res);
+      } catch (error) {
+        console.error("Error fetching related products:", error);
+      }
+    };
+    fetchRelatedProducts();
+    console.log(relatedProducts);
+  }, []);
+
+  const handleClickProduct = (id: string) => {
+    navigate(`/products/${id}`);
+  };
+
   return (
     <Container maxWidth="xl" sx={{ flex: 1 }}>
       <Stack
@@ -94,6 +118,15 @@ const ProductDetailsSection = ({
             </Button>
           </Box>
         )}
+        <Stack spacing={2} sx={{ width: "100%" }}>
+          <Typography variant="h4" fontWeight={100}>
+            Produtos Relacionados
+          </Typography>
+          <ProductCardStackList
+            productList={relatedProducts}
+            onClick={handleClickProduct}
+          />
+        </Stack>
       </Stack>
     </Container>
   );

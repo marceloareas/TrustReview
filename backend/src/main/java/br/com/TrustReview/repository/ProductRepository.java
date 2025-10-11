@@ -58,14 +58,14 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Product> findProductsByTagsId(UUID tagId);
 
     @Query("""
-        SELECT DISTINCT p
+        SELECT p
         FROM Product p
         JOIN p.tags t
         WHERE t IN (
             SELECT t2 FROM Product p2 JOIN p2.tags t2 WHERE p2.id = :productId
         )
         AND p.id <> :productId
-        GROUP BY p
+        GROUP BY p.id, p.name, p.description, p.overallRating, p.createdAt, p.updatedAt
         ORDER BY COUNT(t) DESC
         """)
     Page<Product> findRelatedProducts(

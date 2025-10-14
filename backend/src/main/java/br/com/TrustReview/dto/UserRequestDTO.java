@@ -3,8 +3,18 @@ package br.com.TrustReview.dto;
 import br.com.TrustReview.model.UserTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Schema(description = "DTO de requisição para criação ou atualização de um usuário")
 public class UserRequestDTO {
 
     @NotBlank(message = "Usuário deve conter nome")
@@ -22,8 +32,5 @@ public class UserRequestDTO {
     @Schema(description = "Senha do usuário", required = true)
     private String password;
 
-    @NotBlank(message = "Usuário deve conter tipo de usuário")
-    @Schema(description = "Tipo do usuário", example = "ADMIN", required = true)
-    private UserTypeEnum userType;
 
 }

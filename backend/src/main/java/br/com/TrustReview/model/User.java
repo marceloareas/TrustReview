@@ -1,21 +1,19 @@
 package br.com.TrustReview.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = Tag.TABLE_NAME)
+@Table(name = User.TABLE_NAME)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
-    public static final String TABLE_NAME = "User";
+    public static final String TABLE_NAME = "users";
 
     @Id
     @EqualsAndHashCode.Include
@@ -31,6 +29,6 @@ public class User {
     @Column(name = "password", nullable = false, unique = false)
     private String password;
 
-    @Column(name = "userType", length = 20, nullable = false)
-    private UserTypeEnum userType;
+    @Column(name = "userType", length = 20, nullable = false, unique = false)
+    private UserTypeEnum userType = UserTypeEnum.COSTUMER;
 }

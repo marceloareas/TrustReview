@@ -29,7 +29,7 @@ public class UserResponseDTO {
     @Schema(description = "Senha do usuário")
     private String password;
 
-    @Schema(description = "Tipo do usuário", example = "ADMIN")
+    @Schema(description = "Tipo do usuário", example = "COSTUMER")
     private UserTypeEnum userType;
 
 }

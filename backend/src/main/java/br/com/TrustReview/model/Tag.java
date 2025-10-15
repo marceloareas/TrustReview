@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -54,5 +56,6 @@ public class Tag {
     private String description;
 
     @ManyToMany(mappedBy = "tags")
+    @JsonBackReference
     private Set<Product> products = new HashSet<>();
 }

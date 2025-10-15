@@ -1,4 +1,10 @@
-import { Card, CardContent, CardMedia, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import CardImage from "../../../assets/card-image.svg";
 import type { IProduct } from "../../../interfaces/Product";
 
@@ -15,9 +21,9 @@ const ProductCard = ({
         width: "240px",
         height: "240px",
         borderRadius: 4,
-        flex: 1,
         backgroundColor: "#fff",
         cursor: "pointer",
+        flexShrink: 0,
         "&:hover": {
           transform: "scale(1.02)",
         },
@@ -43,9 +49,11 @@ const ProductCard = ({
           bgcolor: "background.cardContent",
         }}
       >
-        <Typography variant="h6" noWrap>
-          {productData?.name}
-        </Typography>
+        <Tooltip title={productData?.name} arrow placement="top">
+          <Typography variant="h6" noWrap>
+            {productData?.name}
+          </Typography>
+        </Tooltip>
       </CardContent>
     </Card>
   );

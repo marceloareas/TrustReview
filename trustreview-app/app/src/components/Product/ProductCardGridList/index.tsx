@@ -2,13 +2,15 @@ import { Box, Grid, Stack, Typography } from "@mui/material";
 import type { IProduct } from "../../../interfaces/Product";
 import ProductCard from "../ProductCard";
 
-const ProductCardList = ({
+interface IProductCardListProps {
+  productList: IProduct[];
+  onClick: (id: string) => void;
+}
+
+const ProductCardGridList = ({
   productList,
   onClick,
-}: {
-  productList: Partial<IProduct>[];
-  onClick: (id: string) => void;
-}) => {
+}: IProductCardListProps) => {
   if (productList.length === 0) {
     return (
       <Stack
@@ -54,4 +56,4 @@ const ProductCardList = ({
   );
 };
 
-export default ProductCardList;
+export default ProductCardGridList;

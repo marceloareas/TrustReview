@@ -1,6 +1,6 @@
 import { Container, Stack } from "@mui/material";
 import ProductTitle from "../../components/Product/ProductTitle";
-import ProductCardList from "../../components/Product/ProductCardList";
+import ProductCardList from "../../components/Product/ProductCardGridList";
 import Search from "../../components/Search";
 import { useSearch } from "../../hooks/useSearch";
 import { useQuery } from "../../hooks/useQuery";

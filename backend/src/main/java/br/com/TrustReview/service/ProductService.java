@@ -12,6 +12,7 @@ import br.com.TrustReview.model.Product;
 import br.com.TrustReview.model.Tag;
 import br.com.TrustReview.repository.ProductRepository;
 import br.com.TrustReview.repository.TagRepository;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,5 @@
 FROM node:latest
+#FROM --platform=linux/amd64 node:18-alpine
 
 WORKDIR /tmp/react
 

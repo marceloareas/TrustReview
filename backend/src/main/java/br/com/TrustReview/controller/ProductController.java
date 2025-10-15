@@ -7,6 +7,7 @@ import br.com.TrustReview.exception.ApiError;
 import br.com.TrustReview.exception.ProductNotFound;
 import br.com.TrustReview.model.Product;
 import br.com.TrustReview.service.ProductService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;

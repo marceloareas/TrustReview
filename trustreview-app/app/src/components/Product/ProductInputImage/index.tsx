@@ -1,6 +1,6 @@
-// components/Product/ProductInputImage.tsx
 import { Box, Button } from "@mui/material";
 import type { ChangeEvent } from "react";
+import CardImage from "../../../assets/card-image.svg";
 
 interface ProductInputImageProps {
   imageUrl?: string;
@@ -17,7 +17,7 @@ const ProductImageInput = ({ imageUrl, onChange }: ProductInputImageProps) => {
     <Box display="flex" flexDirection="column" alignItems="center">
       <Box
         component="img"
-        src={imageUrl || "/placeholder.png"}
+        src={imageUrl || CardImage}
         alt="Preview"
         sx={{
           width: 200,

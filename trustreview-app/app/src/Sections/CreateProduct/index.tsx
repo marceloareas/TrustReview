@@ -15,26 +15,25 @@ import { productService } from "../../services";
 import { useForm, Controller } from "react-hook-form";
 import type { IProduct } from "../../interfaces/Product";
 
-interface CreateProductForm {
+interface CreateProductReviewForm {
   name: string;
   description: string;
+  image?: File | null;
   reviewRating: number;
   comment: string;
   pros: string;
   cons: string;
-  image?: File | null;
 }
 
 const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
 
-  // Inicializa o React Hook Form
   const {
     control,
     handleSubmit,
     reset,
     formState: { isSubmitting },
-  } = useForm<CreateProductForm>({
+  } = useForm<CreateProductReviewForm>({
     defaultValues: {
       name: "",
       description: "",
@@ -45,8 +44,7 @@ const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
     },
   });
 
-  // Envio do formulário
-  const onSubmit = async (data: CreateProductForm) => {
+  const onSubmit = async (data: CreateProductReviewForm) => {
     try {
       const newProduct = {
         name: data.name,
@@ -56,12 +54,38 @@ const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
       const response = await productService.createProduct(newProduct);
       console.log("Produto criado:", response);
 
+      const newReview = {
+        reviewRating: data.reviewRating,
+        comment: data.comment,
+        pros: data.pros,
+        cons: data.cons,
+        productId: response.id,
+      };
+
+      console.log("Review", newReview);
+
+      //const createdReview = await productService.createReview(newReview);
+      //console.log("✅ Review criada:", createdReview);
+
       reset();
       setPreviewUrl(undefined);
     } catch (error) {
       console.error("Erro ao criar produto:", error);
     }
   };
+  /*
+    // Enviar Review
+  const onSubmitReview = async (data: CreateReviewForm) => {
+    if (!productId) return; // segurança
+    try {
+      const newReview = { ...data, productId };
+      const response = await reviewService.createReview(newReview);
+      console.log("Review criada:", response);
+      resetReview();
+    } catch (error) {
+      console.error("Erro ao criar review:", error);
+    }
+  };*/
 
   return (
     <Container maxWidth="xl">
@@ -87,11 +111,7 @@ const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
                   imageUrl={previewUrl}
                   onChange={(file) => {
                     field.onChange(file);
-                    if (file) {
-                      setPreviewUrl(URL.createObjectURL(file));
-                    } else {
-                      setPreviewUrl(undefined);
-                    }
+                    setPreviewUrl(file ? URL.createObjectURL(file) : undefined);
                   }}
                 />
               )}

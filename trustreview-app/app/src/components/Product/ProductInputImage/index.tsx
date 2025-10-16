@@ -1,95 +1,44 @@
-import { useState, useRef } from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+// components/Product/ProductInputImage.tsx
+import { Box, Button } from "@mui/material";
+import type { ChangeEvent } from "react";
 
-interface ProductImageInputProps {
+interface ProductInputImageProps {
   imageUrl?: string;
-  name?: string;
-  onImageChange?: (file: File | null) => void;
+  onChange?: (file: File | null) => void;
 }
 
-const ProductInputImage = ({
-  imageUrl,
-  name,
-  onImageChange,
-}: ProductImageInputProps) => {
-  const [preview, setPreview] = useState<string | null>(imageUrl || null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const objectUrl = URL.createObjectURL(file);
-      setPreview(objectUrl);
-      onImageChange?.(file);
-    }
-  };
-
-  const handleRemove = () => {
-    setPreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    onImageChange?.(null);
+const ProductImageInput = ({ imageUrl, onChange }: ProductInputImageProps) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (onChange) onChange(file);
   };
 
   return (
-    <Stack alignItems="center" spacing={2}>
-      <Typography variant="h6">{name || "Product Image"}</Typography>
-
+    <Box display="flex" flexDirection="column" alignItems="center">
       <Box
+        component="img"
+        src={imageUrl || "/placeholder.png"}
+        alt="Preview"
         sx={{
-          width: 240,
-          height: 240,
-          borderRadius: 4,
-          border: "2px dashed #ccc",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#fafafa",
-          position: "relative",
+          width: 200,
+          height: 200,
+          borderRadius: "8px",
+          objectFit: "cover",
+          border: "1px solid #ccc",
+          mb: 2,
         }}
-      >
-        {preview ? (
-          <Box
-            component="img"
-            src={preview}
-            alt="Product preview"
-            sx={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
-          />
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            Nenhuma imagem selecionada
-          </Typography>
-        )}
-      </Box>
-
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={handleImageUpload}
       />
-
-      <Stack direction="row" spacing={2}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          {preview ? "Alterar Imagem" : "Enviar Imagem"}
-        </Button>
-        {preview && (
-          <Button variant="outlined" color="error" onClick={handleRemove}>
-            Remover
-          </Button>
-        )}
-      </Stack>
-    </Stack>
+      <Button variant="contained" component="label">
+        Escolher Imagem
+        <input
+          type="file"
+          hidden
+          accept="image/*"
+          onChange={handleImageChange}
+        />
+      </Button>
+    </Box>
   );
 };
 
-export default ProductInputImage;
+export default ProductImageInput;

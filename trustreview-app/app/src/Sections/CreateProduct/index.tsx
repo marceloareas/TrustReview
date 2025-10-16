@@ -10,134 +10,228 @@ import {
 import Review from "../../assets/icons/Review.svg";
 import { useState } from "react";
 import ProductInputImage from "../../components/Product/ProductInputImage";
-import type { IProduct } from "../../interfaces/Product";
 import TagsList from "../../components/TagList";
+import { productService } from "../../services";
+import { useForm, Controller } from "react-hook-form";
+import type { IProduct } from "../../interfaces/Product";
+
+interface CreateProductForm {
+  name: string;
+  description: string;
+  reviewRating: number;
+  comment: string;
+  pros: string;
+  cons: string;
+  image?: File | null;
+}
 
 const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
-  const [reviewRating, setReviewRating] = useState<number | null>(0);
-  const [productRating, setProductRating] = useState<number | null>(0);
-  const [comment, setComment] = useState<string>("");
-  const [pros, setPros] = useState<string>("");
-  const [cons, setCons] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [productName, setProductName] = useState<string>("");
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>();
 
-  const handleSave = async () => {
-    console.log(comment, reviewRating, pros, cons, description, productName);
-    //onReview();
+  // Inicializa o React Hook Form
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<CreateProductForm>({
+    defaultValues: {
+      name: "",
+      description: "",
+      reviewRating: 0,
+      comment: "",
+      pros: "",
+      cons: "",
+    },
+  });
+
+  // Envio do formulário
+  const onSubmit = async (data: CreateProductForm) => {
+    try {
+      const newProduct = {
+        name: data.name,
+        description: data.description,
+      };
+
+      const response = await productService.createProduct(newProduct);
+      console.log("Produto criado:", response);
+
+      reset();
+      setPreviewUrl(undefined);
+    } catch (error) {
+      console.error("Erro ao criar produto:", error);
+    }
   };
 
   return (
     <Container maxWidth="xl">
-      <Stack
-        flex={1}
-        spacing={3}
-        justifyContent={"center"}
-        alignItems={"flex-start"}
-        pb={4}
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Stack
-          direction={{ xs: "column", md: "row" }}
-          spacing={4}
-          sx={{ width: "100%" }}
+          flex={1}
+          spacing={3}
+          justifyContent={"center"}
+          alignItems={"flex-start"}
+          pb={4}
         >
-          <Box>
-            <ProductInputImage
-              name={product?.name}
-              imageUrl={product?.imageUrl}
-              onImageChange={(file) => console.log("Selected file:", file)}
+          {/* Nome e imagem */}
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            spacing={4}
+            sx={{ width: "100%" }}
+          >
+            <Controller
+              name="image"
+              control={control}
+              render={({ field }) => (
+                <ProductInputImage
+                  imageUrl={previewUrl}
+                  onChange={(file) => {
+                    field.onChange(file);
+                    if (file) {
+                      setPreviewUrl(URL.createObjectURL(file));
+                    } else {
+                      setPreviewUrl(undefined);
+                    }
+                  }}
+                />
+              )}
             />
-          </Box>
-          <Stack spacing={2}>
-            <Typography>Product Name</Typography>
-            <TextField onChange={(e) => setProductName(e.target.value)} />
-            <Stack direction={"row"} alignItems={"center"} spacing={1}>
-              <Rating
-                name="Product rating"
-                precision={0.5}
-                value={productRating}
-                size="large"
-                onChange={(_, newValue) => setProductRating(newValue)}
+
+            <Stack spacing={2}>
+              <Typography>Product Name</Typography>
+              <Controller
+                name="name"
+                control={control}
+                rules={{ required: "O nome é obrigatório" }}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
               />
-              <Typography variant="body2">{productRating || ""}</Typography>
+
+              <Typography variant="h6" fontWeight={100}>
+                Tags
+              </Typography>
+              <TagsList tags={product?.tags || []} />
             </Stack>
-            <Typography variant="h6" fontWeight={100}>
-              Tags
+          </Stack>
+
+          {/* Descrição */}
+          <Stack spacing={1} sx={{ width: "100%" }}>
+            <Typography>Description</Typography>
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <TextField multiline minRows={5} {...field} />
+              )}
+            />
+          </Stack>
+
+          {/* Review e rating */}
+          <Stack direction={"row"} alignItems={"center"} spacing={1}>
+            <Typography>Review</Typography>
+            <Box component={"img"} src={Review} alt="Review" />
+          </Stack>
+
+          <Stack direction={"row"} alignItems={"center"} spacing={1}>
+            <Controller
+              name="reviewRating"
+              control={control}
+              render={({ field }) => (
+                <Rating
+                  name="Product rating"
+                  precision={0.5}
+                  value={field.value}
+                  size="large"
+                  onChange={(_, newValue) => field.onChange(newValue)}
+                />
+              )}
+            />
+            <Typography variant="body2">
+              <Controller
+                name="reviewRating"
+                control={control}
+                render={({ field }) => <>{field.value || ""}</>}
+              />
             </Typography>
-            <TagsList tags={product?.tags || []} />
+          </Stack>
+
+          {/* Comment */}
+          <Stack spacing={1} sx={{ width: "100%" }}>
+            <Typography>Comment</Typography>
+            <Controller
+              name="comment"
+              control={control}
+              render={({ field }) => (
+                <TextField multiline minRows={5} {...field} />
+              )}
+            />
+          </Stack>
+
+          {/* Pros */}
+          <Stack spacing={1} sx={{ width: "100%" }}>
+            <Typography>Pros</Typography>
+            <Controller
+              name="pros"
+              control={control}
+              render={({ field }) => (
+                <TextField multiline minRows={5} {...field} />
+              )}
+            />
+          </Stack>
+
+          {/* Cons */}
+          <Stack spacing={1} sx={{ width: "100%" }}>
+            <Typography>Cons</Typography>
+            <Controller
+              name="cons"
+              control={control}
+              render={({ field }) => (
+                <TextField multiline minRows={5} {...field} />
+              )}
+            />
+          </Stack>
+
+          {/* Botões */}
+          <Stack
+            direction={"row"}
+            spacing={4}
+            justifyContent={"flex-end"}
+            alignItems={"flex-end"}
+            sx={{ width: "100%" }}
+          >
+            <Button
+              variant="contained"
+              size="large"
+              sx={{
+                backgroundColor: "background.discard",
+                "&:hover": {
+                  backgroundColor: "#e74545d2",
+                },
+              }}
+              onClick={() => {
+                reset();
+                setPreviewUrl(undefined);
+              }}
+            >
+              Descartar Produto e Review
+            </Button>
+
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              disabled={isSubmitting}
+            >
+              Publicar Produto e Review
+            </Button>
           </Stack>
         </Stack>
-        <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Description</Typography>
-          <TextField
-            multiline
-            minRows={5}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </Stack>
-        <Stack direction={"row"} alignItems={"center"} spacing={1}>
-          <Typography>Review</Typography>
-          <Box component={"img"} src={Review} alt="Review" />
-        </Stack>
-        <Stack direction={"row"} alignItems={"center"} spacing={1}>
-          <Rating
-            name="Product rating"
-            precision={0.5}
-            value={reviewRating}
-            size="large"
-            onChange={(_, newValue) => setReviewRating(newValue)}
-          />
-          <Typography variant="body2">{reviewRating || ""}</Typography>
-        </Stack>
-        <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Comment</Typography>
-          <TextField
-            multiline
-            minRows={5}
-            onChange={(e) => setComment(e.target.value)}
-          />
-        </Stack>
-        <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Pros</Typography>
-          <TextField
-            multiline
-            minRows={5}
-            onChange={(e) => setPros(e.target.value)}
-          />
-        </Stack>
-        <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Cons</Typography>
-          <TextField
-            multiline
-            minRows={5}
-            onChange={(e) => setCons(e.target.value)}
-          />
-        </Stack>
-        <Stack
-          direction={"row"}
-          spacing={4}
-          justifyContent={"flex-end"}
-          alignItems={"flex-end"}
-          sx={{ width: "100%" }}
-        >
-          <Button
-            variant="contained"
-            size="large"
-            sx={{
-              backgroundColor: "background.discard",
-              "&:hover": {
-                backgroundColor: "#e74545d2",
-              },
-            }}
-          >
-            Descartar Produto e Review
-          </Button>
-
-          <Button variant="contained" size="large" onClick={handleSave}>
-            Publicar Produto e Review
-          </Button>
-        </Stack>
-      </Stack>
+      </form>
     </Container>
   );
 };

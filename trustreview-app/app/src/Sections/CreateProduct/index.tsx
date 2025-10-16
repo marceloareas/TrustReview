@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import Review from "../../assets/icons/Review.svg";
 import { useState } from "react";
-import ProductImage from "../../components/Product/ProductImage";
+import ProductInputImage from "../../components/Product/ProductInputImage";
 import type { IProduct } from "../../interfaces/Product";
 import TagsList from "../../components/TagList";
 
@@ -42,7 +42,11 @@ const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
           sx={{ width: "100%" }}
         >
           <Box>
-            <ProductImage name={product?.name} imageUrl={product?.imageUrl} />
+            <ProductInputImage
+              name={product?.name}
+              imageUrl={product?.imageUrl}
+              onImageChange={(file) => console.log("Selected file:", file)}
+            />
           </Box>
           <Stack spacing={2}>
             <Typography>Product Name</Typography>

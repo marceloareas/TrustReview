@@ -31,3 +31,8 @@ export interface IReview {
   createdAt?: string;
   updatedAt?: string;
 }
+
+//Apenas temporário
+export interface IUser {
+  email: string;
+}

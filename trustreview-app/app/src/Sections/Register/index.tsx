@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   Container,
@@ -12,15 +11,61 @@ import {
 } from "@mui/material";
 import AppTitle from "../../components/AppTitle";
 import { Link } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
+import { userService } from "../../services";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+interface CreateUserForm {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export const createUserSchema = yup.object({
+  name: yup
+    .string()
+    .required("O nome é obrigatório")
+    .min(6, "O nome deve ter pelo menos 6 caracteres")
+    .max(150, "O nome deve ter no máximo 150 caracteres"),
+
+  email: yup
+    .string()
+    .required("O email é obrigatório")
+    .email("Email inválido")
+    .min(6, "O email deve ter pelo menos 6 caracteres")
+    .max(80, "O email deve ter no máximo 80 caracteres"),
+
+  password: yup
+    .string()
+    .required("A senha é obrigatória")
+    .min(8, "A senha deve ter pelo menos 8 caracteres")
+    .max(50, "A senha deve ter no máximo 50 caracteres"),
+});
 
 const RegisterSection = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateUserForm>({
+    resolver: yupResolver(createUserSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Login with:", { email, password });
+  const onSubmit = async (data: CreateUserForm) => {
+    try {
+      const user = await userService.createUser(data);
+      console.log("Usuário criado:", user);
+      reset(); // limpa os campos
+    } catch (error: any) {
+      console.error("Erro ao criar usuário:", error.response?.data || error);
+    }
   };
 
   return (
@@ -59,36 +104,62 @@ const RegisterSection = () => {
                 Faça login
               </Link>
             </Typography>
-            <Box component="form" onSubmit={handleSubmit} noValidate>
+
+            <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
               <Stack spacing={2}>
-                <TextField
-                  label="Nome"
-                  type="nome"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  fullWidth
-                  required
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Nome"
+                      fullWidth
+                      error={!!errors.name}
+                      helperText={errors.name?.message}
+                    />
+                  )}
                 />
-                <TextField
-                  label="Email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  fullWidth
-                  required
+
+                <Controller
+                  name="email"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Email"
+                      type="email"
+                      fullWidth
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                    />
+                  )}
                 />
-                <TextField
-                  label="Password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  fullWidth
-                  required
+
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Senha"
+                      type="password"
+                      fullWidth
+                      error={!!errors.password}
+                      helperText={errors.password?.message}
+                    />
+                  )}
                 />
               </Stack>
+
               <CardActions sx={{ mt: 2, p: 0 }}>
-                <Button type="submit" variant="contained" fullWidth>
-                  Login
+                <Button
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  disabled={isSubmitting}
+                >
+                  Cadastrar
                 </Button>
               </CardActions>
             </Box>

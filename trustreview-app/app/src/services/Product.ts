@@ -32,4 +32,21 @@ export default class ProductService {
     const data = response.data as { content: IProduct[] };
     return data.content;
   }
+
+  async createProduct(product: Partial<IProduct>): Promise<IProduct> {
+    //Por enquanto o back não tem imagem, colocar depois
+    //A tela de criar produto também cria review, temos que ver como vai ficar
+    console.log(product);
+
+    /*if (product.tags && product.tags.length > 0) {
+    product.tags.forEach((tag, index) => {
+      formData.append(`tags[${index}]`, tag.name ?? tag);
+    });
+  }*/
+    const response = await this.api.post("/products", product, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return response.data as IProduct;
+  }
 }

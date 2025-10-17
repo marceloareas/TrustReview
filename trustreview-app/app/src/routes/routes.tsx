@@ -3,6 +3,9 @@ import SearchPage from "../pages/SearchPage";
 import SearchedProductsPage from "../pages/SearchedProductsPage";
 import MainLayout from "../layout/MainLayout";
 import ProductPage from "../pages/ProductPage";
+import LoginPage from "../pages/LoginPage";
+import RegisterPage from "../pages/RegisterPage";
+import CreateProductPage from "../pages/CreateProductPage";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +23,18 @@ const router = createBrowserRouter([
       {
         path: "/products/:id",
         element: <ProductPage />,
+      },
+      {
+        path: "/login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/register",
+        element: <RegisterPage />,
+      },
+      {
+        path: "/createProduct",
+        element: <CreateProductPage />,
       },
     ],
   },

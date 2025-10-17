@@ -23,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
-@Tag(name = "Tag Endpoint", description = "Endpoint para gerenciamento de Usuários (CRUD)")
+@Tag(name = "User Endpoint", description = "Endpoint para gerenciamento de Usuários (CRUD)")
 public class UserController {
 
     private final UserService userService;

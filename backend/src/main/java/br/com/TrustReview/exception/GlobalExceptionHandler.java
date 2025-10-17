@@ -229,5 +229,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
+    /**
+     * Trata exceção quando já existe um usuário com o mesmo e-mail.
+     *
+     * @param ex Exceção lançada
+     * @return ResponseEntity com detalhes do erro de e-mail de usuário duplicado
+     */
+    @ExceptionHandler(UserEmailAlredyExits.class)
+    public ResponseEntity<ApiError> handleUserEmailAlreadyExists(UserEmailAlredyExits ex) {
+        ApiError error = new ApiError(
+                HttpStatus.CONFLICT.value(),                     
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),                                 
+                "USER_EMAIL_ALREADY_EXISTS",          
+                List.of(ex.getMessage())                      
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+
 
 }

@@ -32,5 +32,4 @@ public class UserRequestDTO {
     @Schema(description = "Senha do usuário", required = true)
     private String password;
 
-
 }

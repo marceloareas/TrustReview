@@ -16,7 +16,7 @@ public class UserMapper {
         User user = new User();
         user.setName(requestDTO.getName());
         user.setEmail(requestDTO.getEmail());
-        user.setPassword(requestDTO.getPassword());
+        user.setPassword("");
         user.setUserType(UserTypeEnum.COSTUMER);        //Evita forçar admins no banco
         return user;
     }
@@ -25,7 +25,7 @@ public class UserMapper {
         User user = new User();
         user.setName(requestDTO.getName());
         user.setEmail(requestDTO.getEmail());
-        user.setPassword(requestDTO.getPassword());
+        user.setPassword("");
         user.setUserType(UserTypeEnum.COSTUMER);        //Evita forçar admins no banco
         return user;
     }
@@ -35,7 +35,7 @@ public class UserMapper {
         userResponseDTO.setId(user.getId());
         userResponseDTO.setName(user.getName());
         userResponseDTO.setEmail(user.getEmail());
-        userResponseDTO.setPassword(user.getPassword());
+        userResponseDTO.setPassword("");
         userResponseDTO.setUserType(user.getUserType());
         return userResponseDTO;
     }
@@ -44,7 +44,7 @@ public class UserMapper {
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setName(userRequestDTO.getName());
         userResponseDTO.setEmail(userRequestDTO.getEmail());
-        userResponseDTO.setPassword(userRequestDTO.getPassword());
+        userResponseDTO.setPassword("");
         userResponseDTO.setUserType(UserTypeEnum.COSTUMER);     // Pode dar problemas em outras regras de negócio
         return userResponseDTO;
     }

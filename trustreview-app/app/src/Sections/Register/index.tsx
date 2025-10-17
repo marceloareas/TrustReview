@@ -8,6 +8,8 @@ import {
   CardContent,
   TextField,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import AppTitle from "../../components/AppTitle";
 import { Link } from "react-router-dom";
@@ -15,6 +17,7 @@ import { useForm, Controller } from "react-hook-form";
 import { userService } from "../../services";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
 
 interface CreateUserForm {
   name: string;
@@ -58,13 +61,51 @@ const RegisterSection = () => {
     },
   });
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
+
+  const handleCloseSnackbar = () => setSnackbarOpen(false);
+
   const onSubmit = async (data: CreateUserForm) => {
     try {
       const user = await userService.createUser(data);
       console.log("Usuário criado:", user);
+
+      setSnackbarMessage("Usuário criado com sucesso!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+
       reset(); // limpa os campos
     } catch (error: any) {
-      console.error("Erro ao criar usuário:", error.response?.data || error);
+      console.log("Erro completo:", error);
+
+      // Caso o backend tenha retornado um objeto Axios (com response)
+      if (error.response) {
+        const status = error.response.status;
+        const data = error.response.data;
+
+        if (status === 409 || data?.errorCode === "USER_EMAIL_ALREADY_EXISTS") {
+          setSnackbarMessage(data?.message || "Email já está em uso!");
+        } else if (status === 400) {
+          setSnackbarMessage("Erro de validação. Verifique os campos.");
+        } else {
+          setSnackbarMessage(
+            data?.message || "Erro inesperado ao criar o usuário."
+          );
+        }
+      }
+      // Caso o erro tenha sido transformado em Error simples (sem response)
+      else if (error.message?.includes("Email de usuário já em uso")) {
+        setSnackbarMessage("Email já está em uso!");
+      } else {
+        setSnackbarMessage("Erro inesperado ao criar o usuário.");
+      }
+
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
@@ -166,6 +207,21 @@ const RegisterSection = () => {
           </CardContent>
         </Card>
       </Stack>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+          variant="filled"
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

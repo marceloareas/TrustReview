@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 import type {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
-  CreateAxiosDefaults
-} from 'axios';
-import type IApiClient from '../interfaces/IApiClient';
+  CreateAxiosDefaults,
+} from "axios";
+import type IApiClient from "../interfaces/IApiClient";
 
 abstract class ApiClient implements IApiClient {
   private http: AxiosInstance;
@@ -25,7 +25,7 @@ abstract class ApiClient implements IApiClient {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         throw new Error(
-          error.response?.data?.message ?? 'Erro de comunicação com a API',
+          error.response?.data?.message ?? "Erro de comunicação com a API",
         );
       }
       throw error;
@@ -37,7 +37,7 @@ abstract class ApiClient implements IApiClient {
     config?: AxiosRequestConfig<D>,
   ): Promise<AxiosResponse<T, D>> {
     return this.execute<T, D>({
-      method: 'GET',
+      method: "GET",
       url,
       ...config,
     });
@@ -49,7 +49,7 @@ abstract class ApiClient implements IApiClient {
     config?: AxiosRequestConfig<D>,
   ): Promise<AxiosResponse<T, D>> {
     return this.execute<T, D>({
-      method: 'POST',
+      method: "POST",
       url,
       data,
       ...config,
@@ -62,7 +62,7 @@ abstract class ApiClient implements IApiClient {
     config?: AxiosRequestConfig<D>,
   ): Promise<AxiosResponse<T, D>> {
     return this.execute<T, D>({
-      method: 'PUT',
+      method: "PUT",
       url,
       data,
       ...config,
@@ -74,7 +74,7 @@ abstract class ApiClient implements IApiClient {
     config?: AxiosRequestConfig<D>,
   ): Promise<AxiosResponse<T, D>> {
     return this.execute<T, D>({
-      method: 'DELETE',
+      method: "DELETE",
       url,
       ...config,
     });
@@ -86,7 +86,7 @@ abstract class ApiClient implements IApiClient {
     config?: AxiosRequestConfig<Partial<D>>,
   ): Promise<AxiosResponse<T, Partial<D>>> {
     return this.execute<T, Partial<D>>({
-      method: 'PATCH',
+      method: "PATCH",
       url,
       data,
       ...config,

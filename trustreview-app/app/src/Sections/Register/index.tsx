@@ -10,11 +10,12 @@ import {
   Button,
 } from "@mui/material";
 import AppTitle from "../../components/AppTitle";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import { userService } from "../../services";
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { createUserSchema } from "./schema";
+import { useAuth } from "../../hooks/useAuth";
+import { useEffect } from "react";
 
 interface CreateUserForm {
   name: string;
@@ -22,28 +23,9 @@ interface CreateUserForm {
   password: string;
 }
 
-export const createUserSchema = yup.object({
-  name: yup
-    .string()
-    .required("O nome é obrigatório")
-    .min(6, "O nome deve ter pelo menos 6 caracteres")
-    .max(150, "O nome deve ter no máximo 150 caracteres"),
-
-  email: yup
-    .string()
-    .required("O email é obrigatório")
-    .email("Email inválido")
-    .min(6, "O email deve ter pelo menos 6 caracteres")
-    .max(80, "O email deve ter no máximo 80 caracteres"),
-
-  password: yup
-    .string()
-    .required("A senha é obrigatória")
-    .min(8, "A senha deve ter pelo menos 8 caracteres")
-    .max(50, "A senha deve ter no máximo 50 caracteres"),
-});
-
 const RegisterSection = () => {
+  const { register, authorized } = useAuth();
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -58,15 +40,16 @@ const RegisterSection = () => {
     },
   });
 
-  const onSubmit = async (data: CreateUserForm) => {
-    try {
-      const user = await userService.createUser(data);
-      console.log("Usuário criado:", user);
-      reset(); // limpa os campos
-    } catch (error: any) {
-      console.error("Erro ao criar usuário:", error.response?.data || error);
-    }
+  const onSubmit = (data: CreateUserForm) => {
+    register(data.email, data.password);
   };
+
+  useEffect(() => {
+    if (authorized) {
+      navigate("/");
+      reset();
+    }
+  }, [authorized]);
 
   return (
     <Container maxWidth="sm">

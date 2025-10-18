@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Container,
@@ -11,16 +11,26 @@ import {
   Button,
 } from "@mui/material";
 import AppTitle from "../../components/AppTitle";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const LoginSection = () => {
+  const { login, authorized } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login with:", { email, password });
+    login(email, password);
   };
+
+  useEffect(() => {
+    if (authorized) {
+      navigate("/");
+    }
+  }, [authorized]);
 
   return (
     <Container maxWidth="sm">

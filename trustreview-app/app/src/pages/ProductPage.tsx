@@ -10,7 +10,9 @@ import type { IProduct } from "../interfaces/Product";
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<IProduct | null>(null);
+
   const [isReviewing, setIsReviewing] = useState(false);
+  const [reviewed, setReviewed] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -45,7 +47,7 @@ const ProductPage = () => {
 
   return (
     <Stack
-      spacing={4}
+      spacing={8}
       sx={{
         width: "100%",
         height: "100%",
@@ -59,9 +61,14 @@ const ProductPage = () => {
         isReviewing={isReviewing}
         onReview={() => setIsReviewing(true)}
       />
-      {!isReviewing && <ProductReviewSection reviews={product.reviews || []} />}
+      {!isReviewing && (
+        <ProductReviewSection id={id ? id : ""} reviewed={reviewed} />
+      )}
       {isReviewing && (
-        <CreateReviewSection onReview={() => setIsReviewing(false)} />
+        <CreateReviewSection
+          onReview={() => setIsReviewing(false)}
+          setReviewed={setReviewed}
+        />
       )}
     </Stack>
   );

@@ -38,11 +38,11 @@ const ProductCardGridList = ({
         paddingRight: 1,
         marginRight: -1,
         pl: 0.5,
-        maxHeight: "60vh",
+        maxHeight: { xs: "80vh", md: "60vh" },
       }}
     >
       {productList.map((product) => (
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }} key={product.id}>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }} key={product.id}>
           <Stack direction={"row"} justifyContent={"center"}>
             <ProductCard
               key={product.id}

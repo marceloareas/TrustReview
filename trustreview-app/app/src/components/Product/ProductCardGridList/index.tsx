@@ -1,6 +1,7 @@
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import { Box, Grid, IconButton, Stack, Typography } from "@mui/material";
 import type { IProduct } from "../../../interfaces/Product";
 import ProductCard from "../ProductCard";
+import { AddBox } from "@mui/icons-material";
 
 interface IProductCardListProps {
   productList: IProduct[];
@@ -18,10 +19,22 @@ const ProductCardGridList = ({
         height={"60vh"}
         alignItems={"center"}
         justifyContent={"center"}
+        spacing={4}
       >
-        <Box>
-          <Typography>Nenhum produto encontrado.</Typography>
-        </Box>
+        <Typography variant="h6">Nenhum produto encontrado.</Typography>
+        <Stack alignItems={"center"} justifyContent={"center"} spacing={1}>
+          <Box>
+            <IconButton
+              size="large"
+              aria-label="Add"
+              color="secondary"
+              sx={{ color: "secondary.main" }}
+            >
+              <AddBox sx={{ fontSize: 30 }} />
+            </IconButton>
+          </Box>
+          <Typography variant="h6">Crie um produto</Typography>
+        </Stack>
       </Stack>
     );
   }

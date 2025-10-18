@@ -1,6 +1,6 @@
 import MuiAppBar from "@mui/material/AppBar";
 import { Avatar, IconButton, Stack } from "@mui/material";
-import { ArrowBack, AddBox } from "@mui/icons-material";
+import { ArrowBack } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 export default function AppBar() {
@@ -43,9 +43,6 @@ export default function AppBar() {
           justifyContent={"flex-end"}
           spacing={2}
         >
-          <IconButton size="large" aria-label="Add" color="inherit">
-            <AddBox sx={{ fontSize: 30 }} />
-          </IconButton>
           <IconButton size="large" aria-label="Avatar" color="inherit">
             <Avatar />
           </IconButton>

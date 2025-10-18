@@ -21,7 +21,7 @@ const ProductCardGridList = ({
         justifyContent={"center"}
         spacing={4}
       >
-        <Typography variant="h6">Nenhum produto encontrado.</Typography>
+        <Typography variant="h6">Nenhum produto encontrado</Typography>
         <Stack alignItems={"center"} justifyContent={"center"} spacing={1}>
           <Box>
             <IconButton

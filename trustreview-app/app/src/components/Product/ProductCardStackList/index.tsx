@@ -20,7 +20,7 @@ const ProductCardStackList = ({
         justifyContent={"center"}
       >
         <Box>
-          <Typography>Nenhum produto encontrado.</Typography>
+          <Typography>Nenhum produto encontrado</Typography>
         </Box>
       </Stack>
     );

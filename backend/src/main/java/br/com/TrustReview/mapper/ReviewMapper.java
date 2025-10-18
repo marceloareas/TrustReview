@@ -117,7 +117,6 @@ public class ReviewMapper {
 
         UUID userId = (review.getUserId() != null) ? review.getUserId().getId() : null;
         UUID productId = (review.getProductId() != null) ? review.getProductId().getId() : null;
-
         response.setUserId(userId);
         response.setProductId(productId);
         response.setTitle(review.getTitle());

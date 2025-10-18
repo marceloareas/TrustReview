@@ -100,8 +100,22 @@ public class UserService {
                 case "name" -> user.setName((String) value);
                 case "email" ->user.setEmail((String) value);
                 case "password" -> {
+                    /**
+                     * Hash Info:
+                     * The characters that comprise the resultant hash are ./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$.
+                     *
+                     * Resultant hashes will be 60 characters long and they will include the salt among other parameters, as follows:
+                     *
+                     * $[algorithm]$[cost]$[salt][hash]
+                     *
+                     * 2 chars hash algorithm identifier prefix. "$2a$" or "$2b$" indicates BCrypt
+                     * Cost-factor (n). Represents the exponent used to determine how many iterations 2^n
+                     * 16-byte (128-bit) salt, base64 encoded to 22 characters
+                     * 24-byte (192-bit) hash, base64 encoded to 31 characters
+                     */
+
                     String EncryptedPassword = passwordEncoder.encode((String) value);
-                    //String EncryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+
                     user.setPassword(EncryptedPassword);
                 }
             }

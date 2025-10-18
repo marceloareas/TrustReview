@@ -66,10 +66,10 @@ public class ReviewResponseDTO {
     private Double rating;
 
     @Schema(description = "Quantidade de curtidas recebidas na avaliação.", example = "42")
-    private int likes;
+    private Integer likes;
 
     @Schema(description = "Quantidade de reações negativas (dislikes) recebidas.", example = "3")
-    private int dislikes;
+    private Integer dislikes;
 
     @Schema(description = "Data e hora em que a avaliação foi criada.", example = "2025-10-15T13:45:00.000Z")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")

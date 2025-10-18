@@ -2,6 +2,7 @@ package br.com.TrustReview.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -116,14 +117,14 @@ public class Review {
      */
     @Column(name = "likes", nullable = false, updatable = false)
     @Schema(description = "Quantidade de curtidas recebidas na avaliação.", example = "42")
-    private int likes;
+    private Integer likes;
 
     /**
      * Quantidade de reações negativas (dislikes) recebidas.
      */
     @Column(name = "dislikes", nullable = false, updatable = true)
     @Schema(description = "Quantidade de reações negativas (dislikes) recebidas.", example = "3")
-    private int dislikes;
+    private Integer dislikes;
 
     /**
      * Data e hora em que a avaliação foi criada.

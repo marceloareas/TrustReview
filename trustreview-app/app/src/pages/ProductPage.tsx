@@ -1,6 +1,4 @@
 import ProductDetailsSection from "../Sections/ProductDetails";
-import CreateReviewSection from "../Sections/CreateReview";
-import ProductReviewSection from "../Sections/ProductReview";
 import { Box, Stack } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -11,8 +9,6 @@ const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<IProduct | null>(null);
 
-  const [isReviewing, setIsReviewing] = useState(false);
-  const [reviewed, setReviewed] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -57,19 +53,10 @@ const ProductPage = () => {
       }}
     >
       <ProductDetailsSection
+        id={id ?? ''}
         product={product}
-        isReviewing={isReviewing}
-        onReview={() => setIsReviewing(true)}
       />
-      {!isReviewing && (
-        <ProductReviewSection id={id ? id : ""} reviewed={reviewed} />
-      )}
-      {isReviewing && (
-        <CreateReviewSection
-          onReview={() => setIsReviewing(false)}
-          setReviewed={setReviewed}
-        />
-      )}
+   
     </Stack>
   );
 };

@@ -3,7 +3,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  Container,
   Grid,
   Rating,
   Stack,
@@ -67,8 +66,7 @@ const ProductReviewSection = ({
   }, [reviewed, id]);
 
   return (
-    <Container maxWidth="xl">
-      <Stack spacing={4}>
+      <Stack spacing={4} justifyContent={'center'} width={'100%'}>
         <Typography variant="h4" fontWeight={100}>
           Avaliações
         </Typography>
@@ -168,7 +166,6 @@ const ProductReviewSection = ({
             ))}
         </Grid>
       </Stack>
-    </Container>
   );
 };
 

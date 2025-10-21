@@ -13,18 +13,20 @@ import { useEffect, useState } from "react";
 import { productService } from "../../services";
 import { useNavigate } from "react-router-dom";
 import ProductCardStackList from "../../components/Product/ProductCardStackList";
+import CreateReviewSection from "../CreateReview";
+import ProductReviewSection from "../ProductReview";
 
 const ProductDetailsSection = ({
+  id,
   product,
-  isReviewing,
-  onReview,
 }: {
+  id: string,
   product: Partial<IProduct>;
-  isReviewing: boolean;
-  onReview: () => void;
 }) => {
   const navigate = useNavigate();
   const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
+  const [reviewed, setReviewed] = useState(false);
+  const [isReviewing,setIsReviewing] = useState(false);
 
   useEffect(() => {
     const fetchRelatedProducts = async () => {
@@ -113,10 +115,19 @@ const ProductDetailsSection = ({
             justifyContent={"flex-end"}
             alignItems={"flex-end"}
           >
-            <Button variant="contained" size="large" onClick={onReview}>
+            <Button variant="contained" size="large" onClick={() => setIsReviewing(true)}>
               Fazer Review
             </Button>
           </Box>
+        )}
+        {!isReviewing && (
+          <ProductReviewSection id={id ? id : ""} reviewed={reviewed} />
+        )}
+        {isReviewing && (
+          <CreateReviewSection
+            onReview={() => setIsReviewing(false)}
+            setReviewed={setReviewed}
+          />
         )}
         <Stack spacing={2} sx={{ width: "100%" }}>
           <Typography variant="h4" fontWeight={100}>

@@ -157,8 +157,8 @@ const ProductReviewSection = ({
                     onClick={(opt) => handleClick(review.id as string, opt)}
                     isLike={likes[review.id as string]?.isLike || false}
                     isDislike={likes[review.id as string]?.isDislike || false}
-                    likesCount={review.likeCount}
-                    dislikesCount={review.dislikeCount}
+                    likesCount={review.likes}
+                    dislikesCount={review.dislikes}
                   />
                 </CardActions>
               </Card>

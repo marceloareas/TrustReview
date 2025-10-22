@@ -2,6 +2,7 @@ package br.com.TrustReview.controller;
 
 import br.com.TrustReview.dto.TagResponseDTO;
 import br.com.TrustReview.dto.UserRequestDTO;
+import br.com.TrustReview.dto.UserRequestLoginDTO;
 import br.com.TrustReview.dto.UserResponseDTO;
 import br.com.TrustReview.exception.ApiError;
 import br.com.TrustReview.service.UserService;
@@ -24,7 +25,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
-@Tag(name = "Tag Endpoint", description = "Endpoint para gerenciamento de Usuários (CRUD)")
+@Tag(name = "User Endpoint", description = "Endpoint para gerenciamento de Usuários (CRUD)")
 public class UserController {
 
     private final UserService userService;
@@ -127,6 +128,22 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> putUser(@PathVariable("userId") UUID userId,
                                                    @RequestBody @Valid UserRequestDTO request) {
         return ResponseEntity.ok(userService.putUserById(userId, request));
+    }
+
+    @Operation(summary = "Faz login do Usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário fez login com sucesso",
+                    content = @Content(schema = @Schema(implementation = TagResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Erro de validação",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "404", description = "User não encontrado",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                    content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDTO> login(@RequestBody UserRequestLoginDTO loginRequest) {
+        return ResponseEntity.ok(userService.loginUser(loginRequest));
     }
 
 }

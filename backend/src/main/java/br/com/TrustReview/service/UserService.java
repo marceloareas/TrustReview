@@ -1,7 +1,10 @@
 package br.com.TrustReview.service;
 
+import br.com.TrustReview.config.PasswordEncoderConfig;
 import br.com.TrustReview.dto.UserRequestDTO;
+import br.com.TrustReview.dto.UserRequestLoginDTO;
 import br.com.TrustReview.dto.UserResponseDTO;
+import br.com.TrustReview.exception.InvalidCredentials;
 import br.com.TrustReview.exception.UserEmailAlredyExits;
 import br.com.TrustReview.exception.UserNotFound;
 import br.com.TrustReview.mapper.UserMapper;
@@ -9,7 +12,7 @@ import br.com.TrustReview.model.User;
 import br.com.TrustReview.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
@@ -53,11 +57,11 @@ public class UserService {
 
         User user = userMapper.toUserCreate(userRequestDTO);
 
-        String EncryptedPassword = BCrypt.hashpw(userRequestDTO.getPassword(), BCrypt.gensalt());
+        String EncryptedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
+        //String EncryptedPassword = BCrypt.hashpw(userRequestDTO.getPassword(), BCrypt.gensalt());
         user.setPassword(EncryptedPassword);
 
         User persistedUser = userRepository.save(user);
-        persistedUser.setPassword("");
         log.info("User created: {}", user);
 
         return userMapper.toUserResponseDTO(persistedUser);
@@ -96,7 +100,22 @@ public class UserService {
                 case "name" -> user.setName((String) value);
                 case "email" ->user.setEmail((String) value);
                 case "password" -> {
-                    String EncryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+                    /**
+                     * Hash Info:
+                     * The characters that comprise the resultant hash are ./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$.
+                     *
+                     * Resultant hashes will be 60 characters long and they will include the salt among other parameters, as follows:
+                     *
+                     * $[algorithm]$[cost]$[salt][hash]
+                     *
+                     * 2 chars hash algorithm identifier prefix. "$2a$" or "$2b$" indicates BCrypt
+                     * Cost-factor (n). Represents the exponent used to determine how many iterations 2^n
+                     * 16-byte (128-bit) salt, base64 encoded to 22 characters
+                     * 24-byte (192-bit) hash, base64 encoded to 31 characters
+                     */
+
+                    String EncryptedPassword = passwordEncoder.encode((String) value);
+
                     user.setPassword(EncryptedPassword);
                 }
             }
@@ -126,7 +145,8 @@ public class UserService {
             throw new IllegalArgumentException("Password is null");
         }
 
-        String EncryptedPassword = BCrypt.hashpw(userRequestDTO.getPassword(), BCrypt.gensalt());
+        String EncryptedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
+        //String EncryptedPassword = BCrypt.hashpw(userRequestDTO.getPassword(), BCrypt.gensalt());
         user.setPassword(EncryptedPassword);
         user.setEmail(userRequestDTO.getEmail());
         user.setName(userRequestDTO.getName());
@@ -140,6 +160,20 @@ public class UserService {
     public void deleteUser(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFound("User with id " + id + " not found"));
+
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public UserResponseDTO loginUser(UserRequestLoginDTO userRequestLoginDTO) {
+        User user = userRepository.findByEmail(userRequestLoginDTO.getEmail())
+                .orElseThrow(() -> new UserNotFound("User with email " + userRequestLoginDTO.getEmail() + " not found"));
+
+
+        if (!passwordEncoder.matches(userRequestLoginDTO.getPassword(), user.getPassword())) {
+            throw new InvalidCredentials("Invalid credentials, senha inválida");
+        }
+
+        return userMapper.toUserResponseDTO(user);
     }
 }

@@ -32,7 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
-.env
+backend/.env
 
 .fake
 

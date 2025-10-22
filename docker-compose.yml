@@ -26,6 +26,10 @@ services:
       - ./backend/.env
     ports:
       - "8080:8080"
+    volumes:
+      # Mapeia a pasta interna do contêiner (/app/uploads) 
+      # para uma nova pasta chamada 'uploads_api' no seu projeto local (host).
+      - ./uploads:/app/uploads
 
   app:
     build: ./trustreview-app/app

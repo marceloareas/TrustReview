@@ -7,7 +7,7 @@ interface AuthContextProps {
   user: IUser | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  register: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   authorized?: boolean;
 }
 
@@ -26,13 +26,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setAuthorized(!!data);
   };
 
-  const register = useCallback(async (email: string, password: string) => {
+  const register = useCallback(async (name: string, email: string, password: string) => {
     const response = await userService.createUser({
+      name,
       email,
       password,
     } as UserDTO);
-    const { id, name, email: userEmail, userType } = response;
-    persistUser({ id, name, email: userEmail, userType });
+    const { id, name: userName, email: userEmail, userType } = response;
+    persistUser({ id, name: userName, email: userEmail, userType });
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {

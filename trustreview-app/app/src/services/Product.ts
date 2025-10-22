@@ -34,17 +34,35 @@ export default class ProductService {
   }
 
   async createProduct(product: Partial<IProduct>): Promise<IProduct> {
-    //Por enquanto o back não tem imagem, colocar depois
-    //A tela de criar produto também cria review, temos que ver como vai ficar
-    console.log(product);
+    console.log("Creating product (multipart):", product);
 
-    /*if (product.tags && product.tags.length > 0) {
-    product.tags.forEach((tag, index) => {
-      formData.append(`tags[${index}]`, tag.name ?? tag);
-    });
-  }*/
-    const response = await this.api.post("/products", product, {
-      headers: { "Content-Type": "application/json" },
+    const formData = new FormData();
+
+    const jsonBlob = new Blob([
+      JSON.stringify({
+        name: product.name,
+        description: product.description,
+        reviewRating: (product as any).reviewRating,
+        comment: (product as any).comment,
+        pros: (product as any).pros,      
+        cons: (product as any).cons,
+        tags: product.tags?.map((t) => {
+          if (typeof t === "string") {
+            return { name: t };
+          }
+          return { id: (t as any).id, name: (t as any).name };
+        }),
+      }),
+    ], { type: "application/json" });
+
+    formData.append("data", jsonBlob);
+
+    if ((product as any).image instanceof File) {
+      formData.append("image", (product as any).image);
+    }
+
+    const response = await this.api.post("/products", formData, {
+      headers: { "Content-Type": undefined as any },
     });
 
     return response.data as IProduct;

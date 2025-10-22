@@ -41,7 +41,7 @@ const RegisterSection = () => {
   });
 
   const onSubmit = (data: CreateUserForm) => {
-    register(data.email, data.password);
+    register(data.email, data.password, data.name);
   };
 
   useEffect(() => {

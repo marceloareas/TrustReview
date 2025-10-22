@@ -4,19 +4,20 @@ import ProductInputImage from "../../components/Product/ProductInputImage";
 import { productService, tagService } from "../../services";
 import { useForm, Controller } from "react-hook-form";
 import type { ITag } from "../../interfaces/Product";
-import TagsList from "../../components/TagList";
+import TagsList from "../../components/Tag/TagList";
 
 interface CreateProductReviewForm {
   name: string;
   description: string;
   image?: File | null;
   reviewRating: number;
+  tags: ITag[];
   comment: string;
   pros: string;
   cons: string;
 }
 
-const CreateProduct = () => {
+const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void }) => {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
   const [tags, setTags] = useState<ITag[]>([]);
 
@@ -43,6 +44,7 @@ const CreateProduct = () => {
       name: "",
       description: "",
       reviewRating: 0,
+      tags: [],
       comment: "",
       pros: "",
       cons: "",
@@ -53,24 +55,15 @@ const CreateProduct = () => {
     try {
       const newProduct = {
         name: data.name,
+        tags: data.tags && data.tags.length ? data.tags : tags,
         description: data.description,
       };
 
       const response = await productService.createProduct(newProduct);
-      console.log("Produto criado:", response);
-
-      const newReview = {
-        reviewRating: data.reviewRating,
-        comment: data.comment,
-        pros: data.pros,
-        cons: data.cons,
-        productId: response.id,
-      };
-
-      console.log("Review", newReview);
-
       reset();
-      setPreviewUrl(undefined);
+      if (onCreated && response?.id) {
+        onCreated(response.id);
+      }
     } catch (error) {
       console.error("Erro ao criar produto:", error);
     }
@@ -78,7 +71,7 @@ const CreateProduct = () => {
 
   return (
     <Container maxWidth="xl">
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form id="create-product-form" onSubmit={handleSubmit(onSubmit)}>
         <Stack
           flex={1}
           justifyContent={"center"}

@@ -51,9 +51,7 @@ const ProductCardGridList = ({
         width: "100%",
         overflowY: "auto",
         overflowX: "hidden",
-        paddingRight: 1,
-        marginRight: -1,
-        pl: 0.5,
+        px: 1,
         maxHeight: { xs: "80vh", md: "60vh" },
       }}
     >

@@ -50,7 +50,7 @@ export default function DialogTag({
                         }}
                     >
                         <Box>
-                            <TagButton />
+                            <TagButton isEditMode={true} />
                         </Box>
 
                         {tags.map((t) => (

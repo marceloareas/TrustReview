@@ -36,12 +36,12 @@ export interface IReview {
   userId: string;
   productId: string;
   userName: string;
-  pros: string;
-  con: string;
+  pros: string[];
+  con: string[];
   rating: number;
   description?: string;
-  likeCount?: number;
-  dislikeCount?: number;
+  likes?: number;
+  dislikes?: number;
   createdAt?: string;
   updatedAt?: string;
 }

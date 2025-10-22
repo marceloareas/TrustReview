@@ -9,7 +9,7 @@ import ProductInputImage from "../../components/Product/ProductInputImage";
 import { productService, tagService } from "../../services";
 import { useForm, Controller } from "react-hook-form";
 import type { ITag } from "../../interfaces/Product";
-import TagsList from "../../components/TagList";
+import TagsList from "../../components/Tag/TagList";
 
 interface CreateProductReviewForm {
   name: string;

@@ -4,12 +4,16 @@ import AddIcon from "@mui/icons-material/Add";
 interface TagButtonProps {
   onClick?: () => void;
   onModalClick?: () => void;
+  isEditMode?: boolean;
 }
 
-const TagButton = ({ onClick,onModalClick }: TagButtonProps) => {
+const TagButton = ({ onClick,onModalClick,isEditMode }: TagButtonProps) => {
+  if (!isEditMode) {
+    return null;
+  }
+
   return (
     <>
-
       <Box
         onClick={(e) => { e.stopPropagation(); onClick?.(); onModalClick?.(); }}
         sx={{

@@ -10,7 +10,7 @@ const CreateProductPage = () => {
         width: "100%",
         bgcolor: "background.default",
         justifyContent: "center",
-        alignItems: "flex-start",
+        alignItems: "center",
         
       }}
     >

@@ -18,8 +18,8 @@ const ProductCard = ({
   return (
     <Card
       sx={{
-        width: "240px",
-        height: "240px",
+        width: "236px",
+        height: "236px",
         borderRadius: 4,
         backgroundColor: "#fff",
         cursor: "pointer",

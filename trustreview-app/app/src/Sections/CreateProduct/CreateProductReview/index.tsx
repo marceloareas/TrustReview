@@ -79,12 +79,12 @@ const CreateProductReview = ({
 
                 <Stack spacing={1} sx={{ width: "100%" }}>
                     <Typography>Pros</Typography>
-                    <TextField multiline minRows={3} value={pros} onChange={(e) => setPros(e.target.value)} placeholder="Um por linha" />
+                    <TextField multiline minRows={3} value={pros} onChange={(e) => setPros(e.target.value)}  />
                 </Stack>
 
                 <Stack spacing={1} sx={{ width: "100%" }}>
                     <Typography>Cons</Typography>
-                    <TextField multiline minRows={3} value={cons} onChange={(e) => setCons(e.target.value)} placeholder="Um por linha" />
+                    <TextField multiline minRows={3} value={cons} onChange={(e) => setCons(e.target.value)}  />
                 </Stack>
             </Stack>
 

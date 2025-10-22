@@ -46,6 +46,7 @@ const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void 
     formState: { },
   } = useForm<CreateProductReviewForm>({
     defaultValues: {
+      image: null,
       name: "",
       description: "",
       reviewRating: 0,

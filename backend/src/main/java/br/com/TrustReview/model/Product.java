@@ -73,6 +73,9 @@ public class Product {
     @Column(name = "overall_rating", nullable = true, updatable = true)
     private Double overallRating;
 
+    @Column(name = "image_url", length = 500, nullable = true, updatable = true)
+    private String imageUrl;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")
     private Timestamp createdAt;

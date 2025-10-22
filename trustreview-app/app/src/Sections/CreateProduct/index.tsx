@@ -1,9 +1,4 @@
-import {
-  Container,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Container, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ProductInputImage from "../../components/Product/ProductInputImage";
 import { productService, tagService } from "../../services";
@@ -43,7 +38,7 @@ const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void 
     control,
     handleSubmit,
     reset,
-    formState: { },
+    formState: {},
   } = useForm<CreateProductReviewForm>({
     defaultValues: {
       image: null,

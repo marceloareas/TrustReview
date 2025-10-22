@@ -77,10 +77,15 @@ public class ReviewService {
             log.error("Usuário {} já possui avaliação para o produto {}", user.getId(), product.getId());
             throw new IllegalArgumentException("Usuário já avaliou este produto.");
         }
+        if (request.getRating() ==  null){
+            log.error("Rating vazia para o produto {} - {}",product.getName(),product.getId());
+            throw new IllegalArgumentException("A avaliação deve conter um valor de rating (não pode ser nulo).");
+        }
 
         Review review = reviewMapper.toReview(request);
         review.setUserId(user);
         review.setProductId(product);
+        review.setRating(request.getRating());
         review.setLikes(0);
         review.setDislikes(0);
         review.setCreatedAt(new Timestamp(System.currentTimeMillis()));

@@ -19,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,6 +55,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ProductService {
 
+    private final ImageStorageService imageStorageService;
+
     private final ProductRepository productRepository;
     private final TagRepository tagRepository;
     private final ProductMapper productMapper;
@@ -68,7 +72,7 @@ public class ProductService {
      * @throws ProductNameAlreadyExists se já existir produto com o mesmo nome
      */
     @Transactional
-    public ProductResponseDTO create(ProductRequestDTO request) {
+    public ProductResponseDTO create(ProductRequestDTO request, MultipartFile imageFile) {
         log.info("Criando um novo produto para name: {}", request.getName());
 
         if (request.getName() == null || request.getName().isBlank()) {
@@ -86,6 +90,15 @@ public class ProductService {
         Product product = productMapper.toProduct(request);
         product.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         product.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        // Salva imagem se existir
+        if (imageFile != null && !imageFile.isEmpty()) {
+            log.info("Salvando imagem para o produto: {}", request.getName());
+            String imageUrl = imageStorageService.saveImage(imageFile);
+            product.setImageUrl(imageUrl);
+        } else {
+            log.info("Nenhuma imagem fornecida para o produto: {}", request.getName());
+        }
 
         if (request.getTags() != null && !request.getTags().isEmpty()) {
             Set<Tag> managedTags = validateTags(

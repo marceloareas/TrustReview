@@ -17,12 +17,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,8 +72,11 @@ public class ProductController {
             content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     @PostMapping
-    public ResponseEntity<ProductResponseDTO> create(@RequestBody @Valid ProductRequestDTO request) {
-        ProductResponseDTO response = service.create(request);
+    public ResponseEntity<ProductResponseDTO> create(
+        @RequestPart("data") @Valid ProductRequestDTO request,
+        @RequestPart(value = "image", required = false) MultipartFile image
+        ) {
+        ProductResponseDTO response = service.create(request, image);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

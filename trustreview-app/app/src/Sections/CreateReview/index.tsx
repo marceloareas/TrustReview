@@ -18,7 +18,7 @@ const CreateReviewSection = ({
   setReviewed,
 }: {
   onReview: () => void;
-  setReviewed: (value: boolean) => void;
+  setReviewed?: (value: boolean) => void;
 }) => {
   const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
@@ -53,7 +53,7 @@ const CreateReviewSection = ({
 
     try {
       await reviewService.postReview(payload);
-      setReviewed(true);
+      if (setReviewed) setReviewed(true);
     } catch (error) {
       console.error("Error saving review:", error);
     } finally {

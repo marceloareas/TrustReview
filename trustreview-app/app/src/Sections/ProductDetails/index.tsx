@@ -8,13 +8,13 @@ import {
 } from "@mui/material";
 import type { IProduct } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
-import TagsList from "../../components/TagList";
 import { useEffect, useState } from "react";
 import { productService } from "../../services";
 import { useNavigate } from "react-router-dom";
 import ProductCardStackList from "../../components/Product/ProductCardStackList";
 import CreateReviewSection from "../CreateReview";
 import ProductReviewSection from "../ProductReview";
+import TagsList from "../../components/TagList";
 
 const ProductDetailsSection = ({
   id,
@@ -86,10 +86,10 @@ const ProductDetailsSection = ({
                 ({product?.reviewsCount} reviews)
               </Typography>
             </Stack>
-            <Typography variant="h6" fontWeight={100}>
+            <Typography variant="body1" fontWeight={600}>
               Tags
             </Typography>
-            <TagsList tags={product?.tags || []} />
+            <TagsList tags={product?.tags || []} isEdit/>
           </Stack>
         </Stack>
         <Stack spacing={2} sx={{ width: "100%" }}>

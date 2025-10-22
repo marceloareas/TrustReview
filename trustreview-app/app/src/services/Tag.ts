@@ -12,4 +12,9 @@ export default class TagService {
     const response = await this.api.get("/tags");
     return response.data as ITag[];
   }
+
+  async createTag(name: string): Promise<ITag> {
+    const response = await this.api.post("/tags", { name });
+    return response.data as ITag;
+  }
 }

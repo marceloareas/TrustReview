@@ -22,9 +22,10 @@ export const defaultTheme = createTheme({
       discard: "rgba(179, 44, 44, 0.79)",
     } as Partial<TypeBackground>,
     text: {
-      primary: "#E6E0E9",
+      primary: "#1D1B20",
       secondary: "#49454F",
       tertiary: "#85858fff",
+      light: "#FFFFFF",
     } as Partial<TypeText>,
     action: {
       selected: "#6750A4",
@@ -122,6 +123,9 @@ export const defaultTheme = createTheme({
           "& .MuiOutlinedInput-root": {
             backgroundColor: "#FFFFFF",
             borderRadius: "10px",
+            '& input::placeholder': {
+              color: '#1D1B20',
+            },
             "& fieldset": {
               borderColor: "#D5D5D5",
             },
@@ -178,6 +182,8 @@ export const defaultTheme = createTheme({
         root: {
           color: "#fff",
           fontWeight: 600,
+          borderRadius: "8px",
+          backgroundColor: "#1D1B20",
         },
       },
     },

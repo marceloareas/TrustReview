@@ -1,8 +1,47 @@
 import { Stack } from "@mui/material";
 import CreateProduct from "../Sections/CreateProduct";
-import CreateReviewSection from "../Sections/CreateReview";
+import { useState } from "react";
+import CreateProductReview from "../Sections/CreateProduct/CreateProductReview";
+import { useAuth } from "../hooks/useAuth";
+import { reviewService } from "../services";
 
 const CreateProductPage = () => {
+  const { user } = useAuth();
+  const [productId, setProductId] = useState<string | undefined>();
+  const [pendingReview, setPendingReview] = useState<{
+    title: string;
+    description: string;
+    pros: string[];
+    con: string[];
+    rating: number;
+  } | null>(null);
+
+  const handleReviewPublish = async (data: { title: string; description: string; pros: string[]; con: string[]; rating: number }) => {
+    if (!productId) {
+      setPendingReview(data);
+      return;
+    }
+
+    const payload = {
+      userId: user?.id || "",
+      productId: productId,
+      title: data.title,
+      description: data.description,
+      likes: 0,
+      dislikes: 0,
+      pros: data.pros,
+      con: data.con,
+      rating: data.rating,
+    };
+
+    try {
+      await reviewService.postReview(payload);
+      console.log("Review publicada");
+    } catch (error) {
+      console.error("Error saving review:", error);
+    }
+  };
+
   return (
     <Stack
       spacing={4}
@@ -10,12 +49,31 @@ const CreateProductPage = () => {
         width: "100%",
         bgcolor: "background.default",
         justifyContent: "center",
-        alignItems: "flex-start",
-        
+        alignItems: "center",
       }}
     >
-      <CreateProduct />
-      <CreateReviewSection onReview={() => { }} />
+      <CreateProduct onCreated={async (id) => {
+        setProductId(id);
+        if (pendingReview) {
+          try {
+            await reviewService.postReview({
+              userId: user?.id || "",
+              productId: id,
+              title: pendingReview.title,
+              description: pendingReview.description,
+              likes: 0,
+              dislikes: 0,
+              pros: pendingReview.pros,
+              con: pendingReview.con,
+              rating: pendingReview.rating,
+            });
+            setPendingReview(null);
+          } catch (error) {
+            console.error("Error publishing pending review:", error);
+          }
+        }
+      }} />
+      <CreateProductReview onReview={handleReviewPublish} onCancel={() => setProductId(undefined)} />
     </Stack>
   );
 };

@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import ProductCardStackList from "../../components/Product/ProductCardStackList";
 import CreateReviewSection from "../CreateReview";
 import ProductReviewSection from "../ProductReview";
-import TagsList from "../../components/TagList";
+import TagsList from "../../components/Tag/TagList";
 
 const ProductDetailsSection = ({
   id,
@@ -89,7 +89,7 @@ const ProductDetailsSection = ({
             <Typography variant="body1" fontWeight={600}>
               Tags
             </Typography>
-            <TagsList tags={product?.tags || []} isEdit/>
+            <TagsList tags={product?.tags || []} />
           </Stack>
         </Stack>
         <Stack spacing={2} sx={{ width: "100%" }}>

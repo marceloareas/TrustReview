@@ -17,7 +17,7 @@ const SearchedProducts = () => {
   const { searchTerm, setSearchTerm, filteredItems } = useSearch(
     products,
     ["name"],
-    initialSearch
+    initialSearch,
   );
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,5 +1,5 @@
 import { Card, CardMedia } from "@mui/material";
-import CardImage from "../../../assets/card-image.svg";
+import CardImage from "../../../assets/images/card-image.svg";
 
 const ProductImage = ({
   name,

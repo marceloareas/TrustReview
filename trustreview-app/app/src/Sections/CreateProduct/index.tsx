@@ -1,19 +1,15 @@
 import {
-  Box,
-  Button,
   Container,
-  Rating,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import Review from "../../assets/icons/Review.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductInputImage from "../../components/Product/ProductInputImage";
-import TagsList from "../../components/TagList";
-import { productService } from "../../services";
+import { productService, tagService } from "../../services";
 import { useForm, Controller } from "react-hook-form";
-import type { IProduct } from "../../interfaces/Product";
+import type { ITag } from "../../interfaces/Product";
+import TagsList from "../../components/TagList";
 
 interface CreateProductReviewForm {
   name: string;
@@ -25,14 +21,28 @@ interface CreateProductReviewForm {
   cons: string;
 }
 
-const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
+const CreateProduct = () => {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
+  const [tags, setTags] = useState<ITag[]>([]);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const tags = await tagService.getTags();
+        setTags(tags);
+      } catch (error) {
+        console.error("Erro ao buscar tags:", error);
+      }
+    };
+
+    fetchTags();
+  }, []);
 
   const {
     control,
     handleSubmit,
     reset,
-    formState: { isSubmitting },
+    formState: { },
   } = useForm<CreateProductReviewForm>({
     defaultValues: {
       name: "",
@@ -64,40 +74,22 @@ const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
 
       console.log("Review", newReview);
 
-      //const createdReview = await productService.createReview(newReview);
-      //console.log("✅ Review criada:", createdReview);
-
       reset();
       setPreviewUrl(undefined);
     } catch (error) {
       console.error("Erro ao criar produto:", error);
     }
   };
-  /*
-    // Enviar Review
-  const onSubmitReview = async (data: CreateReviewForm) => {
-    if (!productId) return; // segurança
-    try {
-      const newReview = { ...data, productId };
-      const response = await reviewService.createReview(newReview);
-      console.log("Review criada:", response);
-      resetReview();
-    } catch (error) {
-      console.error("Erro ao criar review:", error);
-    }
-  };*/
 
   return (
     <Container maxWidth="xl">
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack
           flex={1}
-          spacing={3}
           justifyContent={"center"}
           alignItems={"flex-start"}
-          pb={4}
+          spacing={4}
         >
-          {/* Nome e imagem */}
           <Stack
             direction={{ xs: "column", md: "row" }}
             spacing={4}
@@ -118,7 +110,6 @@ const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
             />
 
             <Stack spacing={2}>
-              <Typography>Product Name</Typography>
               <Controller
                 name="name"
                 control={control}
@@ -126,20 +117,21 @@ const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
                 render={({ field, fieldState }) => (
                   <TextField
                     {...field}
+                    placeholder="Nome"
+                    variant="standard"
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
                   />
                 )}
               />
 
-              <Typography variant="h6" fontWeight={100}>
+              <Typography variant="body1" fontWeight={600}>
                 Tags
               </Typography>
-              <TagsList tags={product?.tags || []} />
+              <TagsList tags={tags || []} isEdit={true} />
             </Stack>
           </Stack>
 
-          {/* Descrição */}
           <Stack spacing={1} sx={{ width: "100%" }}>
             <Typography>Description</Typography>
             <Controller
@@ -149,106 +141,6 @@ const CreateProduct = ({ product = {} }: { product?: Partial<IProduct> }) => {
                 <TextField multiline minRows={5} {...field} />
               )}
             />
-          </Stack>
-
-          {/* Review e rating */}
-          <Stack direction={"row"} alignItems={"center"} spacing={1}>
-            <Typography>Review</Typography>
-            <Box component={"img"} src={Review} alt="Review" />
-          </Stack>
-
-          <Stack direction={"row"} alignItems={"center"} spacing={1}>
-            <Controller
-              name="reviewRating"
-              control={control}
-              render={({ field }) => (
-                <Rating
-                  name="Product rating"
-                  precision={0.5}
-                  value={field.value}
-                  size="large"
-                  onChange={(_, newValue) => field.onChange(newValue)}
-                />
-              )}
-            />
-            <Typography variant="body2">
-              <Controller
-                name="reviewRating"
-                control={control}
-                render={({ field }) => <>{field.value || ""}</>}
-              />
-            </Typography>
-          </Stack>
-
-          {/* Comment */}
-          <Stack spacing={1} sx={{ width: "100%" }}>
-            <Typography>Comment</Typography>
-            <Controller
-              name="comment"
-              control={control}
-              render={({ field }) => (
-                <TextField multiline minRows={5} {...field} />
-              )}
-            />
-          </Stack>
-
-          {/* Pros */}
-          <Stack spacing={1} sx={{ width: "100%" }}>
-            <Typography>Pros</Typography>
-            <Controller
-              name="pros"
-              control={control}
-              render={({ field }) => (
-                <TextField multiline minRows={5} {...field} />
-              )}
-            />
-          </Stack>
-
-          {/* Cons */}
-          <Stack spacing={1} sx={{ width: "100%" }}>
-            <Typography>Cons</Typography>
-            <Controller
-              name="cons"
-              control={control}
-              render={({ field }) => (
-                <TextField multiline minRows={5} {...field} />
-              )}
-            />
-          </Stack>
-
-          {/* Botões */}
-          <Stack
-            direction={"row"}
-            spacing={4}
-            justifyContent={"flex-end"}
-            alignItems={"flex-end"}
-            sx={{ width: "100%" }}
-          >
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                backgroundColor: "background.discard",
-                "&:hover": {
-                  backgroundColor: "#e74545d2",
-                },
-              }}
-              onClick={() => {
-                reset();
-                setPreviewUrl(undefined);
-              }}
-            >
-              Descartar Produto e Review
-            </Button>
-
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              disabled={isSubmitting}
-            >
-              Publicar Produto e Review
-            </Button>
           </Stack>
         </Stack>
       </form>

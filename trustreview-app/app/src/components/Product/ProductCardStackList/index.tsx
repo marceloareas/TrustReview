@@ -15,12 +15,12 @@ const ProductCardStackList = ({
     return (
       <Stack
         width={"100%"}
-        height={"60vh"}
+        height={"30vh"}
         alignItems={"center"}
         justifyContent={"center"}
       >
         <Box>
-          <Typography>Nenhum produto encontrado.</Typography>
+          <Typography>Nenhum produto encontrado</Typography>
         </Box>
       </Stack>
     );

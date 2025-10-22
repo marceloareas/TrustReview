@@ -17,22 +17,31 @@ export interface ITag {
   description?: string;
 }
 
+export interface ReviewDTO {
+  title: string;
+  userId: string;
+  productId: string;
+  userName?: string;
+  description?: string;
+  likes?: number;
+  dislikes?: number;
+  pros?: string[];
+  con?: string[];
+  rating: number;
+}
+
 export interface IReview {
   id?: string;
+  title?: string;
   userId: string;
   productId: string;
   userName: string;
   pros: string;
-  cons: string;
+  con: string;
   rating: number;
-  comment?: string;
+  description?: string;
   likeCount?: number;
   dislikeCount?: number;
   createdAt?: string;
   updatedAt?: string;
-}
-
-//Apenas temporário
-export interface IUser {
-  email: string;
 }

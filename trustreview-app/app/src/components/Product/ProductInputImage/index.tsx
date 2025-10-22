@@ -1,6 +1,6 @@
-import { Box, Button } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import type { ChangeEvent } from "react";
-import CardImage from "../../../assets/card-image.svg";
+import PhotoIcon from "../../../assets/icons/photoIcon.svg";
 
 interface ProductInputImageProps {
   imageUrl?: string;
@@ -14,30 +14,49 @@ const ProductImageInput = ({ imageUrl, onChange }: ProductInputImageProps) => {
   };
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center">
+    <Stack
+      component="label"
+      htmlFor="product-image-input"
+      alignItems="center"
+      justifyContent="center"
+      sx={{
+        width: 200,
+        height: 200,
+        borderRadius: "8px",
+        boxShadow: 3,
+        cursor: "pointer",
+        mb: 2,
+        overflow: "hidden",
+        "&:hover": { transform: "scale(1.01)" },
+      }}>
       <Box
-        component="img"
-        src={imageUrl || CardImage}
-        alt="Preview"
         sx={{
-          width: 200,
-          height: 200,
-          borderRadius: "8px",
-          objectFit: "cover",
-          border: "1px solid #ccc",
-          mb: 2,
-        }}
-      />
-      <Button variant="contained" component="label">
-        Escolher Imagem
+          width: imageUrl ? "100%" : "80px",
+          height: imageUrl ? "100%" : "80px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+        <Box
+          component="img"
+          src={imageUrl || PhotoIcon}
+          alt="Preview"
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            display: "block",
+          }}
+        />
         <input
+          id="product-image-input"
           type="file"
           hidden
           accept="image/*"
           onChange={handleImageChange}
         />
-      </Button>
-    </Box>
+      </Box>
+    </Stack>
   );
 };
 

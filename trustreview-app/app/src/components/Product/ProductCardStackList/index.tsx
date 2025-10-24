@@ -1,3 +1,29 @@
+/**
+ * ProductCardStackList
+ *
+ * Propósito:
+ *  Exibe uma lista horizontal de cartões de produtos com rolagem lateral.
+ *  É ideal para seções como “Produtos recomendados” ou “Mais visualizados”.
+ *
+ * Uso:
+ *  <ProductCardStackList
+ *    productList={products}
+ *    onClick={(id) => console.log("Produto clicado:", id)}
+ *  />
+ *
+ * Entradas:
+ *  - productList: array de produtos do tipo IProduct, contendo os dados a exibir.
+ *  - onClick: função chamada ao clicar em um card; recebe o ID do produto clicado.
+ *
+ * Comportamento:
+ *  - Quando a lista está vazia, exibe uma mensagem centralizada (“Nenhum produto encontrado”).
+ *  - Quando há produtos, renderiza os cards lado a lado, permitindo rolagem horizontal.
+ *  - Cada card é clicável e dispara a função `onClick` passando o ID do produto.
+ * Notas:
+ *  - Depende de @mui/material e do componente interno `ProductCard`.
+ *  - Suporta rolagem horizontal automática em listas longas.
+ *  - A11y: considerar adicionar botões de navegação (“anterior/próximo”) para acessibilidade melhorada.
+ */
 import { Box, Stack, Typography } from "@mui/material";
 import type { IProduct } from "../../../interfaces/Product";
 import ProductCard from "../ProductCard";

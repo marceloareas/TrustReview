@@ -1,3 +1,47 @@
+/**
+ * ProductCardGridList
+ *
+ * Propósito:
+ *  Exibir uma grade (grid) de cartões de produtos (`ProductCard`) com comportamento responsivo.
+ *  Caso não existam produtos, mostra uma mensagem informativa e um botão para criar um novo produto.
+ *
+ * Uso:
+ *  <ProductCardGridList
+ *    productList={listaDeProdutos}
+ *    onClick={(id) => console.log("Produto clicado:", id)}
+ *  />
+ *
+ * Entradas (props):
+ *  - productList: IProduct[] — lista de produtos a serem exibidos.
+ *  - onClick: (id: string) => void — função chamada ao clicar em um cartão de produto.
+ *
+ * Comportamento:
+ *  - Se `productList` estiver vazia:
+ *      • Exibe a mensagem “Nenhum produto encontrado”.
+ *      • Mostra um botão (`AddBox`) que, ao ser clicado, redireciona para a rota `/createProduct`
+ *        usando `useNavigate()` do `react-router-dom`.
+ *  - Caso existam produtos:
+ *      • Renderiza uma grade (`Grid`) de cartões (`ProductCard`), responsiva conforme o tamanho da tela.
+ *      • Cada `ProductCard` recebe os dados do produto e o evento `onClick`.
+ *      • O layout usa `Stack` para centralizar os cartões horizontalmente.
+ *
+ * Layout:
+ *  - Usa `Grid` do Material UI com espaçamento (`spacing={2}`) e altura máxima ajustável.
+ *  - Scroll vertical habilitado (`overflowY: "auto"`) para listas longas.
+ *  - Cada célula da grade adapta-se responsivamente com tamanhos: xs=12, sm=6, md=4, lg=3, xl=2.
+ *
+ * Observações:
+ *  - Utiliza `ProductCard` como componente filho para exibir cada produto.
+ *  - A função `onClick` deve lidar com o id do produto (ex.: abrir detalhes ou editar).
+ *  - A11y: o botão de adicionar possui `aria-label="Add"`.
+ *
+ * Dependências:
+ *  - @mui/material: Box, Grid, IconButton, Stack, Typography.
+ *  - @mui/icons-material: AddBox.
+ *  - react-router-dom: useNavigate.
+ *  - ../ProductCard: componente de cartão individual.
+ *  - interfaces/Product: tipagem `IProduct`.
+ */
 import { Box, Grid, IconButton, Stack, Typography } from "@mui/material";
 import type { IProduct } from "../../../interfaces/Product";
 import ProductCard from "../ProductCard";
@@ -13,7 +57,7 @@ const ProductCardGridList = ({
   productList,
   onClick,
 }: IProductCardListProps) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   if (productList.length === 0) {
     return (
       <Stack

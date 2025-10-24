@@ -1,3 +1,20 @@
+/**
+ * Product / Tag / Review interfaces
+ *
+ * Propósito:
+ *  Definir os tipos relacionados a produtos, tags e reviews usados pela aplicação
+ *  e pelos serviços que comunicam com a API.
+ *
+ * Uso:
+ *  - `IProduct`: representa um produto (campos principais: id, name, description, tags, ratings, imageUrl).
+ *  - `ITag`: representa uma tag associada a um produto.
+ *  - `ReviewDTO`: payload usado para criar uma review.
+ *  - `IReview`: representação de uma review retornada pela API.
+ *
+ * Observação:
+ *  - Vários campos são opcionais (`id`, timestamps, listas) e dependem do comportamento do backend.
+ */
+
 export interface IProduct {
   id?: string;
   name: string;
@@ -36,12 +53,12 @@ export interface IReview {
   userId: string;
   productId: string;
   userName: string;
-  pros: string;
-  con: string;
+  pros: string[];
+  con: string[];
   rating: number;
   description?: string;
-  likeCount?: number;
-  dislikeCount?: number;
+  likes?: number;
+  dislikes?: number;
   createdAt?: string;
   updatedAt?: string;
 }

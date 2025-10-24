@@ -16,12 +16,15 @@ import { useParams } from "react-router-dom";
 const CreateReviewSection = ({
   onReview,
   setReviewed,
+  productId,
 }: {
   onReview: () => void;
-  setReviewed: (value: boolean) => void;
+  setReviewed?: (value: boolean) => void;
+  productId?: string;
 }) => {
   const { user } = useAuth();
-  const { id } = useParams<{ id: string }>();
+  const { id: routeId } = useParams<{ id: string }>();
+  const id = productId || routeId;
   const [rating, setRating] = useState<number | null>(0);
   const [title, setTitle] = useState<string>("");
   const [comment, setComment] = useState<string>("");
@@ -29,6 +32,15 @@ const CreateReviewSection = ({
   const [cons, setCons] = useState<string>("");
 
   const handleSave = async () => {
+    // basic validation
+    if (!id) {
+      console.error("Cannot post review: productId missing");
+      return;
+    }
+    if (!title.trim() || !comment.trim()) {
+      console.error("Title and comment are required");
+      return;
+    }
     const payload = {
       userId: user?.id || "",
       productId: id || "",
@@ -53,7 +65,7 @@ const CreateReviewSection = ({
 
     try {
       await reviewService.postReview(payload);
-      setReviewed(true);
+      if (setReviewed) setReviewed(true);
     } catch (error) {
       console.error("Error saving review:", error);
     } finally {
@@ -142,7 +154,7 @@ const CreateReviewSection = ({
             Descartar Review
           </Button>
 
-          <Button variant="contained" size="large" onClick={handleSave}>
+          <Button variant="contained" size="large" onClick={handleSave} disabled={!id}>
             Publicar Review
           </Button>
         </Stack>

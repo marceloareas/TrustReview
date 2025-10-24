@@ -1,3 +1,29 @@
+/**
+ * defaultTheme
+ *
+ * Propósito:
+ *  Fornecer a configuração de tema (palette, typography, components overrides)
+ *  usada pela aplicação com base no MUI `createTheme`.
+ *
+ * Uso:
+ *  - Importar `defaultTheme` e passar para o `ThemeProvider` do MUI:
+ *      <ThemeProvider theme={defaultTheme}>...</ThemeProvider>
+ *
+ * Entradas:
+ *  - Este arquivo usa `createTheme` para construir um objeto de tema a partir
+ *    de valores estáticos (cores, tipografia e overrides de componentes).
+ *
+ * Saída:
+ *  - `defaultTheme`: objeto de tema compatível com MUI (Theme).
+ *
+ * Comportamento:
+ *  - Define `palette` com modo `dark`, cores primárias/ secundárias, variáveis
+ *    para background e text, e cores de status (info/success/warning/error).
+ *  - Configura `typography` (fontFamily e cores padrão para variantes).
+ *  - Aplica `components.styleOverrides` para customizar estilos de botões,
+ *    AppBar, TextField, IconButton e Chip.
+ */
+
 import {
   createTheme,
   type TypeBackground,
@@ -22,9 +48,10 @@ export const defaultTheme = createTheme({
       discard: "rgba(179, 44, 44, 0.79)",
     } as Partial<TypeBackground>,
     text: {
-      primary: "#E6E0E9",
+      primary: "#1D1B20",
       secondary: "#49454F",
       tertiary: "#85858fff",
+      light: "#FFFFFF",
     } as Partial<TypeText>,
     action: {
       selected: "#6750A4",
@@ -122,6 +149,9 @@ export const defaultTheme = createTheme({
           "& .MuiOutlinedInput-root": {
             backgroundColor: "#FFFFFF",
             borderRadius: "10px",
+            '& input::placeholder': {
+              color: '#1D1B20',
+            },
             "& fieldset": {
               borderColor: "#D5D5D5",
             },
@@ -178,6 +208,8 @@ export const defaultTheme = createTheme({
         root: {
           color: "#fff",
           fontWeight: 600,
+          borderRadius: "8px",
+          backgroundColor: "#1D1B20",
         },
       },
     },

@@ -28,8 +28,11 @@ Para mais informações, veja na [Documentação do repositório](https://github
 
 É necessário o uso do Docker veja sua instalação em: [Docker](https://docs.docker.com/engine/install/).
 
-Após isto, realiza a criação dos conteiners por meio de:
+Após isto, realize a criação dos conteiners por meio de:
 ```
-docker compose up
+docker compose up ou docker compose up --build
 ```
-
+Para destruir as imagens rode o seguinte código:
+```
+docker compose down ou docker compose down -v 
+```

@@ -1,3 +1,29 @@
+/**
+ * defaultTheme
+ *
+ * Propósito:
+ *  Fornecer a configuração de tema (palette, typography, components overrides)
+ *  usada pela aplicação com base no MUI `createTheme`.
+ *
+ * Uso:
+ *  - Importar `defaultTheme` e passar para o `ThemeProvider` do MUI:
+ *      <ThemeProvider theme={defaultTheme}>...</ThemeProvider>
+ *
+ * Entradas:
+ *  - Este arquivo usa `createTheme` para construir um objeto de tema a partir
+ *    de valores estáticos (cores, tipografia e overrides de componentes).
+ *
+ * Saída:
+ *  - `defaultTheme`: objeto de tema compatível com MUI (Theme).
+ *
+ * Comportamento:
+ *  - Define `palette` com modo `dark`, cores primárias/ secundárias, variáveis
+ *    para background e text, e cores de status (info/success/warning/error).
+ *  - Configura `typography` (fontFamily e cores padrão para variantes).
+ *  - Aplica `components.styleOverrides` para customizar estilos de botões,
+ *    AppBar, TextField, IconButton e Chip.
+ */
+
 import {
   createTheme,
   type TypeBackground,

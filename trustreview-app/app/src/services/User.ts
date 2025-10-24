@@ -1,3 +1,23 @@
+/**
+ * UserService
+ *
+ * Propósito:
+ *  Serviço para operações de usuário (criação e autenticação).
+ *
+ * Uso:
+ *  - Instanciar com um cliente `IApiClient` e usar `createUser` ou `login`.
+ *
+ * Entradas:
+ *  - Construtor: `api: IApiClient`.
+ *  - `createUser(data: UserDTO)`, `login(email: string, password: string)`.
+ *
+ * Saídas:
+ *  - Promises que resolvem em `IUser`.
+ *
+ * Comportamento:
+ *  - `createUser`: POST /user com payload `UserDTO` -> retorna o usuário criado.
+ *  - `login`: POST /user/login com email e password -> retorna usuário autenticado.
+ */
 import type IApiClient from "../interfaces/IApiClient";
 import type { IUser, UserDTO } from "../interfaces/IUser";
 

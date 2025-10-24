@@ -1,3 +1,28 @@
+/**
+ * ProductService
+ *
+ * Propósito:
+ *  Encapsular chamadas HTTP relacionadas a produtos (listar, buscar,
+ *  obter por id, obter relacionados e criar).
+ *
+ * Uso:
+ *  const svc = new ProductService(apiClient);
+ *  const products = await svc.getProducts();
+ *
+ * Entradas:
+ *  - Construtor: `api: IApiClient`.
+ *  - Métodos: `term`, `productId`, `product` conforme assinado.
+ *
+ * Saídas:
+ *  - Promises que resolvem em `IProduct` ou `IProduct[]`.
+ *
+ * Comportamento:
+ *  - getProducts: GET /products -> IProduct[]
+ *  - getProductsByTerm: GET /products/search?term=... -> IProduct[]
+ *  - getProductById: GET /products/:id (params include=tags) -> IProduct
+ *  - getRelatedProducts: GET /products/:id/related -> retorna `content: IProduct[]`
+ *  - createProduct: POST /products -> IProduct
+ */
 import type IApiClient from "../interfaces/IApiClient";
 import type { IProduct } from "../interfaces/Product";
 

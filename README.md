@@ -26,4 +26,10 @@ Para mais informações, veja na [Documentação do repositório](https://github
 
 ## Como usar o repositório ?
 
-WIP
+É necessário o uso do Docker veja sua instalação em: [Docker](https://docs.docker.com/engine/install/).
+
+Após isto, realiza a criação dos conteiners por meio de:
+```
+docker compose up
+```
+

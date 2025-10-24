@@ -25,8 +25,7 @@ const ProductImage = ({
           p: 2,
         }}
         draggable={false}
-        // image={imageUrl || CardImage}
-        image={CardImage}
+        image={imageUrl || CardImage}
         title={name}
       />
     </Card>

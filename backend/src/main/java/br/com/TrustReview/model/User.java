@@ -30,5 +30,10 @@ public class User {
     private String password;
 
     @Column(name = "userType", length = 20, nullable = false, unique = false)
-    private UserTypeEnum userType = UserTypeEnum.COSTUMER;
+    private UserTypeEnum userType = UserTypeEnum.STANDARD;
+
+    public enum UserTypeEnum {
+        ADMIN,
+        STANDARD
+    }
 }

@@ -1,3 +1,24 @@
+/**
+ * ReviewService
+ *
+ * Propósito:
+ *  Serviço para operações de revisão (reviews) relacionadas a produtos.
+ *
+ * Uso:
+ *  - Instanciar com um cliente `IApiClient` e usar os métodos para listar
+ *    reviews de um produto ou postar uma nova review.
+ *
+ * Entradas:
+ *  - Construtor: `api: IApiClient`.
+ *  - `getReviews(productId: string)`, `postReview(review: ReviewDTO)`.
+ *
+ * Saídas:
+ *  - Promises que resolvem em `IReview[]` ou `IReview`.
+ *
+ * Comportamento:
+ *  - `getReviews`: GET /reviews/product/:productId -> retorna array de reviews (campo `content`).
+ *  - `postReview`: POST /reviews com payload `ReviewDTO` -> cria e retorna a review.
+ */
 import type IApiClient from "../interfaces/IApiClient";
 import type { IReview, ReviewDTO } from "../interfaces/Product";
 

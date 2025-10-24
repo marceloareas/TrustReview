@@ -17,30 +17,26 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * Manipulador global de exceções para a API.
  *
  * <p>
- * Esta classe captura e trata exceções lançadas durante o processamento das requisições,
- * retornando respostas padronizadas com informações detalhadas sobre o erro ocorrido.
+ * Centraliza o tratamento de exceções lançadas durante o processamento das requisições HTTP
+ * e traduz essas exceções para respostas HTTP padronizadas contendo um payload {@link ApiError}.
+ * Este componente garante consistência nas mensagens de erro retornadas ao cliente e mapeia
+ * exceções específicas para códigos HTTP apropriados.
  * </p>
  *
+ * Exceções tratadas (exemplos):
  * <ul>
- *   <li>Trata exceções genéricas, erros de leitura do corpo da requisição, argumentos inválidos,
- *       métodos HTTP não suportados, falhas de validação e exceções customizadas do domínio.</li>
- *   <li>Retorna sempre um objeto {@link ApiError} com detalhes do erro para o front-end.</li>
- *   <li>Utiliza anotações do Swagger para documentação automática.</li>
+ *   <li>ProductNotFound, TagNotFound          - 404 Not Found</li>
+ *   <li>ProductNameAlreadyExists, TagNameAlreadyExists - 400 Bad Request</li>
+ *   <li>UserEmailAlreadyExists                 - 409 Conflict</li>
+ *   <li>MethodArgumentNotValidException        - 400 Bad Request (validação de campos)</li>
+ *   <li>HttpMessageNotReadableException        - 400 Bad Request (corpo inválido)</li>
+ *   <li>HttpRequestMethodNotSupportedException - 405 Method Not Allowed</li>
+ *   <li>Exception (genérico)                   - 500 Internal Server Error</li>
  * </ul>
  *
  * <p>
- * Exemplos de erros tratados:
- * <ul>
- *   <li><b>Exception</b>: Erros inesperados do servidor (500).</li>
- *   <li><b>HttpMessageNotReadableException</b>: Corpo da requisição ausente ou inválido (400).</li>
- *   <li><b>IllegalArgumentException</b>: Argumentos inválidos fornecidos (400).</li>
- *   <li><b>HttpRequestMethodNotSupportedException</b>: Método HTTP não permitido (405).</li>
- *   <li><b>MethodArgumentNotValidException</b>: Falhas de validação em campos (400).</li>
- *   <li><b>ProductNotFound</b>: Produto não encontrado (404).</li>
- *   <li><b>TagNotFoundException</b>: Tag não encontrada (404).</li>
- *   <li><b>ProductNameAlreadyExists</b>: Nome de produto já cadastrado (400).</li>
- *   <li><b>TagNameAlreadyExists</b>: Nome de tag já cadastrado (400).</li>
- * </ul>
+ * Observação: a lógica de construção do objeto {@link ApiError} é centralizada aqui; regras de negócio
+ * e decisões de transação continuam na camada de serviço.
  * </p>
  *
  * @author HernaniFilho
@@ -52,8 +48,8 @@ public class GlobalExceptionHandler {
     /**
      * Trata exceção quando um produto não é encontrado.
      *
-     * @param ex Exceção lançada
-     * @return ResponseEntity com detalhes do erro de produto não encontrado
+     * @param ex exceção lançada que indica que o produto solicitado não existe
+     * @return ResponseEntity contendo {@link ApiError} com status 404 Not Found
      */
     @ExceptionHandler(ProductNotFound.class)
     public ResponseEntity<ApiError> handleProductNotFound(ProductNotFound ex) {
@@ -70,8 +66,8 @@ public class GlobalExceptionHandler {
     /**
      * Trata exceção quando uma tag não é encontrada.
      *
-     * @param ex Exceção lançada
-     * @return ResponseEntity com detalhes do erro de tag não encontrada
+     * @param ex exceção lançada que indica que a tag solicitada não existe
+     * @return ResponseEntity contendo {@link ApiError} com status 404 Not Found
      */
     @ExceptionHandler(TagNotFound.class)
     public ResponseEntity<ApiError> handleTagNotFound(TagNotFound ex) {
@@ -88,8 +84,8 @@ public class GlobalExceptionHandler {
     /**
      * Trata exceção quando já existe um produto com o mesmo nome.
      *
-     * @param ex Exceção lançada
-     * @return ResponseEntity com detalhes do erro de nome de produto duplicado
+     * @param ex exceção lançada indicando conflito no nome do produto
+     * @return ResponseEntity contendo {@link ApiError} com status 400 Bad Request
      */
     @ExceptionHandler(ProductNameAlreadyExists.class)
     public ResponseEntity<ApiError> handleProductNameAlreadyExists(ProductNameAlreadyExists ex) {
@@ -106,8 +102,8 @@ public class GlobalExceptionHandler {
     /**
      * Trata exceção quando já existe uma tag com o mesmo nome.
      *
-     * @param ex Exceção lançada
-     * @return ResponseEntity com detalhes do erro de nome de tag duplicado
+     * @param ex exceção lançada indicando conflito no nome da tag
+     * @return ResponseEntity contendo {@link ApiError} com status 400 Bad Request
      */
     @ExceptionHandler(TagNameAlreadyExists.class)
     public ResponseEntity<ApiError> handleTagNameAlreadyExists(TagNameAlreadyExists ex) {
@@ -121,14 +117,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-
-
-
     /**
      * Trata exceções genéricas não capturadas por outros handlers.
      *
-     * @param ex Exceção lançada
-     * @return ResponseEntity com detalhes do erro interno
+     * <p>Registra stack trace e retorna uma resposta 500 com informação genérica de erro.</p>
+     *
+     * @param ex exceção não tratada explicitamente
+     * @return ResponseEntity contendo {@link ApiError} com status 500 Internal Server Error
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
@@ -147,8 +142,8 @@ public class GlobalExceptionHandler {
     /**
      * Trata erros de leitura do corpo da requisição (ex: JSON malformado ou ausente).
      *
-     * @param ex Exceção lançada
-     * @return ResponseEntity com detalhes do erro de requisição
+     * @param ex exceção indicando falha ao desserializar o corpo da requisição
+     * @return ResponseEntity contendo {@link ApiError} com status 400 Bad Request
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
@@ -163,10 +158,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Trata argumentos inválidos fornecidos em requisições.
+     * Trata argumentos inválidos fornecidos em requisições (validações do Spring/Bean Validation).
      *
-     * @param ex Exceção lançada
-     * @return ResponseEntity com detalhes do erro de argumento
+     * @param ex exceção que contém os erros de validação de campos
+     * @return ResponseEntity contendo {@link ApiError} com status 400 Bad Request e lista de detalhes
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException ex) {
@@ -183,8 +178,8 @@ public class GlobalExceptionHandler {
     /**
      * Trata métodos HTTP não suportados pela rota.
      *
-     * @param ex Exceção lançada
-     * @return ResponseEntity com detalhes do erro de método não permitido
+     * @param ex exceção indicando método HTTP não permitido
+     * @return ResponseEntity contendo {@link ApiError} com status 405 Method Not Allowed
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiError> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
@@ -199,10 +194,12 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Trata falhas de validação em campos de entrada.
+     * Trata falhas de validação em campos de entrada (MethodArgumentNotValidException).
      *
-     * @param ex Exceção lançada
-     * @return ResponseEntity com detalhes dos erros de validação
+     * <p>Extrai mensagens de campo e constrói uma lista de detalhes no {@link ApiError}.</p>
+     *
+     * @param ex exceção contendo os erros de binding/validação
+     * @return ResponseEntity contendo {@link ApiError} com status 400 Bad Request e detalhes por campo
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex) {
@@ -232,11 +229,11 @@ public class GlobalExceptionHandler {
     /**
      * Trata exceção quando já existe um usuário com o mesmo e-mail.
      *
-     * @param ex Exceção lançada
-     * @return ResponseEntity com detalhes do erro de e-mail de usuário duplicado
+     * @param ex exceção indicando que o e-mail informado já está em uso
+     * @return ResponseEntity contendo {@link ApiError} com status 409 Conflict
      */
-    @ExceptionHandler(UserEmailAlredyExits.class)
-    public ResponseEntity<ApiError> handleUserEmailAlreadyExists(UserEmailAlredyExits ex) {
+    @ExceptionHandler(UserEmailAlreadyExists.class)
+    public ResponseEntity<ApiError> handleUserEmailAlreadyExists(UserEmailAlreadyExists ex) {
         ApiError error = new ApiError(
                 HttpStatus.CONFLICT.value(),                     
                 HttpStatus.CONFLICT.getReasonPhrase(),
@@ -246,7 +243,4 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
-
-
-
 }

@@ -1,3 +1,22 @@
+/**
+ * TagService
+ *
+ * Propósito:
+ *  Serviço responsável por operações relacionadas a tags.
+ *
+ * Uso:
+ *  - Instanciar com um cliente `IApiClient` e chamar `getTags` para obter
+ *    a lista de tags disponíveis.
+ *
+ * Entradas:
+ *  - Construtor: `api: IApiClient`.
+ *
+ * Saídas:
+ *  - Promise que resolve em `ITag[]`.
+ *
+ * Comportamento:
+ *  - `getTags`: GET /tags -> retorna array de tags.
+ */
 import type IApiClient from "../interfaces/IApiClient";
 import type { ITag } from "../interfaces/Product";
 

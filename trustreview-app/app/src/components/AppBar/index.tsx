@@ -2,28 +2,29 @@
  * AppBar
  *
  * Propósito:
- *  Barra superior fixa (AppBar) que fornece navegação e acesso rápido ao perfil do usuário.
- *  Exibe um botão de voltar quando o usuário não está na rota raiz ("/") e um avatar no canto direito.
+ *  Barra superior fixa que exibe um botão de voltar quando não está na raiz ("/")
+ *  e um avatar à direita.
  *
  * Uso:
- *  <AppBar /> — componente sem props; utilizado em layouts principais para navegação entre rotas.
+ *  <AppBar /> — componente sem props; usado no layout principal para oferecer
+ *  navegação rápida e acesso ao perfil.
  *
  * Entradas:
  *  - Nenhuma prop.
  *
  * Comportamento:
- *  - Determina se o usuário está na raiz verificando `window.location.pathname`.
- *  - Quando não está na raiz, exibe um botão de voltar (`ArrowBack`) que remove o último
- *    segmento do caminho atual e redireciona o usuário para o novo caminho.
- *  - O botão de voltar chama `handleNavigate()`, que utiliza `navigate(newPath)` do react-router-dom.
- *  - Quando está na raiz, o botão de voltar é ocultado.
- *  - O avatar é sempre exibido no canto direito.
-
- * Dependências:
- *  - @mui/material: AppBar, Avatar, IconButton, Stack.
- *  - @mui/icons-material: ArrowBack.
- *  - react-router-dom: useNavigate.
+ *  - Determina se está na raiz usando o path atual (window.location.pathname).
+ *  - Quando não está na raiz, mostra um botão de voltar que remove o último
+ *    segmento do path e navega para o novo caminho com `navigate(newPath)`.
+ *  - Observação: atualmente usa `window.location.pathname`; recomenda-se usar
+ *    `useLocation()` do react-router-dom para maior reatividade às mudanças de rota.
  *
+ * Exemplo:
+ *  <AppBar />
+ *
+ * Notas:
+ *  - Depende de @mui/material, @mui/icons-material e react-router-dom.
+ *  - A11y: melhorar `aria-label`s (ex.: "Voltar", "Abrir perfil").
  */
 import MuiAppBar from "@mui/material/AppBar";
 import { Avatar, IconButton, Stack } from "@mui/material";

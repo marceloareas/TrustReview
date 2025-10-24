@@ -41,6 +41,7 @@ const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void 
     formState: {},
   } = useForm<CreateProductReviewForm>({
     defaultValues: {
+      image: null,
       name: "",
       description: "",
       reviewRating: 0,
@@ -57,6 +58,11 @@ const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void 
         name: data.name,
         tags: data.tags && data.tags.length ? data.tags : tags,
         description: data.description,
+        image: data.image ?? null,
+        reviewRating: data.reviewRating,
+        comment: data.comment,
+        pros: data.pros,
+        cons: data.cons,
       };
 
       const response = await productService.createProduct(newProduct);

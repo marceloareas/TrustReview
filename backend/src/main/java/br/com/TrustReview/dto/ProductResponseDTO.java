@@ -52,6 +52,10 @@ public class ProductResponseDTO {
     @Schema(description = "Descrição do produto", example = "Um notebook potente e leve da Dell")
     private String description;
 
+
+    @Schema(description = "Url da imagem do produto", example = "")
+    private String imageUrl;
+
     @Schema(description = "Tags associadas ao produto")
     private Set<TagResponseDTO> tags;
 

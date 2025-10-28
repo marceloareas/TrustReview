@@ -1,17 +1,19 @@
 package br.com.TrustReview.service;
 
-import br.com.TrustReview.config.PasswordEncoderConfig;
 import br.com.TrustReview.dto.UserRequestDTO;
 import br.com.TrustReview.dto.UserRequestLoginDTO;
 import br.com.TrustReview.dto.UserResponseDTO;
+import br.com.TrustReview.dto.UserResponseLoginDTO;
 import br.com.TrustReview.exception.InvalidCredentials;
 import br.com.TrustReview.exception.UserEmailAlredyExits;
 import br.com.TrustReview.exception.UserNotFound;
 import br.com.TrustReview.mapper.UserMapper;
 import br.com.TrustReview.model.User;
 import br.com.TrustReview.repository.UserRepository;
+import br.com.TrustReview.security.JWTTokenService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    JWTTokenService jwtTokenService;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
@@ -151,7 +156,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO loginUser(UserRequestLoginDTO userRequestLoginDTO) {
+    public UserResponseLoginDTO loginUser(UserRequestLoginDTO userRequestLoginDTO) {
         User user = userRepository.findByEmail(userRequestLoginDTO.getEmail())
                 .orElseThrow(() -> new UserNotFound("User with email " + userRequestLoginDTO.getEmail() + " not found"));
 
@@ -160,6 +165,8 @@ public class UserService {
             throw new InvalidCredentials("Invalid credentials, senha inválida");
         }
 
-        return userMapper.toUserResponseDTO(user);
+        var tk = jwtTokenService.generateToken(user);
+
+        return userMapper.toUserResponseLoginDTO(user, tk);
     }
 }

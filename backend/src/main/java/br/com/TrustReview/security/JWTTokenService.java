@@ -24,7 +24,7 @@ public class JWTTokenService {
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
             String tk = JWT.create()
                     .withIssuer("Trust-Review")
-                    .withSubject(user.getId().toString())
+                    .withSubject(user.getEmail())
                     .withClaim("name", user.getName())
                     .withClaim("userType", user.getUserType().toString())
                     .withIssuedAt(new Date())
@@ -37,7 +37,7 @@ public class JWTTokenService {
         }
     }
 
-    private String validateToken(String token) {
+    public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
 

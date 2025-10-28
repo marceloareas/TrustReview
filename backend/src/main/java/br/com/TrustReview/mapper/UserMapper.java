@@ -2,6 +2,7 @@ package br.com.TrustReview.mapper;
 
 import br.com.TrustReview.dto.UserRequestDTO;
 import br.com.TrustReview.dto.UserResponseDTO;
+import br.com.TrustReview.dto.UserResponseLoginDTO;
 import br.com.TrustReview.model.User;
 import br.com.TrustReview.model.UserTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,12 +41,23 @@ public class UserMapper {
         return userResponseDTO;
     }
 
-    public UserResponseDTO toUserResponseDTO(UserRequestDTO  userRequestDTO) {
-        UserResponseDTO userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setName(userRequestDTO.getName());
-        userResponseDTO.setEmail(userRequestDTO.getEmail());
-        userResponseDTO.setPassword("");
-        userResponseDTO.setUserType(UserTypeEnum.COSTUMER);     // Pode dar problemas em outras regras de negócio
-        return userResponseDTO;
+//    public UserResponseDTO toUserResponseDTO(UserRequestDTO  userRequestDTO) {
+//        UserResponseDTO userResponseDTO = new UserResponseDTO();
+//        userResponseDTO.setName(userRequestDTO.getName());
+//        userResponseDTO.setEmail(userRequestDTO.getEmail());
+//        userResponseDTO.setPassword("");
+//        userResponseDTO.setUserType(UserTypeEnum.COSTUMER);     // Pode dar problemas em outras regras de negócio
+//        return userResponseDTO;
+//    }
+
+    public UserResponseLoginDTO toUserResponseLoginDTO(User user, String token) {
+        UserResponseLoginDTO userResponseLoginDTO = new UserResponseLoginDTO();
+        userResponseLoginDTO.setId(user.getId());
+        userResponseLoginDTO.setName(user.getName());
+        userResponseLoginDTO.setEmail(user.getEmail());
+        userResponseLoginDTO.setPassword("");
+        userResponseLoginDTO.setUserType(user.getUserType());
+        userResponseLoginDTO.setToken(token);
+        return userResponseLoginDTO;
     }
 }

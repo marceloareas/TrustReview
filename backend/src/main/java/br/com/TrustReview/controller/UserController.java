@@ -1,9 +1,6 @@
 package br.com.TrustReview.controller;
 
-import br.com.TrustReview.dto.TagResponseDTO;
-import br.com.TrustReview.dto.UserRequestDTO;
-import br.com.TrustReview.dto.UserRequestLoginDTO;
-import br.com.TrustReview.dto.UserResponseDTO;
+import br.com.TrustReview.dto.*;
 import br.com.TrustReview.exception.ApiError;
 import br.com.TrustReview.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -142,7 +139,7 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@RequestBody UserRequestLoginDTO loginRequest) {
+    public ResponseEntity<UserResponseLoginDTO> login(@RequestBody UserRequestLoginDTO loginRequest) {
         return ResponseEntity.ok(userService.loginUser(loginRequest));
     }
 

@@ -1,3 +1,37 @@
+/**
+ * TagsList
+ *
+ * Propósito:
+ *  Componente para exibir uma lista de tags de produtos em linha, com suporte
+ *  a edição e adição de novas tags. Permite abrir um diálogo de criação de tags
+ *  ou exibir um input inline, dependendo da configuração.
+ *
+ * Uso:
+ *  <TagsList
+ *    tags={tagsArray}
+ *    isEdit={true}
+ *    showDialog={true}
+ *  />
+ *
+ * Entradas (props):
+ *  - tags: ITag[] — array de tags a serem exibidas.
+ *  - isEdit?: boolean — se verdadeiro, permite a edição (adicionar/remover tags).
+ *  - showDialog?: boolean — se verdadeiro, abre um diálogo (`DialogTag`) para
+ *    criação de novas tags; se falso, mostra um input inline para adicionar tags.
+ *
+ * Comportamento:
+ *  - Renderiza uma `Stack` horizontal com rolagem lateral (`overflowX: auto`) para as tags.
+ *  - Quando `isEdit` é verdadeiro, renderiza um `TagButton` que abre o diálogo
+ *    ou input inline, dependendo de `showDialog`.
+ *  - Cada tag é exibida com o componente `Tag`, permitindo exclusão no modo edição.
+ *  - Gerencia estado interno para abrir o diálogo (`openDialog`) e exibir input inline (`showInlineInput`).
+ *
+ * Observações:
+ *  - Dependências: @mui/material (Stack, Box), componentes internos `Tag`, `TagButton`, `DialogTag`.
+ *  - Ideal para seções de formulários de produtos, categorias ou filtros.
+ *  - A11y: tags e botões interativos devem ter `aria-label` ou título para leitores de tela.
+ */
+
 import { Stack, Box } from "@mui/material";
 import Tag from "..";
 import type { ITag } from "../../../interfaces/Product";
@@ -24,7 +58,7 @@ const TagsList = ({
 
   return (
     <>
-      <Stack spacing={2} width={"100%"} direction={"row"} >
+      <Stack spacing={2} width={"100%"} direction={"row"}>
         <Box
           sx={{
             display: "flex",
@@ -72,7 +106,7 @@ const TagsList = ({
         <DialogTag
           open={openDialog}
           onClose={() => setOpenDialog(false)}
-          onCreateTag={() => { }}
+          onCreateTag={() => {}}
           tags={tags}
         />
       )}

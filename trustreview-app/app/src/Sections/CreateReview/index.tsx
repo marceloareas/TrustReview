@@ -12,6 +12,7 @@ import { useState } from "react";
 import { reviewService } from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { useParams } from "react-router-dom";
+import { useNotification } from "../../components/Snackbar/snackbar";
 
 const CreateReviewSection = ({
   onReview,
@@ -30,6 +31,7 @@ const CreateReviewSection = ({
   const [comment, setComment] = useState<string>("");
   const [pros, setPros] = useState<string>("");
   const [cons, setCons] = useState<string>("");
+  const { showNotification } = useNotification();
 
   const handleSave = async () => {
     // basic validation
@@ -66,8 +68,10 @@ const CreateReviewSection = ({
     try {
       await reviewService.postReview(payload);
       if (setReviewed) setReviewed(true);
+      showNotification("Review realizado com sucesso!", "success");
     } catch (error) {
       console.error("Error saving review:", error);
+      showNotification("Erro ao realizar o Review. Tente novamente.", "error");
     } finally {
       onReview();
     }
@@ -154,7 +158,12 @@ const CreateReviewSection = ({
             Descartar Review
           </Button>
 
-          <Button variant="contained" size="large" onClick={handleSave} disabled={!id}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={handleSave}
+            disabled={!id}
+          >
             Publicar Review
           </Button>
         </Stack>

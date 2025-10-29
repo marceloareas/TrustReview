@@ -13,17 +13,25 @@ import {
 import AppTitle from "../../components/AppTitle";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useNotification } from "../../components/Snackbar/snackbar";
 
 const LoginSection = () => {
   const { login, authorized } = useAuth();
+  const { showNotification } = useNotification();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    login(email, password);
+    try {
+      await login(email, password);
+      showNotification("Login realizado com sucesso!", "success");
+    } catch (error) {
+      console.log(error);
+      showNotification("Erro ao se Logar. Tente novamente.", "error");
+    }
   };
 
   useEffect(() => {

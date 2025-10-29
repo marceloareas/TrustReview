@@ -31,11 +31,13 @@ import { Avatar, IconButton, Stack, Tooltip } from "@mui/material";
 import { ArrowBack, Logout, Login } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useNotification } from "../Snackbar/snackbar";
 
 export default function AppBar() {
   const navigate = useNavigate();
   const path = window.location.pathname;
   const isRoot = path === "/";
+  const { showNotification } = useNotification();
 
   const { logout, user } = useAuth();
 
@@ -46,7 +48,13 @@ export default function AppBar() {
   };
 
   const handleLogout = () => {
-    logout();
+    try {
+      logout();
+      showNotification("Logout realizado com sucesso!", "success");
+    } catch (error) {
+      console.log(error);
+      showNotification("Erro ao realizar Logout. Tente novamente.", "error");
+    }
     //navigate("/login");
   };
 

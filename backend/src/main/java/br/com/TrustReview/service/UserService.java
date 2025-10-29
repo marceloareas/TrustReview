@@ -32,6 +32,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private static final Pattern emailRegexPattern = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");    //para email
+    private static final Pattern passwordRegexPattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$"); //para senhas
 
 
     @Autowired
@@ -65,6 +66,11 @@ public class UserService {
         if (userRequestDTO.getPassword() == null) {
             log.error("Password is null");
             throw new IllegalArgumentException("Password is null");
+        }
+
+        if (!passwordRegexPattern.matcher(userRequestDTO.getPassword()).matches()) {
+            log.error("Invalid password");
+            throw new IllegalArgumentException("Invalid password pattern: ao menos 8 digítos, um símbolo, umas letra maiúscula e uma minúscula");
         }
 
         User user = userMapper.toUserCreate(userRequestDTO);
@@ -110,7 +116,7 @@ public class UserService {
         patchData.forEach((key, value) -> {
             switch (key) {
                 case "name" -> user.setName((String) value);
-                case "email" ->user.setEmail((String) value);
+                case "email" -> user.setEmail((String) value);
                 case "password" -> {
                     String EncryptedPassword = passwordEncoder.encode((String) value);
                     //String EncryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
@@ -138,7 +144,7 @@ public class UserService {
             throw new IllegalArgumentException("Email is null");
         }
 
-        if  (userRequestDTO.getPassword() == null) {
+        if (userRequestDTO.getPassword() == null) {
             log.error("Password is null");
             throw new IllegalArgumentException("Password is null");
         }

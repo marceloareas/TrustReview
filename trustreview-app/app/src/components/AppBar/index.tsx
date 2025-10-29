@@ -27,19 +27,31 @@
  *  - A11y: melhorar `aria-label`s (ex.: "Voltar", "Abrir perfil").
  */
 import MuiAppBar from "@mui/material/AppBar";
-import { Avatar, IconButton, Stack } from "@mui/material";
-import { ArrowBack } from "@mui/icons-material";
+import { Avatar, IconButton, Stack, Tooltip } from "@mui/material";
+import { ArrowBack, Logout, Login } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function AppBar() {
   const navigate = useNavigate();
   const path = window.location.pathname;
   const isRoot = path === "/";
 
+  const { logout, user } = useAuth();
+
   const handleNavigate = () => {
     const index = path.lastIndexOf("/");
     const newPath = index !== -1 ? path.slice(0, index) : path;
     navigate(newPath);
+  };
+
+  const handleLogout = () => {
+    logout();
+    //navigate("/login");
+  };
+
+  const handleLogin = () => {
+    navigate("/login");
   };
 
   return (
@@ -71,9 +83,37 @@ export default function AppBar() {
           justifyContent={"flex-end"}
           spacing={2}
         >
-          <IconButton size="large" aria-label="Avatar" color="inherit">
-            <Avatar />
-          </IconButton>
+          {user ? (
+            <>
+              <Tooltip title={user.name || "Usuário"}>
+                <IconButton size="large" aria-label="Avatar" color="inherit">
+                  <Avatar />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Sair">
+                <IconButton
+                  size="large"
+                  aria-label="logout"
+                  color="inherit"
+                  onClick={handleLogout}
+                >
+                  <Logout />
+                </IconButton>
+              </Tooltip>
+            </>
+          ) : (
+            <Tooltip title="Entrar">
+              <IconButton
+                size="large"
+                aria-label="login"
+                color="inherit"
+                onClick={handleLogin}
+              >
+                <Login />
+              </IconButton>
+            </Tooltip>
+          )}
         </Stack>
       </Stack>
     </MuiAppBar>

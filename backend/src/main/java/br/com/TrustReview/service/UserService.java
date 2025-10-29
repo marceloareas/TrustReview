@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -30,6 +31,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private static final Pattern emailRegexPattern = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");    //para email
+
 
     @Autowired
     JWTTokenService jwtTokenService;
@@ -42,6 +45,10 @@ public class UserService {
             throw new IllegalArgumentException("Email is null");
         }
 
+        if (!emailRegexPattern.matcher(userRequestDTO.getEmail()).matches()) {
+            log.error("Invalid email");
+            throw new IllegalArgumentException("Invalid email pattern");
+        }
 
         Optional<User> existingEmail = userRepository.findByEmail(userRequestDTO.getEmail());
 

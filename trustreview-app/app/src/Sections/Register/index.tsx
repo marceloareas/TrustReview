@@ -15,16 +15,19 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createUserSchema } from "./schema";
 import { useAuth } from "../../hooks/useAuth";
+import { useNotification } from "../../components/Snackbar/snackbar";
 import { useEffect } from "react";
 
 interface CreateUserForm {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 const RegisterSection = () => {
   const { register, authorized } = useAuth();
+  const { showNotification } = useNotification();
   const navigate = useNavigate();
   const {
     control,
@@ -37,12 +40,18 @@ const RegisterSection = () => {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const onSubmit = (data: CreateUserForm) => {
-    console.log(data)
-    register(data.name, data.email, data.password);
+  const onSubmit = async (data: CreateUserForm) => {
+    console.log(data);
+    try {
+      await register(data.name, data.email, data.password);
+      showNotification("Conta criada com sucesso!", "success");
+    } catch (error) {
+      showNotification("Erro ao criar conta. Tente novamente.", "error");
+    }
   };
 
   useEffect(() => {
@@ -131,6 +140,21 @@ const RegisterSection = () => {
                       fullWidth
                       error={!!errors.password}
                       helperText={errors.password?.message}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="confirmPassword"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Confirmar senha"
+                      type="password"
+                      fullWidth
+                      error={!!errors.confirmPassword}
+                      helperText={errors.confirmPassword?.message}
                     />
                   )}
                 />

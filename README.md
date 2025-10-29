@@ -26,4 +26,13 @@ Para mais informações, veja na [Documentação do repositório](https://github
 
 ## Como usar o repositório ?
 
-WIP
+É necessário o uso do Docker veja sua instalação em: [Docker](https://docs.docker.com/engine/install/).
+
+Após isto, realize a criação dos conteiners por meio de:
+```
+docker compose up ou docker compose up --build
+```
+Para destruir as imagens rode o seguinte código:
+```
+docker compose down ou docker compose down -v 
+```

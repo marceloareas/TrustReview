@@ -5,11 +5,13 @@ import CreateProductReview from "../Sections/CreateProduct/CreateProductReview";
 import { useAuth } from "../hooks/useAuth";
 import { reviewService } from "../services";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "../components/Snackbar/snackbar";
 
 const CreateProductPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [productId, setProductId] = useState<string | undefined>();
+  const { showNotification } = useNotification();
   const [pendingReview, setPendingReview] = useState<{
     title: string;
     description: string;
@@ -20,10 +22,16 @@ const CreateProductPage = () => {
 
   const handleCancelPublish = () => {
     setProductId(undefined);
-    navigate('/');
-  }
+    navigate("/");
+  };
 
-  const handleReviewPublish = async (data: { title: string; description: string; pros: string[]; con: string[]; rating: number }) => {
+  const handleReviewPublish = async (data: {
+    title: string;
+    description: string;
+    pros: string[];
+    con: string[];
+    rating: number;
+  }) => {
     if (!productId) {
       setPendingReview(data);
       return;
@@ -44,7 +52,12 @@ const CreateProductPage = () => {
     try {
       await reviewService.postReview(payload);
       console.log("Review publicada");
+      showNotification("Review publicado com sucesso!", "success");
     } catch (error) {
+      showNotification(
+        "Houve um erro ao criar o Review. Tente Novamente.",
+        "error"
+      );
       console.error("Error saving review:", error);
     }
   };
@@ -65,13 +78,12 @@ const CreateProductPage = () => {
           rating: pendingReview.rating,
         });
         setPendingReview(null);
-        navigate('/');
+        navigate("/");
       } catch (error) {
         console.error("Error publishing pending review:", error);
       }
     }
   };
-
 
   return (
     <Stack
@@ -84,7 +96,10 @@ const CreateProductPage = () => {
       }}
     >
       <CreateProduct onCreated={handleProductCreated} />
-      <CreateProductReview onReview={handleReviewPublish} onCancel={handleCancelPublish} />
+      <CreateProductReview
+        onReview={handleReviewPublish}
+        onCancel={handleCancelPublish}
+      />
     </Stack>
   );
 };

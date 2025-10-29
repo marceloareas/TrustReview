@@ -37,10 +37,15 @@ const CreateReviewSection = ({
     // basic validation
     if (!id) {
       console.error("Cannot post review: productId missing");
+      showNotification("Erro ao realizar o Review. Tente novamente.", "error");
       return;
     }
     if (!title.trim() || !comment.trim()) {
       console.error("Title and comment are required");
+      showNotification(
+        "É necessário preencher o Título e Comentário.",
+        "error"
+      );
       return;
     }
     const payload = {
@@ -68,7 +73,7 @@ const CreateReviewSection = ({
     try {
       await reviewService.postReview(payload);
       if (setReviewed) setReviewed(true);
-      showNotification("Review realizado com sucesso!", "success");
+      showNotification("Review publicado com sucesso!", "success");
     } catch (error) {
       console.error("Error saving review:", error);
       showNotification("Erro ao realizar o Review. Tente novamente.", "error");

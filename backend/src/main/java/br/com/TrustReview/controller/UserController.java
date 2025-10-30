@@ -39,9 +39,9 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid UserRequestDTO userRequestDTO) {
-        UserResponseDTO userResponseDTO = userService.createUser(userRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDTO);
+    public ResponseEntity<UserResponseLoginDTO> createUser(@RequestBody @Valid UserRequestDTO userRequestDTO) {
+        UserResponseLoginDTO userResponseLoginDTO = userService.createUser(userRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseLoginDTO);
     }
 
     @Operation(summary = "Busca Usuário pelo email")

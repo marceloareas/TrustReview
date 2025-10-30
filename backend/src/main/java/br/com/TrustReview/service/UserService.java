@@ -39,7 +39,7 @@ public class UserService {
     JWTTokenService jwtTokenService;
 
     @Transactional
-    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+    public UserResponseLoginDTO createUser(UserRequestDTO userRequestDTO) {
 
         if (userRequestDTO.getEmail() == null) {
             log.error("Email is null");
@@ -82,7 +82,9 @@ public class UserService {
         User persistedUser = userRepository.save(user);
         log.info("User created: {}", user);
 
-        return userMapper.toUserResponseDTO(persistedUser);
+        var tk = jwtTokenService.generateToken(persistedUser);
+
+        return userMapper.toUserResponseLoginDTO(persistedUser, tk);
     }
 
     //public UserResponseDTO updateUser(UserRequestDTO userRequestDTO) {}
@@ -99,6 +101,11 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO getUserByEmail(String email) {
+        if (!emailRegexPattern.matcher(email).matches()) {
+            log.error("Invalid email");
+            throw new IllegalArgumentException("Invalid email pattern");
+        }
+
         Optional<User> user = userRepository.findByEmail(email);
 
         if (user.isEmpty()) {
@@ -116,8 +123,19 @@ public class UserService {
         patchData.forEach((key, value) -> {
             switch (key) {
                 case "name" -> user.setName((String) value);
-                case "email" -> user.setEmail((String) value);
+                case "email" -> {
+                    if (!emailRegexPattern.matcher((String) value).matches()) {
+                        log.error("Invalid email");
+                        throw new IllegalArgumentException("Invalid email pattern");
+                    }
+                    user.setEmail((String) value);
+                }
                 case "password" -> {
+                    if (!passwordRegexPattern.matcher((String) value).matches()) {
+                        log.error("Invalid password");
+                        throw new IllegalArgumentException("Invalid password pattern: ao menos 8 digítos, um símbolo, umas letra maiúscula e uma minúscula");
+                    }
+
                     String EncryptedPassword = passwordEncoder.encode((String) value);
                     //String EncryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
                     user.setPassword(EncryptedPassword);
@@ -144,9 +162,19 @@ public class UserService {
             throw new IllegalArgumentException("Email is null");
         }
 
+        if (!emailRegexPattern.matcher(userRequestDTO.getEmail()).matches()) {
+            log.error("Invalid email");
+            throw new IllegalArgumentException("Invalid email pattern");
+        }
+
         if (userRequestDTO.getPassword() == null) {
             log.error("Password is null");
             throw new IllegalArgumentException("Password is null");
+        }
+
+        if (!passwordRegexPattern.matcher(userRequestDTO.getPassword()).matches()) {
+            log.error("Invalid password");
+            throw new IllegalArgumentException("Invalid password pattern: ao menos 8 digítos, um símbolo, umas letra maiúscula e uma minúscula");
         }
 
         String EncryptedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
@@ -170,6 +198,11 @@ public class UserService {
 
     @Transactional
     public UserResponseLoginDTO loginUser(UserRequestLoginDTO userRequestLoginDTO) {
+        if (!emailRegexPattern.matcher(userRequestLoginDTO.getEmail()).matches()) {
+            log.error("Invalid email");
+            throw new IllegalArgumentException("Invalid email pattern");
+        }
+
         User user = userRepository.findByEmail(userRequestLoginDTO.getEmail())
                 .orElseThrow(() -> new UserNotFound("User with email " + userRequestLoginDTO.getEmail() + " not found"));
 

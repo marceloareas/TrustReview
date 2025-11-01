@@ -83,7 +83,7 @@ const CreateReviewSection = ({
   };
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth={false} disableGutters>
       <Stack
         flex={1}
         spacing={3}

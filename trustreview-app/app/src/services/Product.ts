@@ -72,14 +72,9 @@ export default class ProductService {
         comment: (product as any).comment,
         pros: (product as any).pros,      
         cons: (product as any).cons,
-        tags: product.tags?.map((t) => {
-          if (typeof t === "string") {
-            return { name: t };
-          }
-          return { id: (t as any).id, name: (t as any).name };
-        }),
+        tags: product.tags,
       }),
-    ], { type: "application/json" });
+    ]);
 
     formData.append("data", jsonBlob);
 

@@ -36,24 +36,32 @@ import { Stack, Box } from "@mui/material";
 import Tag from "..";
 import type { ITag } from "../../../interfaces/Product";
 
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import TagButton from "../TagButton";
 import DialogTag from "../DialogTag";
 
 const TagsList = ({
   tags,
+  currentTagsList,
+  setCurrentTagsList,
   isEdit,
   showDialog = true,
 }: {
   tags: ITag[];
+  currentTagsList?: ITag[];
+  setCurrentTagsList?: Dispatch<SetStateAction<ITag[]>>;
   isEdit?: boolean;
   showDialog?: boolean;
 }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [showInlineInput, setShowInlineInput] = useState(false);
 
-  const handleDelete = (tagId: string) => {
-    console.log(`Delete clicked for tag: ${tagId}`);
+  const handleCreateTag = (tag: ITag) => {
+    setCurrentTagsList?.((prev) => [...prev, tag]);
+  };
+
+  const handleDelete = (tagName: string) => {
+    setCurrentTagsList?.((prev) => prev.filter((tag) => tag.name !== tagName));
   };
 
   return (
@@ -84,12 +92,12 @@ const TagsList = ({
             </Box>
           )}
 
-          {tags.map((tag) => (
-            <Box key={tag.id} sx={{ flex: "0 0 auto" }}>
+          {(currentTagsList || tags)?.map((tag) => (
+            <Box key={tag.name} sx={{ flex: "0 0 auto" }}>
               <Tag
-                label={tag.name}
+                tag={tag}
                 isEdit={isEdit}
-                handleDelete={() => handleDelete(tag.id || "")}
+                handleDelete={() => handleDelete(tag.name || "")}
               />
             </Box>
           ))}
@@ -106,8 +114,13 @@ const TagsList = ({
         <DialogTag
           open={openDialog}
           onClose={() => setOpenDialog(false)}
-          onCreateTag={() => {}}
-          tags={tags}
+          onCreateTag={(tag) => handleCreateTag(tag)}
+          tags={[
+            ...tags,
+            ...(currentTagsList || []).filter(
+              (ct) => !tags.some((t) => t.name === ct.name)
+            ),
+          ]}
         />
       )}
     </>

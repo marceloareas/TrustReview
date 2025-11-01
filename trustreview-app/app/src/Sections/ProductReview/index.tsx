@@ -66,16 +66,14 @@ const ProductReviewSection = ({
   }, [reviewed, id]);
 
   return (
-    <Stack spacing={4} justifyContent={'center'} width={'100%'}>
+    <Stack spacing={4} justifyContent={"center"} width={"100%"}>
       <Typography variant="h4" fontWeight={100}>
         Avaliações
       </Typography>
 
       {reviews.length === 0 && (
         <Box sx={{ width: "100%", textAlign: "center", py: 8 }}>
-          <Typography variant="body1">
-            Nenhuma avaliação encontrada.
-          </Typography>
+          <Typography variant="body1">Nenhuma avaliação encontrada.</Typography>
         </Box>
       )}
 

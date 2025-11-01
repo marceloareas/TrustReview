@@ -6,10 +6,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import type { IProduct } from "../../interfaces/Product";
+import type { IProduct, ITag } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
 import { useEffect, useState } from "react";
-import { productService } from "../../services";
+import { productService, tagService } from "../../services";
 import { useNavigate } from "react-router-dom";
 import ProductCardStackList from "../../components/Product/ProductCardStackList";
 import CreateReviewSection from "../CreateReview";
@@ -20,13 +20,14 @@ const ProductDetailsSection = ({
   id,
   product,
 }: {
-  id: string,
+  id: string;
   product: Partial<IProduct>;
 }) => {
   const navigate = useNavigate();
   const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
+  const [productTags, setProductTags] = useState<ITag[]>([]);
   const [reviewed, setReviewed] = useState(false);
-  const [isReviewing,setIsReviewing] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(false);
 
   useEffect(() => {
     const fetchRelatedProducts = async () => {
@@ -39,7 +40,19 @@ const ProductDetailsSection = ({
     };
     fetchRelatedProducts();
     console.log(relatedProducts);
-  }, []);
+  }, [product.id]);
+
+  useEffect(() => {
+    const fetchProductTags = async () => {
+      try {
+        const res = await tagService.getTagsByProductId(product.id || "");
+        setProductTags(res);
+      } catch (error) {
+        console.error("Error fetching product tags:", error);
+      }
+    };
+    fetchProductTags();
+  }, [product.id]);
 
   const handleClickProduct = (id: string) => {
     navigate(`/products/${id}`);
@@ -89,7 +102,7 @@ const ProductDetailsSection = ({
             <Typography variant="body1" fontWeight={600}>
               Tags
             </Typography>
-            <TagsList tags={product?.tags || []} />
+            <TagsList tags={productTags || []} />
           </Stack>
         </Stack>
         <Stack spacing={2} sx={{ width: "100%" }}>
@@ -115,7 +128,11 @@ const ProductDetailsSection = ({
             justifyContent={"flex-end"}
             alignItems={"flex-end"}
           >
-            <Button variant="contained" size="large" onClick={() => setIsReviewing(true)}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => setIsReviewing(true)}
+            >
               Fazer Review
             </Button>
           </Box>

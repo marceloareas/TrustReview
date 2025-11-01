@@ -17,15 +17,23 @@ interface CreateProductReviewForm {
   cons: string;
 }
 
-const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void }) => {
+const CreateProduct = ({
+  onCreated,
+}: {
+  onCreated?: (productId: string) => void;
+}) => {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
   const [tags, setTags] = useState<ITag[]>([]);
+  const [currentTagsList, setCurrentTagsList] = useState<ITag[]>([]);
 
   useEffect(() => {
     const fetchTags = async () => {
       try {
         const tags = await tagService.getTags();
         setTags(tags);
+        if (tags.length > 0 && currentTagsList.length === 0) {
+          setCurrentTagsList(tags);
+        }
       } catch (error) {
         console.error("Erro ao buscar tags:", error);
       }
@@ -34,12 +42,7 @@ const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void 
     fetchTags();
   }, []);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: {},
-  } = useForm<CreateProductReviewForm>({
+  const { control, handleSubmit, reset } = useForm<CreateProductReviewForm>({
     defaultValues: {
       image: null,
       name: "",
@@ -56,7 +59,7 @@ const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void 
     try {
       const newProduct = {
         name: data.name,
-        tags: data.tags && data.tags.length ? data.tags : tags,
+        tags: currentTagsList,
         description: data.description,
         image: data.image ?? null,
         reviewRating: data.reviewRating,
@@ -122,7 +125,12 @@ const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void 
               <Typography variant="body1" fontWeight={600}>
                 Tags
               </Typography>
-              <TagsList tags={tags || []} isEdit={true} />
+              <TagsList
+                tags={tags || []}
+                isEdit={true}
+                currentTagsList={currentTagsList}
+                setCurrentTagsList={setCurrentTagsList}
+              />
             </Stack>
           </Stack>
 

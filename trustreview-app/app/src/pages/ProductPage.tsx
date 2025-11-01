@@ -9,7 +9,6 @@ const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<IProduct | null>(null);
 
-
   useEffect(() => {
     const fetchProduct = async () => {
       if (!id) return;
@@ -52,11 +51,7 @@ const ProductPage = () => {
         alignItems: "center",
       }}
     >
-      <ProductDetailsSection
-        id={id ?? ''}
-        product={product}
-      />
-   
+      <ProductDetailsSection id={id ?? ""} product={product} />
     </Stack>
   );
 };

@@ -40,7 +40,7 @@ interface AuthContextProps {
 }
 
 export const AuthContext = createContext<AuthContextProps | undefined>(
-  undefined
+  undefined,
 );
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -54,15 +54,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setAuthorized(!!data);
   };
 
-  const register = useCallback(async (name: string, email: string, password: string) => {
-    const response = await userService.createUser({
-      name,
-      email,
-      password,
-    } as UserDTO);
-    const { id, name: userName, email: userEmail, userType } = response;
-    persistUser({ id, name: userName, email: userEmail, userType });
-  }, []);
+  const register = useCallback(
+    async (name: string, email: string, password: string) => {
+      const response = await userService.createUser({
+        name,
+        email,
+        password,
+      } as UserDTO);
+      const { id, name: userName, email: userEmail, userType } = response;
+      persistUser({ id, name: userName, email: userEmail, userType });
+    },
+    [],
+  );
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await userService.login(email, password);

@@ -48,12 +48,16 @@ export default function DialogTag({
   open,
   onClose,
   tags,
+  currentTagsList,
   onCreateTag,
+  onSelectTag,
 }: {
   open: boolean;
   onClose: () => void;
   tags: ITag[];
+  currentTagsList?: ITag[];
   onCreateTag?: (tag: ITag) => void;
+  onSelectTag: (tag: ITag) => void;
 }) {
   const { filteredItems, searchTerm, setSearchTerm } = useSearch(tags, [
     "name",
@@ -61,8 +65,9 @@ export default function DialogTag({
   ]);
   const visibleTags = filteredItems;
   const [isCreating, setIsCreating] = useState(false);
+  const selectedTagNames = currentTagsList?.map((tag) => tag.name) || [];
 
-  const openCreateInput = () => {
+  const enterCreateMode = () => {
     setIsCreating(true);
   };
 
@@ -91,9 +96,8 @@ export default function DialogTag({
             }}
           >
             <Box>
-              <TagButton isEditMode={true} onClick={openCreateInput} />
+              <TagButton isEditMode={true} onClick={enterCreateMode} />
             </Box>
-
             <TagInput
               isCreating={isCreating}
               setIsCreating={setIsCreating}
@@ -103,8 +107,16 @@ export default function DialogTag({
               }}
             />
 
-            {visibleTags.map((t) => (
-              <Tag key={t.id || t.name} tag={t} />
+            {visibleTags.map((tag) => (
+              <Tag
+                key={tag.id || tag.name}
+                tag={tag}
+                isEdit
+                onClick={() => {
+                  onSelectTag(tag);
+                }}
+                isSelected={selectedTagNames.includes(tag.name)}
+              />
             ))}
           </Box>
         </Stack>

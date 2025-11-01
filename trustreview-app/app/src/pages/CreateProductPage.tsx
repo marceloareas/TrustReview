@@ -56,7 +56,7 @@ const CreateProductPage = () => {
     } catch (error) {
       showNotification(
         "Houve um erro ao criar o Review. Tente Novamente.",
-        "error"
+        "error",
       );
       console.error("Error saving review:", error);
     }

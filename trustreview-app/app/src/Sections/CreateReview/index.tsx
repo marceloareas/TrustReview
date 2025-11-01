@@ -44,7 +44,7 @@ const CreateReviewSection = ({
       console.error("Title and comment are required");
       showNotification(
         "É necessário preencher o Título e Comentário.",
-        "error"
+        "error",
       );
       return;
     }

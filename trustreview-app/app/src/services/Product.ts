@@ -70,7 +70,7 @@ export default class ProductService {
         description: product.description,
         reviewRating: (product as any).reviewRating,
         comment: (product as any).comment,
-        pros: (product as any).pros,      
+        pros: (product as any).pros,
         cons: (product as any).cons,
         tags: product.tags,
       }),

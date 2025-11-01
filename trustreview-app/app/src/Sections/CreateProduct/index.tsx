@@ -31,9 +31,6 @@ const CreateProduct = ({
       try {
         const tags = await tagService.getTags();
         setTags(tags);
-        if (tags.length > 0 && currentTagsList.length === 0) {
-          setCurrentTagsList(tags);
-        }
       } catch (error) {
         console.error("Erro ao buscar tags:", error);
       }

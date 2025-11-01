@@ -59,7 +59,7 @@ const CreateProductReview = ({
     // Fazemos isso aqui para manter a UX de um único botão "Publicar Produto"
     // que cria o produto e depois publica a review pendente.
     const productForm = document.getElementById(
-      "create-product-form"
+      "create-product-form",
     ) as HTMLFormElement | null;
     if (productForm) {
       // requestSubmit é preferível porque respeita o botão submit associado.

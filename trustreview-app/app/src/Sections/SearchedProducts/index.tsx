@@ -32,7 +32,7 @@ const SearchedProducts = () => {
     const fetchProducts = async () => {
       try {
         const res = await productService.getProducts();
-        console.log("Produtos",res)
+        console.log("Produtos", res);
         setProducts(res);
       } catch (error) {
         console.error("Error fetching products:", error);

@@ -149,8 +149,8 @@ export const defaultTheme = createTheme({
           "& .MuiOutlinedInput-root": {
             backgroundColor: "#FFFFFF",
             borderRadius: "10px",
-            '& input::placeholder': {
-              color: '#1D1B20',
+            "& input::placeholder": {
+              color: "#1D1B20",
             },
             "& fieldset": {
               borderColor: "#D5D5D5",

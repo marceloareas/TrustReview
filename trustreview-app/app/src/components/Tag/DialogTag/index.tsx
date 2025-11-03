@@ -79,9 +79,9 @@ export default function DialogTag({
   }, [open, setSearchTerm]);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" >
       <DialogContent>
-        <Stack spacing={2} mt={1}>
+        <Stack spacing={2} mt={1} height={'60vh'}>
           <Search
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

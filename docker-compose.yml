@@ -45,12 +45,12 @@ services:
       - VITE_API_URL=http://localhost:8080/api/v1
 
   nginx:
-    build: ./trustreview-app/nginx
+    build:
+      context: ./trustreview-app
+      dockerfile: nginx/Dockerfile
     container_name: nginx-trustreview
     ports:
       - "80:80"
-    volumes:
-      - ./trustreview-app/app/dist:/usr/share/nginx/html
     depends_on:
       - app
       - api

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repositório responsável por operações de persistência relacionadas à entidade {@link Review}.
@@ -81,6 +82,28 @@ public interface ReviewRepository extends JpaRepository<Review, ProductReviewId>
      * @return Lista de avaliações com nota maior ou igual ao valor especificado.
      */
     List<Review> findByRatingGreaterThanEqual(Double minRating);
+
+    /**
+     * Conta o número total de avaliações associadas a um determinado produto.
+     *
+     * <p>
+     * Este método retorna a quantidade de registros de {@link Review}
+     * existentes no banco de dados que estão vinculados ao produto informado.
+     * É útil para exibir a quantidade total de avaliações de um produto ou
+     * para cálculos estatísticos, como o ajuste da nota média.
+     * </p>
+     *
+     * <p><b>Exemplo de uso:</b></p>
+     * <pre>{@code
+     * Product product = productRepository.findById(productId).get();
+     * long totalReviews = reviewRepository.countByProductId(product);
+     * }</pre>
+     *
+     * @param Product_id Produto para o qual as avaliações serão contadas.
+     * @return Número total de avaliações associadas ao produto.
+     */
+    int countByProductId(Product product);
+
 
     /**
      * Consulta JPQL para retornar as avaliações mais curtidas de um produto.

@@ -106,6 +106,8 @@ public class ProductService {
             log.info("Nenhuma imagem fornecida para o produto: {}", request.getName());
         }
 
+        product.setOverallRating(0.0);
+
         if (request.getTags() != null && !request.getTags().isEmpty()) {
             Set<Tag> managedTags = validateTags(
                     request.getTags().stream()

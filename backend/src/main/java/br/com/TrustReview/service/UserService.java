@@ -5,7 +5,7 @@ import br.com.TrustReview.dto.UserRequestLoginDTO;
 import br.com.TrustReview.dto.UserResponseDTO;
 import br.com.TrustReview.dto.UserResponseLoginDTO;
 import br.com.TrustReview.exception.InvalidCredentials;
-import br.com.TrustReview.exception.UserEmailAlredyExits;
+import br.com.TrustReview.exception.UserEmailAlreadyExists;
 import br.com.TrustReview.exception.UserNotFound;
 import br.com.TrustReview.mapper.UserMapper;
 import br.com.TrustReview.model.User;
@@ -55,7 +55,7 @@ public class UserService {
 
         if (existingEmail.isPresent()) {
             log.error("User with email {} already exists", userRequestDTO.getEmail());
-            throw new UserEmailAlredyExits("Email de usuário já em uso");
+            throw new UserEmailAlreadyExists("Email de usuário já em uso");
         }
 
         if (userRequestDTO.getName() == null) {

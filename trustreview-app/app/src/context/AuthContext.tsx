@@ -61,58 +61,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email,
         password,
       } as UserDTO);
-      const anyResp = response as any;
-      if (anyResp && anyResp.token) {
-        // backend may return either { token, user } or a flat object { id, name, email, userType, token }
-        try {
-          localStorage.setItem("token", anyResp.token);
-        } catch (e) {}
 
-        let returnedUser: IUser | null = null;
-        if (anyResp.user) {
-          returnedUser = anyResp.user as IUser;
-        } else {
-          const { id, name: userName, email: userEmail, userType } = anyResp;
-          returnedUser = { id, name: userName, email: userEmail, userType } as IUser;
-        }
-        persistUser(returnedUser);
-      } else {
-        const { id, name: userName, email: userEmail, userType } = response as IUser;
-        persistUser({ id, name: userName, email: userEmail, userType });
-      }
+      const { id, name: userName, email: userEmail, userType, token } = response as IUser;
+      persistUser({ id, name: userName, email: userEmail, userType, token });
     },
     [],
   );
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await userService.login(email, password);
-    const anyResp = response as any;
-    if (anyResp && anyResp.token) {
-      try {
-        localStorage.setItem("token", anyResp.token);
-      } catch (e) {}
 
-      let returnedUser: IUser | null = null;
-      if (anyResp.user) {
-        returnedUser = anyResp.user as IUser;
-      } else {
-        const { id, name: userName, email: userEmail, userType } = anyResp;
-        returnedUser = { id, name: userName, email: userEmail, userType } as IUser;
-      }
-      persistUser(returnedUser);
-    } else {
-      const { id, name, email: userEmail, userType } = response as IUser;
-      persistUser({ id, name, email: userEmail, userType });
-    }
+    const { id, name: userName, email: userEmail, userType, token } = response as IUser;
+    persistUser({ id, name: userName, email: userEmail, userType, token });
   }, []);
 
   const logout = useCallback(() => {
     persistUser(null);
-    try {
-      localStorage.removeItem("token");
-    } catch (e) {}
+    setAuthorized(false);
   }, []);
-
+  
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {

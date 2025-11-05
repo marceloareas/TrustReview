@@ -1,5 +1,5 @@
 import { Container, Stack, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import ProductInputImage from "../../components/Product/ProductInputImage";
 import { tagService } from "../../services";
 import { useForm, Controller } from "react-hook-form";
@@ -11,11 +11,7 @@ interface CreateProductReviewForm {
   name: string;
   description: string;
   image?: File | null;
-  reviewRating: number;
   tags: ITag[];
-  comment: string;
-  pros: string;
-  cons: string;
 }
 
 const CreateProduct = ({
@@ -45,29 +41,23 @@ const CreateProduct = ({
 
   const { control, handleSubmit, reset } = useForm<CreateProductReviewForm>({
     defaultValues: {
-      image: null,
       name: "",
       description: "",
-      reviewRating: 0,
       tags: [],
-      comment: "",
-      pros: "",
-      cons: "",
+      image: null,
     },
   });
 
-  const onSubmit = async (data: CreateProductReviewForm) => {
+  const onSubmit = useCallback(async (data: CreateProductReviewForm) => {
     try {
       const newProduct = {
         name: data.name,
-        tags: currentTagsList,
         description: data.description,
+        tags: currentTagsList,
         image: data.image ?? null,
-        reviewRating: data.reviewRating,
-        comment: data.comment,
-        pros: data.pros,
-        cons: data.cons,
       };
+
+      console.log("Creating product: (component)", newProduct);
 
       const response = await createProduct(newProduct);
       reset();
@@ -77,15 +67,21 @@ const CreateProduct = ({
     } catch (error) {
       console.error("Erro ao criar produto:", error);
     }
-  };
+  }, [createProduct, reset, onCreated, currentTagsList]);
 
-  const submitForm = () => {
+  const latestSubmitRef = useRef<() => void>(() => {});
+
+  latestSubmitRef.current = useCallback(() => {
     void handleSubmit(onSubmit)();
-  };
+  }, [handleSubmit, onSubmit]);
+
+  const stableRegisterWrapper = useCallback(() => {
+    latestSubmitRef.current?.();
+  }, []);
 
   useEffect(() => {
-    if (registerSubmit) registerSubmit(submitForm);
-  }, []);
+    if (registerSubmit) registerSubmit(stableRegisterWrapper);
+  }, [registerSubmit]);
 
   return (
     <Container maxWidth="xl">

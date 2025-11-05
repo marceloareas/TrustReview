@@ -46,7 +46,7 @@ import { Box, Grid, IconButton, Stack, Typography } from "@mui/material";
 import type { IProduct } from "../../../interfaces/Product";
 import ProductCard from "../ProductCard";
 import { AddBox } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import useNavigateIfAuthorized from "../../../hooks/useNavigateIfAuthorized";
 
 interface IProductCardListProps {
   productList: IProduct[];
@@ -57,7 +57,8 @@ const ProductCardGridList = ({
   productList,
   onClick,
 }: IProductCardListProps) => {
-  const navigate = useNavigate();
+  const { navigateIfAuthorized } = useNavigateIfAuthorized();
+
   if (productList.length === 0) {
     return (
       <Stack
@@ -75,7 +76,7 @@ const ProductCardGridList = ({
               aria-label="Add"
               color="secondary"
               sx={{ color: "secondary.main" }}
-              onClick={() => navigate("/createProduct")}
+              onClick={() => navigateIfAuthorized("/createProduct")}
             >
               <AddBox sx={{ fontSize: 30 }} />
             </IconButton>

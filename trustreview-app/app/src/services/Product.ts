@@ -60,7 +60,7 @@ export default class ProductService {
   }
 
   async createProduct(product: Partial<IProduct>): Promise<IProduct> {
-    console.log("Creating product (multipart):", product);
+    console.log("Creating product:", product);
 
     const formData = new FormData();
 

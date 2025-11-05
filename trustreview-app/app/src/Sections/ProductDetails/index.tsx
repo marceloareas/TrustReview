@@ -16,6 +16,7 @@ import CreateReviewSection from "../CreateReview";
 import ProductReviewSection from "../ProductReview";
 import TagsList from "../../components/Tag/TagList";
 import useProduct from "../../hooks/useProduct";
+import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
 
 const ProductDetailsSection = ({
   id,
@@ -29,6 +30,7 @@ const ProductDetailsSection = ({
   const [isReviewing, setIsReviewing] = useState(false);
   const [product, setProduct] = useState<IProduct | null>(null);
   const { getProductById, getRelatedProducts, loading } = useProduct();
+  const { navigateIfAuthorized } = useNavigateIfAuthorized();
 
   const fetchProduct = async () => {
     const fetchedProduct = await getProductById(id ?? "");
@@ -173,7 +175,10 @@ const ProductDetailsSection = ({
             <Button
               variant="contained"
               size="large"
-              onClick={() => setIsReviewing(true)}
+              onClick={() => {
+                navigateIfAuthorized();
+                setIsReviewing(true)
+              }}
             >
               Fazer Review
             </Button>
@@ -184,7 +189,10 @@ const ProductDetailsSection = ({
         )}
         {isReviewing && (
           <CreateReviewSection
-            onReview={() => setIsReviewing(false)}
+            onReview={() => {
+              navigateIfAuthorized();
+              setIsReviewing(false)
+            }}
             setReviewed={setReviewed}
           />
         )}

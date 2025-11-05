@@ -83,7 +83,6 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     setError(null);
     try {
       const created = await productService.createProduct(product);
-      // optimistically add to list
       setProducts((prev) => (created ? [created, ...prev] : prev));
       return created;
     } catch (e: any) {

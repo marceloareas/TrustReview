@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import CreateProduct from "../Sections/CreateProduct";
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import CreateProductReview from "../Sections/CreateProduct/CreateProductReview";
 import { useAuth } from "../hooks/useAuth";
 import { reviewService } from "../services";
@@ -19,7 +19,6 @@ const CreateProductPage = () => {
     con: string[];
     rating: number;
   } | null>(null);
-  // keep a ref so we can synchronously read pending review when the child triggers form submit
   const pendingReviewRef = useRef<typeof pendingReview>(null);
   const [submitForm, setSubmitForm] = useState<(() => void) | null>(null);
 
@@ -56,14 +55,12 @@ const CreateProductPage = () => {
 
     try {
       await reviewService.postReview(payload);
-      console.log("Review publicada");
       showNotification("Review publicado com sucesso!", "success");
     } catch (error) {
       showNotification(
         "Houve um erro ao criar o Review. Tente Novamente.",
         "error",
       );
-      console.error("Error saving review:", error);
     }
   };
 
@@ -83,7 +80,7 @@ const CreateProductPage = () => {
           con: toPublish.con,
           rating: toPublish.rating,
         });
-        // clear both ref and state
+
         pendingReviewRef.current = null;
         setPendingReview(null);
         navigate("/");
@@ -105,11 +102,9 @@ const CreateProductPage = () => {
     >
       <CreateProduct
         onCreated={handleProductCreated}
-        registerSubmit={(fn: () => void) => {
-          // pass the submit function to the review component via prop
-          // we'll render CreateProductReview below with submitForm
+        registerSubmit={useCallback((fn: () => void) => {
           setSubmitForm(() => fn);
-        }}
+        }, [])}
       />
       <CreateProductReview
         onReview={handleReviewPublish}

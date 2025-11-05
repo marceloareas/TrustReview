@@ -91,6 +91,9 @@ const ProductReviewSection = ({
                 }}
               >
                 <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="body2" color="text.tertiary">
+                    Por: {review.userName || "Anônimo"} 
+                  </Typography>
                   <Stack
                     direction={"row"}
                     alignItems={"center"}

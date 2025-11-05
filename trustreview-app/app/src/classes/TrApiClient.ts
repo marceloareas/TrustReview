@@ -57,7 +57,22 @@ class TrApiClient extends ApiClient {
         Accept: "application/json",
       },
     });
+
+    this.http.interceptors.request.use((config) => {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          config.headers = config.headers || {};
+          (config.headers as any)["Authorization"] = `Bearer ${token}`;
+        }
+      } catch (e) {
+        console.error("TrApiClient - erro ao adicionar token Authorization no cabeçalho.", e);
+      }
+
+      return config;
+    });
   }
+  
 }
 
 export default TrApiClient;

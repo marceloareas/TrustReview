@@ -9,41 +9,49 @@ import {
 import type { IProduct, ITag } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
 import { useEffect, useState } from "react";
-import { productService, tagService } from "../../services";
+import { tagService } from "../../services";
 import { useNavigate } from "react-router-dom";
 import ProductCardStackList from "../../components/Product/ProductCardStackList";
 import CreateReviewSection from "../CreateReview";
 import ProductReviewSection from "../ProductReview";
 import TagsList from "../../components/Tag/TagList";
+import useProduct from "../../hooks/useProduct";
 
 const ProductDetailsSection = ({
   id,
-  product,
 }: {
   id: string;
-  product: Partial<IProduct>;
 }) => {
   const navigate = useNavigate();
   const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
   const [productTags, setProductTags] = useState<ITag[]>([]);
   const [reviewed, setReviewed] = useState(false);
   const [isReviewing, setIsReviewing] = useState(false);
+  const [product, setProduct] = useState<IProduct | null>(null);
+  const { getProductById, getRelatedProducts, loading } = useProduct();
+
+  const fetchProduct = async () => {
+    const fetchedProduct = await getProductById(id ?? "");
+    setProduct(fetchedProduct);
+  };
+
+  const fetchRelatedProducts = async () => {
+    if (!product?.id) return;
+    const res = await getRelatedProducts(product.id || "");
+    setRelatedProducts(res);
+  };
 
   useEffect(() => {
-    const fetchRelatedProducts = async () => {
-      try {
-        const res = await productService.getRelatedProducts(product.id || "");
-        setRelatedProducts(res);
-      } catch (error) {
-        console.error("Error fetching related products:", error);
-      }
-    };
+    fetchProduct();
+  }, [id, reviewed]);
+
+  useEffect(() => {
     fetchRelatedProducts();
-    console.log(relatedProducts);
-  }, [product.id]);
+  }, [product?.id]);
 
   useEffect(() => {
     const fetchProductTags = async () => {
+      if (!product?.id) return;
       try {
         const res = await tagService.getTagsByProductId(product.id || "");
         setProductTags(res);
@@ -52,7 +60,41 @@ const ProductDetailsSection = ({
       }
     };
     fetchProductTags();
-  }, [product.id]);
+  }, [product?.id]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          bgcolor: "background.default",
+        }}
+      >
+        <h2>Carregando...</h2>
+      </Box>
+    );
+  }
+
+  if (!product) {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          bgcolor: "background.default",
+        }}
+      >
+        <h2>Produto não encontrado</h2>
+      </Box>
+    );
+  }
 
   const handleClickProduct = (id: string) => {
     navigate(`/products/${id}`);

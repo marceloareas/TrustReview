@@ -9,8 +9,10 @@ import {
 } from "@mui/material";
 import Review from "../../../assets/icons/Review.svg";
 import { useState } from "react";
+import { useAuth } from "../../../hooks/useAuth";
 
 type ReviewFormData = {
+  userId: string;
   title: string;
   description: string;
   pros: string[];
@@ -25,6 +27,7 @@ const CreateProductReview = ({
   onReview: (data: ReviewFormData) => void;
   onCancel?: () => void;
 }) => {
+  const { user } = useAuth();
   const [rating, setRating] = useState<number | null>(0);
   const [title, setTitle] = useState<string>("");
   const [comment, setComment] = useState<string>("");
@@ -48,6 +51,7 @@ const CreateProductReview = ({
     if (!title.trim() || !comment.trim() || rating === null) return;
 
     onReview({
+      userId: user?.id || "",
       title: title.trim(),
       description: comment.trim(),
       pros: prosArr,
@@ -55,14 +59,10 @@ const CreateProductReview = ({
       rating: rating || 0,
     });
 
-    // Submete o formulário de criação do produto programaticamente.
-    // Fazemos isso aqui para manter a UX de um único botão "Publicar Produto"
-    // que cria o produto e depois publica a review pendente.
     const productForm = document.getElementById(
       "create-product-form",
     ) as HTMLFormElement | null;
     if (productForm) {
-      // requestSubmit é preferível porque respeita o botão submit associado.
       if (typeof productForm.requestSubmit === "function") {
         productForm.requestSubmit();
       } else {

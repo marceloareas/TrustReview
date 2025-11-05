@@ -72,7 +72,7 @@ import type {
 import type IApiClient from "../interfaces/IApiClient";
 
 abstract class ApiClient implements IApiClient {
-  private http: AxiosInstance;
+  protected http: AxiosInstance;
   private baseConfig: CreateAxiosDefaults;
 
   constructor(baseConfig: CreateAxiosDefaults) {
@@ -88,9 +88,11 @@ abstract class ApiClient implements IApiClient {
       return response;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(
-          error.response?.data?.message ?? "Erro de comunicação com a API",
-        );
+  // Log full response for debugging in dev
+  // eslint-disable-next-line no-console
+  console.error("ApiClient.execute - axios error response:", error.response);
+  const msg = error.response?.data?.message ?? JSON.stringify(error.response?.data) ?? "Erro de comunicação com a API";
+  throw new Error(msg);
       }
       throw error;
     }

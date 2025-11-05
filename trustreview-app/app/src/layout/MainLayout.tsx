@@ -31,7 +31,7 @@ const MainLayout = () => {
           height: "calc(100vh - 64px)",
           width: "100%",
           backgroundColor: "background.default",
-          py: 4,
+          py: '64px',
           overflowY: "auto",
           overflowX: "hidden",
         }}

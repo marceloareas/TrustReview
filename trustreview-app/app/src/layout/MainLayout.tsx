@@ -29,9 +29,9 @@ const MainLayout = () => {
       <Box
         sx={{
           height: "calc(100vh - 64px)",
+          py: 4,
           width: "100%",
           backgroundColor: "background.default",
-          py: '64px',
           overflowY: "auto",
           overflowX: "hidden",
         }}

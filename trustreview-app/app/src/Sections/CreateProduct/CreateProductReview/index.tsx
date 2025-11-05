@@ -23,9 +23,11 @@ type ReviewFormData = {
 const CreateProductReview = ({
   onReview,
   onCancel,
+  submitForm,
 }: {
   onReview: (data: ReviewFormData) => void;
   onCancel?: () => void;
+  submitForm?: () => void;
 }) => {
   const { user } = useAuth();
   const [rating, setRating] = useState<number | null>(0);
@@ -58,16 +60,8 @@ const CreateProductReview = ({
       con: conArr,
       rating: rating || 0,
     });
-
-    const productForm = document.getElementById(
-      "create-product-form",
-    ) as HTMLFormElement | null;
-    if (productForm) {
-      if (typeof productForm.requestSubmit === "function") {
-        productForm.requestSubmit();
-      } else {
-        productForm.submit();
-      }
+    if (typeof submitForm === "function") {
+      submitForm();
     }
   };
 

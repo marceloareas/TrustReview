@@ -1,10 +1,11 @@
 import { Container, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ProductInputImage from "../../components/Product/ProductInputImage";
-import { productService, tagService } from "../../services";
+import { tagService } from "../../services";
 import { useForm, Controller } from "react-hook-form";
 import type { ITag } from "../../interfaces/Product";
 import TagsList from "../../components/Tag/TagList";
+import useProduct from "../../hooks/useProduct";
 
 interface CreateProductReviewForm {
   name: string;
@@ -19,12 +20,15 @@ interface CreateProductReviewForm {
 
 const CreateProduct = ({
   onCreated,
+  registerSubmit,
 }: {
   onCreated?: (productId: string) => void;
+  registerSubmit?: (fn: () => void) => void;
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
   const [tags, setTags] = useState<ITag[]>([]);
   const [currentTagsList, setCurrentTagsList] = useState<ITag[]>([]);
+  const {createProduct} = useProduct();
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -65,7 +69,7 @@ const CreateProduct = ({
         cons: data.cons,
       };
 
-      const response = await productService.createProduct(newProduct);
+      const response = await createProduct(newProduct);
       reset();
       if (onCreated && response?.id) {
         onCreated(response.id);
@@ -74,6 +78,14 @@ const CreateProduct = ({
       console.error("Erro ao criar produto:", error);
     }
   };
+
+  const submitForm = () => {
+    void handleSubmit(onSubmit)();
+  };
+
+  useEffect(() => {
+    if (registerSubmit) registerSubmit(submitForm);
+  }, []);
 
   return (
     <Container maxWidth="xl">

@@ -39,3 +39,8 @@ backend/.env
 node_modules
 
 uploads/
+
+#Sentimental Analysis Stuff
+sentimental_analysis/model
+sentimental_analysis/training/data
+sentimental_analysis/tmp_trainer

@@ -1,0 +1,22 @@
+# Dockerfile
+FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime
+
+# Diretório de trabalho principal
+WORKDIR /workspace
+
+# Copiando requirements
+COPY requirements.txt .
+
+# Instalando todas as dependências
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiando código da API e do treinamento
+COPY api/ ./api/
+COPY training/ ./training/
+
+# Expondo porta da API
+EXPOSE 8000
+
+# Rodando somente a API — rotina já embutida no app.py
+#CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python","training/train.py"]

@@ -44,6 +44,20 @@ services:
     environment:
       - VITE_API_URL=http://localhost:8080/api/v1
 
+  sentimental_analysis:
+    build:
+      context: ./sentimental_analysis
+      dockerfile: Dockerfile.api
+    container_name: sentimental_analysis
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./sentimental_analysis:/workspace
+    #restart: always
+
   nginx:
     build: ./trustreview-app/nginx
     container_name: nginx-trustreview

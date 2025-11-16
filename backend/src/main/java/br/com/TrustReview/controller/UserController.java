@@ -1,9 +1,6 @@
 package br.com.TrustReview.controller;
 
-import br.com.TrustReview.dto.TagResponseDTO;
-import br.com.TrustReview.dto.UserRequestDTO;
-import br.com.TrustReview.dto.UserRequestLoginDTO;
-import br.com.TrustReview.dto.UserResponseDTO;
+import br.com.TrustReview.dto.*;
 import br.com.TrustReview.exception.ApiError;
 import br.com.TrustReview.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
-@Tag(name = "User Endpoint", description = "Endpoint para gerenciamento de Usuários (CRUD)")
+@Tag(name = "Tag Endpoint", description = "Endpoint para gerenciamento de Usuários (CRUD)")
 public class UserController {
 
     private final UserService userService;
@@ -42,9 +39,9 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid UserRequestDTO userRequestDTO) {
-        UserResponseDTO userResponseDTO = userService.createUser(userRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDTO);
+    public ResponseEntity<UserResponseLoginDTO> createUser(@RequestBody @Valid UserRequestDTO userRequestDTO) {
+        UserResponseLoginDTO userResponseLoginDTO = userService.createUser(userRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseLoginDTO);
     }
 
     @Operation(summary = "Busca Usuário pelo email")
@@ -142,7 +139,7 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@RequestBody UserRequestLoginDTO loginRequest) {
+    public ResponseEntity<UserResponseLoginDTO> login(@RequestBody UserRequestLoginDTO loginRequest) {
         return ResponseEntity.ok(userService.loginUser(loginRequest));
     }
 

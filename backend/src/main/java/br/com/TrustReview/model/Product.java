@@ -83,4 +83,25 @@ public class Product {
     @Column(name = "updated_at", nullable = false, updatable = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")
     private Timestamp updatedAt;
+
+    /**
+     * Atualiza a nota média (overallRating) do produto com base em todas as avaliações recebidas.
+     *
+     * @param totalReviews número total de avaliações do produto
+     * @param newRating nota da nova avaliação recebida
+     */
+    public void updateOverallRating(int totalReviews, double newRating) {
+        if (totalReviews <= 0) {
+            this.overallRating = newRating;
+            return;
+        }
+
+        if (this.overallRating == null) {
+            this.overallRating = newRating;
+        } else {
+            // Fórmula para média incremental: novaMédia = ((médiaAnterior * (n - 1)) + novaNota) / n
+            this.overallRating = ((this.overallRating * (totalReviews - 1)) + newRating) / totalReviews;
+        }
+    }
+
 }

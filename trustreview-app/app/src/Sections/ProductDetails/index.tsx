@@ -6,40 +6,97 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import type { IProduct } from "../../interfaces/Product";
+import type { IProduct, ITag } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
 import { useEffect, useState } from "react";
-import { productService } from "../../services";
+import { tagService } from "../../services";
 import { useNavigate } from "react-router-dom";
 import ProductCardStackList from "../../components/Product/ProductCardStackList";
 import CreateReviewSection from "../CreateReview";
 import ProductReviewSection from "../ProductReview";
 import TagsList from "../../components/Tag/TagList";
+import useProduct from "../../hooks/useProduct";
+import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
 
 const ProductDetailsSection = ({
   id,
-  product,
 }: {
-  id: string,
-  product: Partial<IProduct>;
+  id: string;
 }) => {
   const navigate = useNavigate();
   const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
+  const [productTags, setProductTags] = useState<ITag[]>([]);
   const [reviewed, setReviewed] = useState(false);
-  const [isReviewing,setIsReviewing] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [product, setProduct] = useState<IProduct | null>(null);
+  const { getProductById, getRelatedProducts, loading } = useProduct();
+  const { navigateIfAuthorized } = useNavigateIfAuthorized();
+
+  const fetchProduct = async () => {
+    const fetchedProduct = await getProductById(id ?? "");
+    setProduct(fetchedProduct);
+  };
+
+  const fetchRelatedProducts = async () => {
+    if (!product?.id) return;
+    const res = await getRelatedProducts(product.id || "");
+    setRelatedProducts(res);
+  };
 
   useEffect(() => {
-    const fetchRelatedProducts = async () => {
+    fetchProduct();
+  }, [id, reviewed]);
+
+  useEffect(() => {
+    fetchRelatedProducts();
+  }, [product?.id]);
+
+  useEffect(() => {
+    const fetchProductTags = async () => {
+      if (!product?.id) return;
       try {
-        const res = await productService.getRelatedProducts(product.id || "");
-        setRelatedProducts(res);
+        const res = await tagService.getTagsByProductId(product.id || "");
+        setProductTags(res);
       } catch (error) {
-        console.error("Error fetching related products:", error);
+        console.error("Error fetching product tags:", error);
       }
     };
-    fetchRelatedProducts();
-    console.log(relatedProducts);
-  }, []);
+    fetchProductTags();
+  }, [product?.id]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          bgcolor: "background.default",
+        }}
+      >
+        <h2>Carregando...</h2>
+      </Box>
+    );
+  }
+
+  if (!product) {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          bgcolor: "background.default",
+        }}
+      >
+        <h2>Produto não encontrado</h2>
+      </Box>
+    );
+  }
 
   const handleClickProduct = (id: string) => {
     navigate(`/products/${id}`);
@@ -89,7 +146,7 @@ const ProductDetailsSection = ({
             <Typography variant="body1" fontWeight={600}>
               Tags
             </Typography>
-            <TagsList tags={product?.tags || []} />
+            <TagsList tags={productTags || []} />
           </Stack>
         </Stack>
         <Stack spacing={2} sx={{ width: "100%" }}>
@@ -115,7 +172,14 @@ const ProductDetailsSection = ({
             justifyContent={"flex-end"}
             alignItems={"flex-end"}
           >
-            <Button variant="contained" size="large" onClick={() => setIsReviewing(true)}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => {
+                navigateIfAuthorized();
+                setIsReviewing(true)
+              }}
+            >
               Fazer Review
             </Button>
           </Box>
@@ -125,7 +189,10 @@ const ProductDetailsSection = ({
         )}
         {isReviewing && (
           <CreateReviewSection
-            onReview={() => setIsReviewing(false)}
+            onReview={() => {
+              navigateIfAuthorized();
+              setIsReviewing(false)
+            }}
             setReviewed={setReviewed}
           />
         )}

@@ -1,0 +1,8 @@
+{
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "exclude": ["**/*.test.*", "**/*.spec.*", "**/__mocks__/**"],
+  "out": "docs",
+  "includeVersion": true,
+  "tsconfig": "tsconfig.json"
+}

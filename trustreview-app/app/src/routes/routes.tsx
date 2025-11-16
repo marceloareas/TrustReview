@@ -1,3 +1,27 @@
+/**
+ * routes
+ *
+ * Propósito:
+ *  Definir as rotas da aplicação usando `createBrowserRouter` do React Router.
+ *
+ * Uso:
+ *  - Importar o `router` exportado e fornecê-lo ao `RouterProvider` na raiz
+ *    da aplicação.
+ *
+ * Entradas:
+ *  - Importa as páginas e o layout que serão montados nas rotas.
+ *
+ * Comportamento:
+ *  - Rota raiz (`/`) usa `MainLayout` como wrapper e define rotas filhas:
+ *    - index: `SearchPage`
+ *    - `/products`: `SearchedProductsPage`
+ *    - `/products/:id`: `ProductPage`
+ *    - `/login`: `LoginPage`
+ *    - `/register`: `RegisterPage`
+ *    - `/createProduct`: `CreateProductPage`
+ *  - Exporta `router` para uso com `RouterProvider`.
+ */
+
 import { createBrowserRouter } from "react-router-dom";
 import SearchPage from "../pages/SearchPage";
 import SearchedProductsPage from "../pages/SearchedProductsPage";

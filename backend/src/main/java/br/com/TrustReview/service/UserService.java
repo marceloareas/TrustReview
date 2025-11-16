@@ -1,17 +1,19 @@
 package br.com.TrustReview.service;
 
-import br.com.TrustReview.config.PasswordEncoderConfig;
 import br.com.TrustReview.dto.UserRequestDTO;
 import br.com.TrustReview.dto.UserRequestLoginDTO;
 import br.com.TrustReview.dto.UserResponseDTO;
+import br.com.TrustReview.dto.UserResponseLoginDTO;
 import br.com.TrustReview.exception.InvalidCredentials;
-import br.com.TrustReview.exception.UserEmailAlredyExits;
+import br.com.TrustReview.exception.UserEmailAlreadyExists;
 import br.com.TrustReview.exception.UserNotFound;
 import br.com.TrustReview.mapper.UserMapper;
 import br.com.TrustReview.model.User;
 import br.com.TrustReview.repository.UserRepository;
+import br.com.TrustReview.security.JWTTokenService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -28,21 +31,31 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private static final Pattern emailRegexPattern = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");    //para email
+    private static final Pattern passwordRegexPattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$"); //para senhas
+
+
+    @Autowired
+    JWTTokenService jwtTokenService;
 
     @Transactional
-    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+    public UserResponseLoginDTO createUser(UserRequestDTO userRequestDTO) {
 
         if (userRequestDTO.getEmail() == null) {
             log.error("Email is null");
             throw new IllegalArgumentException("Email is null");
         }
 
+        if (!emailRegexPattern.matcher(userRequestDTO.getEmail()).matches()) {
+            log.error("Invalid email");
+            throw new IllegalArgumentException("Invalid email pattern");
+        }
 
         Optional<User> existingEmail = userRepository.findByEmail(userRequestDTO.getEmail());
 
         if (existingEmail.isPresent()) {
             log.error("User with email {} already exists", userRequestDTO.getEmail());
-            throw new UserEmailAlredyExits("Email de usuário já em uso");
+            throw new UserEmailAlreadyExists("Email de usuário já em uso");
         }
 
         if (userRequestDTO.getName() == null) {
@@ -55,6 +68,11 @@ public class UserService {
             throw new IllegalArgumentException("Password is null");
         }
 
+        if (!passwordRegexPattern.matcher(userRequestDTO.getPassword()).matches()) {
+            log.error("Invalid password");
+            throw new IllegalArgumentException("Invalid password pattern: ao menos 8 digítos, um símbolo, umas letra maiúscula e uma minúscula");
+        }
+
         User user = userMapper.toUserCreate(userRequestDTO);
 
         String EncryptedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
@@ -64,7 +82,9 @@ public class UserService {
         User persistedUser = userRepository.save(user);
         log.info("User created: {}", user);
 
-        return userMapper.toUserResponseDTO(persistedUser);
+        var tk = jwtTokenService.generateToken(persistedUser);
+
+        return userMapper.toUserResponseLoginDTO(persistedUser, tk);
     }
 
     //public UserResponseDTO updateUser(UserRequestDTO userRequestDTO) {}
@@ -81,6 +101,11 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO getUserByEmail(String email) {
+        if (!emailRegexPattern.matcher(email).matches()) {
+            log.error("Invalid email");
+            throw new IllegalArgumentException("Invalid email pattern");
+        }
+
         Optional<User> user = userRepository.findByEmail(email);
 
         if (user.isEmpty()) {
@@ -98,24 +123,21 @@ public class UserService {
         patchData.forEach((key, value) -> {
             switch (key) {
                 case "name" -> user.setName((String) value);
-                case "email" ->user.setEmail((String) value);
+                case "email" -> {
+                    if (!emailRegexPattern.matcher((String) value).matches()) {
+                        log.error("Invalid email");
+                        throw new IllegalArgumentException("Invalid email pattern");
+                    }
+                    user.setEmail((String) value);
+                }
                 case "password" -> {
-                    /**
-                     * Hash Info:
-                     * The characters that comprise the resultant hash are ./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$.
-                     *
-                     * Resultant hashes will be 60 characters long and they will include the salt among other parameters, as follows:
-                     *
-                     * $[algorithm]$[cost]$[salt][hash]
-                     *
-                     * 2 chars hash algorithm identifier prefix. "$2a$" or "$2b$" indicates BCrypt
-                     * Cost-factor (n). Represents the exponent used to determine how many iterations 2^n
-                     * 16-byte (128-bit) salt, base64 encoded to 22 characters
-                     * 24-byte (192-bit) hash, base64 encoded to 31 characters
-                     */
+                    if (!passwordRegexPattern.matcher((String) value).matches()) {
+                        log.error("Invalid password");
+                        throw new IllegalArgumentException("Invalid password pattern: ao menos 8 digítos, um símbolo, umas letra maiúscula e uma minúscula");
+                    }
 
                     String EncryptedPassword = passwordEncoder.encode((String) value);
-
+                    //String EncryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
                     user.setPassword(EncryptedPassword);
                 }
             }
@@ -140,9 +162,19 @@ public class UserService {
             throw new IllegalArgumentException("Email is null");
         }
 
-        if  (userRequestDTO.getPassword() == null) {
+        if (!emailRegexPattern.matcher(userRequestDTO.getEmail()).matches()) {
+            log.error("Invalid email");
+            throw new IllegalArgumentException("Invalid email pattern");
+        }
+
+        if (userRequestDTO.getPassword() == null) {
             log.error("Password is null");
             throw new IllegalArgumentException("Password is null");
+        }
+
+        if (!passwordRegexPattern.matcher(userRequestDTO.getPassword()).matches()) {
+            log.error("Invalid password");
+            throw new IllegalArgumentException("Invalid password pattern: ao menos 8 digítos, um símbolo, umas letra maiúscula e uma minúscula");
         }
 
         String EncryptedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
@@ -165,7 +197,12 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO loginUser(UserRequestLoginDTO userRequestLoginDTO) {
+    public UserResponseLoginDTO loginUser(UserRequestLoginDTO userRequestLoginDTO) {
+        if (!emailRegexPattern.matcher(userRequestLoginDTO.getEmail()).matches()) {
+            log.error("Invalid email");
+            throw new IllegalArgumentException("Invalid email pattern");
+        }
+
         User user = userRepository.findByEmail(userRequestLoginDTO.getEmail())
                 .orElseThrow(() -> new UserNotFound("User with email " + userRequestLoginDTO.getEmail() + " not found"));
 
@@ -174,6 +211,8 @@ public class UserService {
             throw new InvalidCredentials("Invalid credentials, senha inválida");
         }
 
-        return userMapper.toUserResponseDTO(user);
+        var tk = jwtTokenService.generateToken(user);
+
+        return userMapper.toUserResponseLoginDTO(user, tk);
     }
 }

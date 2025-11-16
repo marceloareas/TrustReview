@@ -4,13 +4,12 @@ import Search from "../../components/Search";
 import SearchIcon from "../../assets/icons/Search.svg";
 import { useNavigate } from "react-router-dom";
 import { useSearch } from "../../hooks/useSearch";
-import { useEffect, useState } from "react";
-import { productService } from "../../services";
-import type { IProduct } from "../../interfaces/Product";
+import { useEffect } from "react";
+import useProduct from "../../hooks/useProduct";
 
 const SearchSection = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState<IProduct[]>([]);
+  const { products, loadProducts } = useProduct();
   const { searchTerm, setSearchTerm } = useSearch(products, ["name"]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,14 +24,13 @@ const SearchSection = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await productService.getProducts();
-        setProducts(res);
+        await loadProducts();
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
     fetchProducts();
-  }, []);
+  }, [loadProducts]);
 
   return (
     <Container maxWidth="md">

@@ -100,7 +100,7 @@ const CreateProductReview = ({
         </Stack>
 
         <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Comment</Typography>
+          <Typography>Comentário</Typography>
           <TextField
             multiline
             minRows={5}
@@ -120,7 +120,9 @@ const CreateProductReview = ({
         </Stack>
 
         <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Cons (utilize ENTER para separar os contras)</Typography>
+          <Typography>
+            Contras (utilize ENTER para separar os contras)
+          </Typography>
           <TextField
             multiline
             minRows={3}

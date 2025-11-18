@@ -3,6 +3,7 @@ package br.com.TrustReview.dto;
 import java.util.UUID;
 
 import br.com.TrustReview.model.User;
+import br.com.TrustReview.model.UserTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,7 @@ import lombok.Setter;
  *   <li><b>name</b>: Nome completo do usuário.</li>
  *   <li><b>email</b>: Endereço de e-mail do usuário.</li>
  *   <li><b>password</b>: Senha do usuário (presente por compatibilidade; não expor em APIs públicas).</li>
- *   <li><b>userType</b>: Tipo do usuário conforme {@link br.com.TrustReview.model.User.UserTypeEnum}.</li>
+ *   <li><b>userType</b>: Tipo do usuário conforme {@link br.com.TrustReview.model.UserTypeEnum}.</li>
  * </ul>
  *
  * <p>
@@ -52,5 +53,5 @@ public class UserResponseDTO {
     private String password;
 
     @Schema(description = "Tipo do usuário", example = "COSTUMER")
-    private User.UserTypeEnum userType;
+    private UserTypeEnum userType;
 }

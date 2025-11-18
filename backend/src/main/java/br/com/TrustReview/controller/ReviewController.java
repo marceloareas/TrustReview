@@ -155,6 +155,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "404", description = "Avaliação, usuário ou produto não encontrado",
                     content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
+    
     @PatchMapping("/{user-id}/{product-id}")
     public ResponseEntity<ReviewResponseDTO> update(
             @PathVariable("user-id") UUID userId,

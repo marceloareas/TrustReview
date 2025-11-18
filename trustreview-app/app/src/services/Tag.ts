@@ -36,4 +36,10 @@ export default class TagService {
     const response = await this.api.post("/tags", { name });
     return response.data as ITag;
   }
+
+  async getTagsByProductId(productId: string): Promise<ITag[]> {
+    const response = await this.api.get(`/tags/products/${productId}`);
+    console.log("Fetched tags for product:", response.data);
+    return response.data as ITag[];
+  }
 }

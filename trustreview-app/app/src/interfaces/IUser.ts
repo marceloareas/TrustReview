@@ -24,4 +24,5 @@ export interface IUser {
   name: string;
   email: string;
   userType: string;
+  token: string;
 }

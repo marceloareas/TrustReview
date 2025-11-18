@@ -60,7 +60,7 @@ export default class ProductService {
   }
 
   async createProduct(product: Partial<IProduct>): Promise<IProduct> {
-    console.log("Creating product (multipart):", product);
+    console.log("Creating product:", product);
 
     const formData = new FormData();
 
@@ -70,16 +70,11 @@ export default class ProductService {
         description: product.description,
         reviewRating: (product as any).reviewRating,
         comment: (product as any).comment,
-        pros: (product as any).pros,      
+        pros: (product as any).pros,
         cons: (product as any).cons,
-        tags: product.tags?.map((t) => {
-          if (typeof t === "string") {
-            return { name: t };
-          }
-          return { id: (t as any).id, name: (t as any).name };
-        }),
+        tags: product.tags,
       }),
-    ], { type: "application/json" });
+    ]);
 
     formData.append("data", jsonBlob);
 

@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 /**
@@ -94,6 +96,20 @@ public class ReviewService {
         Review saved = reviewRepository.save(review);
         log.info("Avaliação criada com sucesso. userId={}, productId={}",
                 user.getId(), product.getId());
+
+        int totalReviews = reviewRepository.countByProductId(product);
+        if (totalReviews <= 0){
+
+        }
+        System.out.println(totalReviews);
+
+        product.updateOverallRating(totalReviews, request.getRating());
+
+        var timeOfUpdate = new Timestamp(System.currentTimeMillis());
+        product.setUpdatedAt(timeOfUpdate);
+
+        productRepository.save(product);
+
         return reviewMapper.toResponse(saved);
     }
 

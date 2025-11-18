@@ -27,21 +27,23 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * Realiza operações de criação, consulta, atualização e remoção de tags,
  * garantindo validações de unicidade, existência e integridade dos dados.
- * Lança exceções customizadas para cenários de erro e utiliza mapeadores para conversão entre entidades e DTOs.
+ * Lança exceções customizadas para cenários de erro e utiliza mapeadores para
+ * conversão entre entidades e DTOs.
  * </p>
  *
  * <ul>
- *   <li><b>create</b>: Cria uma nova tag, validando unicidade do nome.</li>
- *   <li><b>getById</b>: Busca tag por ID.</li>
- *   <li><b>getAll</b>: Lista todas as tags, com opção de incluir produtos.</li>
- *   <li><b>update</b>: Atualiza dados de uma tag existente, validando nome.</li>
- *   <li><b>delete</b>: Remove tag pelo ID.</li>
- *   <li><b>findByName</b>: Busca auxiliar por nome de tag.</li>
- *   <li><b>findById</b>: Busca auxiliar por ID de tag.</li>
+ * <li><b>create</b>: Cria uma nova tag, validando unicidade do nome.</li>
+ * <li><b>getById</b>: Busca tag por ID.</li>
+ * <li><b>getAll</b>: Lista todas as tags, com opção de incluir produtos.</li>
+ * <li><b>update</b>: Atualiza dados de uma tag existente, validando nome.</li>
+ * <li><b>delete</b>: Remove tag pelo ID.</li>
+ * <li><b>findByName</b>: Busca auxiliar por nome de tag.</li>
+ * <li><b>findById</b>: Busca auxiliar por ID de tag.</li>
  * </ul>
  *
  * <p>
- * Utiliza {@link TagRepository} para acesso aos dados e {@link TagMapper} para conversão de objetos.
+ * Utiliza {@link TagRepository} para acesso aos dados e {@link TagMapper} para
+ * conversão de objetos.
  * </p>
  *
  * @author HernaniFilho
@@ -61,7 +63,7 @@ public class TagService {
      * @param request DTO contendo os dados da tag a ser criada
      * @return DTO de resposta com os dados da tag criada
      * @throws IllegalArgumentException se o nome da tag for nulo ou vazio
-     * @throws TagNameAlreadyExists se já existir tag com o mesmo nome
+     * @throws TagNameAlreadyExists     se já existir tag com o mesmo nome
      */
     @Transactional
     public TagResponseDTO create(TagRequestDTO request) {
@@ -94,13 +96,30 @@ public class TagService {
      */
     @Transactional(readOnly = true)
     public TagResponseDTO getById(UUID id) {
-        Optional<Tag> existingTag= findById(id);
+        Optional<Tag> existingTag = findById(id);
 
         if (existingTag.isEmpty()) {
             throw new TagNotFound("Tag não encontrado para id: " + id);
         }
 
         return tagMapper.toResponse(existingTag.get());
+    }
+
+    /**
+     * Retorna as tags vinculadas a um produto pelo seu ID.
+     *
+     * @param productId UUID do produto
+     * @return Lista de TagResponseDTO associadas ao produto
+     */
+    @Transactional(readOnly = true)
+    public List<TagResponseDTO> getByProductId(UUID productId) {
+        log.info("Buscando tags vinculadas ao produto: {}", productId);
+        List<Tag> tags = tagRepository.findTagsByProductsId(productId);
+        if (tags == null || tags.isEmpty()) {
+            log.warn("Nenhuma tag encontrada para o produto: {}", productId);
+            return List.of();
+        }
+        return tags.stream().map(tagMapper::toResponse).toList();
     }
 
     /**
@@ -131,13 +150,14 @@ public class TagService {
                 .map(tagMapper::toResponse)
                 .toList();
     }
+
     /**
      * Atualiza os dados de uma tag existente
      *
-     * @param tagId UUID da tag a ser atualizadoa
-     * @param request   DTO contendo os novos dados da tag
+     * @param tagId   UUID da tag a ser atualizadoa
+     * @param request DTO contendo os novos dados da tag
      * @return DTO de resposta com os dados da tag atualizado
-     * @throws TagNotFound se a tag não for encontrada
+     * @throws TagNotFound          se a tag não for encontrada
      * @throws TagNameAlreadyExists se já existir produto com o mesmo nome
      */
     @Transactional

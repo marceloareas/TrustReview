@@ -35,58 +35,88 @@
  *  - Ideal para formulários de criação/edição de produtos ou categorias.
  *  - A11y: o diálogo é acessível via teclado e foco automático ao abrir o input.
  */
-import { Dialog, DialogContent, Stack, Chip, Box } from "@mui/material";
-import { useState } from "react";
-import type { ITag } from "../../../interfaces/Product";
+import { Dialog, DialogContent, Stack, Box } from "@mui/material";
 import TagButton from "../TagButton";
 import Search from "../../Search";
+import TagInput from "../TagInput";
+import type { ITag } from "../../../interfaces/Product";
+import { useSearch } from "../../../hooks/useSearch";
+import { useState, useEffect } from "react";
+import Tag from "..";
 
 export default function DialogTag({
   open,
   onClose,
   tags,
+  currentTagsList,
   onCreateTag,
+  onSelectTag,
 }: {
   open: boolean;
   onClose: () => void;
   tags: ITag[];
-  onCreateTag?: (name: string) => void;
+  currentTagsList?: ITag[];
+  onCreateTag?: (tag: ITag) => void;
+  onSelectTag: (tag: ITag) => void;
 }) {
-  const [value, setValue] = useState("");
+  const { filteredItems, searchTerm, setSearchTerm } = useSearch(tags, [
+    "name",
+    "description",
+  ]);
+  const visibleTags = filteredItems;
+  const [isCreating, setIsCreating] = useState(false);
+  const selectedTagNames = currentTagsList?.map((tag) => tag.name) || [];
 
-  const handleAdd = () => {
-    const trimmed = value.trim();
-    if (!trimmed) return;
-    onCreateTag?.(trimmed);
-    setValue("");
+  const enterCreateMode = () => {
+    setIsCreating(true);
   };
 
+  useEffect(() => {
+    if (!open) {
+      setIsCreating(false);
+      setSearchTerm("");
+    }
+  }, [open, setSearchTerm]);
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" >
       <DialogContent>
-        <Stack spacing={2} mt={1}>
+        <Stack spacing={2} mt={1} height={'54vh'}>
           <Search
-            value={value}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setValue(e.target.value)
-            }
-            handleSearchSubmit={handleAdd}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
 
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+              gridTemplateColumns: ` repeat(auto-fill, minmax(${isCreating ? "100%" : 120}px, 1fr))`,
               gap: 1,
               alignItems: "center",
             }}
           >
             <Box>
-              <TagButton isEditMode={true} />
+              <TagButton isEditMode={true} onClick={enterCreateMode} />
             </Box>
+            <TagInput
+              isCreating={isCreating}
+              setIsCreating={setIsCreating}
+              onCreate={({ name, description }) => {
+                onCreateTag?.({ name, description });
+                setIsCreating(false);
+              }}
+            />
 
-            {tags.map((t) => (
-              <Chip key={t.id || t.name} label={t.name} sx={{ p: 0 }} />
+            {visibleTags.map((tag) => (
+              <Tag
+                key={tag.id || tag.name}
+                tag={tag}
+                isEdit
+                onClick={() => {
+                  onSelectTag(tag);
+                }}
+                isSelected={selectedTagNames.includes(tag.name)}
+              />
             ))}
           </Box>
         </Stack>

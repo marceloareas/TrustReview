@@ -35,8 +35,8 @@ export default class ReviewService {
   }
 
   async postReview(review: ReviewDTO): Promise<IReview> {
+    console.log("Posted review response:", review);
     const response = await this.api.post("/reviews", review);
-    console.log("Posted review response:", response);
     return response.data as IReview;
   }
 }

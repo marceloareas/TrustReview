@@ -13,6 +13,7 @@ import { reviewService } from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { useParams } from "react-router-dom";
 import { useNotification } from "../../components/Snackbar/snackbar";
+import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
 
 const CreateReviewSection = ({
   onReview,
@@ -32,14 +33,16 @@ const CreateReviewSection = ({
   const [pros, setPros] = useState<string>("");
   const [cons, setCons] = useState<string>("");
   const { showNotification } = useNotification();
+  const { navigateIfAuthorized } = useNavigateIfAuthorized();
 
   const handleSave = async () => {
-    // basic validation
+    navigateIfAuthorized();
     if (!id) {
       console.error("Cannot post review: productId missing");
       showNotification("Erro ao realizar o Review. Tente novamente.", "error");
       return;
     }
+
     if (!title.trim() || !comment.trim()) {
       console.error("Title and comment are required");
       showNotification(
@@ -48,6 +51,7 @@ const CreateReviewSection = ({
       );
       return;
     }
+
     const payload = {
       userId: user?.id || "",
       productId: id || "",
@@ -69,21 +73,19 @@ const CreateReviewSection = ({
         : [],
       rating: rating || 0,
     };
-
     try {
       await reviewService.postReview(payload);
       if (setReviewed) setReviewed(true);
       showNotification("Review publicado com sucesso!", "success");
     } catch (error) {
-      console.error("Error saving review:", error);
-      showNotification("Erro ao realizar o Review. Tente novamente.", "error");
+      showNotification(`Erro ao realizar o Review. ${error}`, "error");
     } finally {
       onReview();
     }
   };
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth={false} disableGutters>
       <Stack
         flex={1}
         spacing={3}
@@ -116,7 +118,7 @@ const CreateReviewSection = ({
         </Stack>
 
         <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Comment</Typography>
+          <Typography>Comentário</Typography>
           <TextField
             multiline
             minRows={5}
@@ -125,7 +127,7 @@ const CreateReviewSection = ({
           />
         </Stack>
         <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Pros</Typography>
+          <Typography>Pros (utilize ENTER para separar os pros)</Typography>
           <TextField
             multiline
             minRows={5}
@@ -134,7 +136,9 @@ const CreateReviewSection = ({
           />
         </Stack>
         <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Cons</Typography>
+          <Typography>
+            Contras (utilize ENTER para separar os contras)
+          </Typography>
           <TextField
             multiline
             minRows={5}

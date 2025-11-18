@@ -30,27 +30,43 @@
  *  - A11y: considerar adicionar `aria-label` para suporte a leitores de tela.
  */
 import Chip from "@mui/material/Chip";
+import { Tooltip } from "@mui/material";
+import type { ITag } from "../../interfaces/Product";
 
 export default function Tag({
-  label,
+  tag,
   isEdit,
   handleDelete,
+  onClick,
+  isSelected,
 }: {
-  label?: string;
+  tag?: ITag;
   isEdit?: boolean;
   handleDelete?: () => void;
+  onClick?: () => void;
+  isSelected?: boolean;
 }) {
   return (
-    <Chip
-      label={label}
-      onDelete={isEdit ? handleDelete : undefined}
-      sx={{
-        color: "text.light",
-        "& .MuiChip-deleteIcon": {
+    <Tooltip title={tag?.description || ""} arrow placement="top">
+      <Chip
+        label={tag?.name || ""}
+        onDelete={isEdit ? handleDelete : undefined}
+        onClick={onClick}
+        sx={{
+          cursor: isEdit ? "pointer" : "default",
           color: "text.light",
-          "&:hover": { color: "text.tertiary" },
-        },
-      }}
-    />
+          "&:hover": isEdit
+            ? { backgroundColor: "primary.main" }
+            : { backgroundColor: "#1D1B20" },
+          "& .MuiChip-deleteIcon": {
+            color: "text.light",
+            "&:hover": {
+              color: "text.tertiary",
+            },
+          },
+          backgroundColor: isSelected ? "primary.main" : "#1D1B20",
+        }}
+      />
+    </Tooltip>
   );
 }

@@ -45,6 +45,6 @@ deploy: build-app build-nginx create-network run-nginx copy-dist
    npm run build
 
 2. Copie os arquivos gerados para dentro do container:
-   docker cp app/dist/. nginx-trustreview:/usr/share/nginx/html
+   docker cp app/dist/. nginx-trustreview:/usr/share/nginx/html/
 
 O Nginx começa a servir o novo conteúdo imediatamente, sem precisar reiniciar o container.

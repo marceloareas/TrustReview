@@ -36,7 +36,7 @@ import { useNotification } from "../Snackbar/snackbar";
 export default function AppBar() {
   const navigate = useNavigate();
   const path = window.location.pathname;
-  const isRoot = path === "/";
+  const isDefaultPaths = path === "/" || path === "/login" || path === "/register";
   const { showNotification } = useNotification();
 
   const { logout, user } = useAuth();
@@ -71,11 +71,11 @@ export default function AppBar() {
         direction={"row"}
         width={"100%"}
         spacing={3}
-        justifyContent={isRoot ? "flex-end" : "space-between"}
+        justifyContent={isDefaultPaths ? "flex-end" : "space-between"}
         alignItems={"center"}
         px={2}
       >
-        {!isRoot && (
+        {!isDefaultPaths && (
           <IconButton
             size="large"
             aria-label="search"

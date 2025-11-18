@@ -1,25 +1,30 @@
 import { Container, Stack, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import ProductInputImage from "../../components/Product/ProductInputImage";
-import { productService, tagService } from "../../services";
+import { tagService } from "../../services";
 import { useForm, Controller } from "react-hook-form";
 import type { ITag } from "../../interfaces/Product";
 import TagsList from "../../components/Tag/TagList";
+import useProduct from "../../hooks/useProduct";
 
 interface CreateProductReviewForm {
   name: string;
   description: string;
   image?: File | null;
-  reviewRating: number;
   tags: ITag[];
-  comment: string;
-  pros: string;
-  cons: string;
 }
 
-const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void }) => {
+const CreateProduct = ({
+  onCreated,
+  registerSubmit,
+}: {
+  onCreated?: (productId: string) => void;
+  registerSubmit?: (fn: () => void) => void;
+}) => {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
   const [tags, setTags] = useState<ITag[]>([]);
+  const [currentTagsList, setCurrentTagsList] = useState<ITag[]>([]);
+  const { createProduct } = useProduct();
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -34,46 +39,52 @@ const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void 
     fetchTags();
   }, []);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: {},
-  } = useForm<CreateProductReviewForm>({
+  const { control, handleSubmit, reset } = useForm<CreateProductReviewForm>({
     defaultValues: {
-      image: null,
       name: "",
       description: "",
-      reviewRating: 0,
       tags: [],
-      comment: "",
-      pros: "",
-      cons: "",
+      image: null,
     },
   });
 
-  const onSubmit = async (data: CreateProductReviewForm) => {
-    try {
-      const newProduct = {
-        name: data.name,
-        tags: data.tags && data.tags.length ? data.tags : tags,
-        description: data.description,
-        image: data.image ?? null,
-        reviewRating: data.reviewRating,
-        comment: data.comment,
-        pros: data.pros,
-        cons: data.cons,
-      };
+  const onSubmit = useCallback(
+    async (data: CreateProductReviewForm) => {
+      try {
+        const newProduct = {
+          name: data.name,
+          description: data.description,
+          tags: currentTagsList,
+          image: data.image ?? null,
+        };
 
-      const response = await productService.createProduct(newProduct);
-      reset();
-      if (onCreated && response?.id) {
-        onCreated(response.id);
+        console.log("Creating product: (component)", newProduct);
+
+        const response = await createProduct(newProduct);
+        reset();
+        if (onCreated && response?.id) {
+          onCreated(response.id);
+        }
+      } catch (error) {
+        console.error("Erro ao criar produto:", error);
       }
-    } catch (error) {
-      console.error("Erro ao criar produto:", error);
-    }
-  };
+    },
+    [createProduct, reset, onCreated, currentTagsList]
+  );
+
+  const latestSubmitRef = useRef<() => void>(() => {});
+
+  latestSubmitRef.current = useCallback(() => {
+    void handleSubmit(onSubmit)();
+  }, [handleSubmit, onSubmit]);
+
+  const stableRegisterWrapper = useCallback(() => {
+    latestSubmitRef.current?.();
+  }, []);
+
+  useEffect(() => {
+    if (registerSubmit) registerSubmit(stableRegisterWrapper);
+  }, [registerSubmit]);
 
   return (
     <Container maxWidth="xl">
@@ -122,12 +133,17 @@ const CreateProduct = ({ onCreated }: { onCreated?: (productId: string) => void 
               <Typography variant="body1" fontWeight={600}>
                 Tags
               </Typography>
-              <TagsList tags={tags || []} isEdit={true} />
+              <TagsList
+                tags={tags || []}
+                isEdit={true}
+                currentTagsList={currentTagsList}
+                setCurrentTagsList={setCurrentTagsList}
+              />
             </Stack>
           </Stack>
 
           <Stack spacing={1} sx={{ width: "100%" }}>
-            <Typography>Description</Typography>
+            <Typography>Descrição</Typography>
             <Controller
               name="description"
               control={control}

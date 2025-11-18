@@ -36,24 +36,42 @@ import { Stack, Box } from "@mui/material";
 import Tag from "..";
 import type { ITag } from "../../../interfaces/Product";
 
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import TagButton from "../TagButton";
 import DialogTag from "../DialogTag";
 
 const TagsList = ({
   tags,
+  currentTagsList,
+  setCurrentTagsList,
   isEdit,
   showDialog = true,
 }: {
   tags: ITag[];
+  currentTagsList?: ITag[];
+  setCurrentTagsList?: Dispatch<SetStateAction<ITag[]>>;
   isEdit?: boolean;
   showDialog?: boolean;
 }) => {
-  const [openDialog, setOpenDialog] = useState(false);
-  const [showInlineInput, setShowInlineInput] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showInlineCreator, setShowInlineCreator] = useState(false);
 
-  const handleDelete = (tagId: string) => {
-    console.log(`Delete clicked for tag: ${tagId}`);
+  const toggleTagSelection = (tag: ITag) => {
+    // adiciona se não existe; remove se já existe
+    if (!currentTagsList?.some((t) => t.name === tag.name)) {
+      setCurrentTagsList?.((prev) => (prev ? [...prev, tag] : [tag]));
+      return;
+    }
+
+    setCurrentTagsList?.((prev) => prev?.filter((t) => t.name !== tag.name));
+  };
+
+  const addTagToSelection = (tag: ITag) => {
+    setCurrentTagsList?.((prev) => (prev ? [...prev, tag] : [tag]));
+  };
+
+  const removeTagByName = (tagName: string) => {
+    setCurrentTagsList?.((prev) => prev.filter((tag) => tag.name !== tagName));
   };
 
   return (
@@ -75,26 +93,28 @@ const TagsList = ({
                 isEditMode={isEdit}
                 onClick={() => {
                   if (showDialog) {
-                    setOpenDialog(true);
+                    setIsDialogOpen(true);
                   } else {
-                    setShowInlineInput(true);
+                    setShowInlineCreator(true);
                   }
                 }}
               />
             </Box>
           )}
 
-          {tags.map((tag) => (
-            <Box key={tag.id} sx={{ flex: "0 0 auto" }}>
-              <Tag
-                label={tag.name}
-                isEdit={isEdit}
-                handleDelete={() => handleDelete(tag.id || "")}
-              />
-            </Box>
-          ))}
+          {(() => {
+            const displayedTags = currentTagsList || tags;
+            return displayedTags.map((tag) => (
+              <Box key={tag.name} sx={{ flex: "0 0 auto" }}>
+                <Tag
+                  tag={tag}
+                  handleDelete={() => removeTagByName(tag.name || "")}
+                />
+              </Box>
+            ));
+          })()}
 
-          {showInlineInput && (
+          {showInlineCreator && (
             <Box sx={{ flex: "0 0 auto" }}>
               <Tag isEdit />
             </Box>
@@ -104,10 +124,17 @@ const TagsList = ({
 
       {showDialog && (
         <DialogTag
-          open={openDialog}
-          onClose={() => setOpenDialog(false)}
-          onCreateTag={() => {}}
-          tags={tags}
+          open={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onCreateTag={(tag) => addTagToSelection(tag)}
+          onSelectTag={(tag) => toggleTagSelection(tag)}
+          tags={[
+            ...tags,
+            ...(currentTagsList || []).filter(
+              (ct) => !tags.some((t) => t.name === ct.name),
+            ),
+          ]}
+          currentTagsList={currentTagsList}
         />
       )}
     </>

@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import CreateProduct from "../Sections/CreateProduct";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import CreateProductReview from "../Sections/CreateProduct/CreateProductReview";
 import { useAuth } from "../hooks/useAuth";
 import { reviewService } from "../services";
@@ -19,6 +19,8 @@ const CreateProductPage = () => {
     con: string[];
     rating: number;
   } | null>(null);
+  const pendingReviewRef = useRef<typeof pendingReview>(null);
+  const [submitForm, setSubmitForm] = useState<(() => void) | null>(null);
 
   const handleCancelPublish = () => {
     setProductId(undefined);
@@ -33,6 +35,8 @@ const CreateProductPage = () => {
     rating: number;
   }) => {
     if (!productId) {
+
+      pendingReviewRef.current = data;
       setPendingReview(data);
       return;
     }
@@ -51,32 +55,33 @@ const CreateProductPage = () => {
 
     try {
       await reviewService.postReview(payload);
-      console.log("Review publicada");
       showNotification("Review publicado com sucesso!", "success");
     } catch (error) {
       showNotification(
         "Houve um erro ao criar o Review. Tente Novamente.",
-        "error"
+        "error",
       );
-      console.error("Error saving review:", error);
     }
   };
 
   const handleProductCreated = async (id: string) => {
     setProductId(id);
-    if (pendingReview) {
+    const toPublish = pendingReviewRef.current || pendingReview;
+    if (toPublish) {
       try {
         await reviewService.postReview({
           userId: user?.id || "",
           productId: id,
-          title: pendingReview.title,
-          description: pendingReview.description,
+          title: toPublish.title,
+          description: toPublish.description,
           likes: 0,
           dislikes: 0,
-          pros: pendingReview.pros,
-          con: pendingReview.con,
-          rating: pendingReview.rating,
+          pros: toPublish.pros,
+          con: toPublish.con,
+          rating: toPublish.rating,
         });
+
+        pendingReviewRef.current = null;
         setPendingReview(null);
         navigate("/");
       } catch (error) {
@@ -95,10 +100,16 @@ const CreateProductPage = () => {
         alignItems: "center",
       }}
     >
-      <CreateProduct onCreated={handleProductCreated} />
+      <CreateProduct
+        onCreated={handleProductCreated}
+        registerSubmit={useCallback((fn: () => void) => {
+          setSubmitForm(() => fn);
+        }, [])}
+      />
       <CreateProductReview
         onReview={handleReviewPublish}
         onCancel={handleCancelPublish}
+        submitForm={submitForm ?? undefined}
       />
     </Stack>
   );

@@ -47,7 +47,7 @@ const CreateReviewSection = ({
       console.error("Title and comment are required");
       showNotification(
         "É necessário preencher o Título e Comentário.",
-        "error",
+        "error"
       );
       return;
     }
@@ -61,15 +61,15 @@ const CreateReviewSection = ({
       dislikes: 0,
       pros: pros
         ? pros
-          .split("\n")
-          .map((s) => s.trim())
-          .filter(Boolean)
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean)
         : [],
       con: cons
         ? cons
-          .split("\n")
-          .map((s) => s.trim())
-          .filter(Boolean)
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean)
         : [],
       rating: rating || 0,
     };
@@ -127,7 +127,7 @@ const CreateReviewSection = ({
           />
         </Stack>
         <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Pros</Typography>
+          <Typography>Pros (utilize ENTER para separar os pros)</Typography>
           <TextField
             multiline
             minRows={5}
@@ -136,7 +136,7 @@ const CreateReviewSection = ({
           />
         </Stack>
         <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Cons</Typography>
+          <Typography>Cons (utilize ENTER para separar os contras)</Typography>
           <TextField
             multiline
             minRows={5}

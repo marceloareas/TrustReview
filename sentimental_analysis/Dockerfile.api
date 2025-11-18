@@ -13,10 +13,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiando código da API e do treinamento
 COPY api/ ./api/
 COPY training/ ./training/
+COPY ./model /workspace/model
+
 
 # Expondo porta da API
 EXPOSE 8000
 
 # Rodando somente a API — rotina já embutida no app.py
-#CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000"]
-CMD ["python","training/train.py"]
+CMD ["uvicorn", "api.app:app","--reload", "--host", "0.0.0.0", "--port", "8000"]
+#CMD ["python","training/train.py"]

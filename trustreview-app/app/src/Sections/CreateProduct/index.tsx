@@ -24,7 +24,7 @@ const CreateProduct = ({
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
   const [tags, setTags] = useState<ITag[]>([]);
   const [currentTagsList, setCurrentTagsList] = useState<ITag[]>([]);
-  const {createProduct} = useProduct();
+  const { createProduct } = useProduct();
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -48,26 +48,29 @@ const CreateProduct = ({
     },
   });
 
-  const onSubmit = useCallback(async (data: CreateProductReviewForm) => {
-    try {
-      const newProduct = {
-        name: data.name,
-        description: data.description,
-        tags: currentTagsList,
-        image: data.image ?? null,
-      };
+  const onSubmit = useCallback(
+    async (data: CreateProductReviewForm) => {
+      try {
+        const newProduct = {
+          name: data.name,
+          description: data.description,
+          tags: currentTagsList,
+          image: data.image ?? null,
+        };
 
-      console.log("Creating product: (component)", newProduct);
+        console.log("Creating product: (component)", newProduct);
 
-      const response = await createProduct(newProduct);
-      reset();
-      if (onCreated && response?.id) {
-        onCreated(response.id);
+        const response = await createProduct(newProduct);
+        reset();
+        if (onCreated && response?.id) {
+          onCreated(response.id);
+        }
+      } catch (error) {
+        console.error("Erro ao criar produto:", error);
       }
-    } catch (error) {
-      console.error("Erro ao criar produto:", error);
-    }
-  }, [createProduct, reset, onCreated, currentTagsList]);
+    },
+    [createProduct, reset, onCreated, currentTagsList]
+  );
 
   const latestSubmitRef = useRef<() => void>(() => {});
 
@@ -140,7 +143,7 @@ const CreateProduct = ({
           </Stack>
 
           <Stack spacing={1} sx={{ width: "100%" }}>
-            <Typography>Description</Typography>
+            <Typography>Descrição</Typography>
             <Controller
               name="description"
               control={control}

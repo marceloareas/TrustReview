@@ -87,7 +87,7 @@ const LoginSection = () => {
                   required
                 />
                 <TextField
-                  label="Password"
+                  label="Senha"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

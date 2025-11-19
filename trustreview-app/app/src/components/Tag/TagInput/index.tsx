@@ -1,6 +1,7 @@
-import { Box, Chip, Divider, InputBase, Stack } from "@mui/material";
+import { Chip, Divider, InputBase, Stack } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import type { ITag } from "../../../interfaces/Product";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface TagInputProps {
   isCreating?: boolean;
@@ -58,6 +59,7 @@ const TagInput = ({ isCreating, setIsCreating, onCreate }: TagInputProps) => {
         sx={{
           "& .MuiChip-deleteIcon": {
             color: "text.light",
+            fontSize: "1.25rem",
           },
           "&:hover": {
             backgroundColor: "primary.main",
@@ -66,10 +68,14 @@ const TagInput = ({ isCreating, setIsCreating, onCreate }: TagInputProps) => {
             backgroundColor: "primary.main",
           },
           "& .MuiInputBase-input": { color: "text.light" },
+          "& .MuiChip-label": {
+            width: '100%',
+            padding: '4px 8px',
+          },
           justifyContent: "space-between",
         }}
         label={
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={1} justifyContent={"space-between"} alignItems="center">
             <InputBase
               inputRef={inputRef}
               value={inputName}
@@ -77,24 +83,32 @@ const TagInput = ({ isCreating, setIsCreating, onCreate }: TagInputProps) => {
               onKeyDown={handleKeyDown}
               sx={{
                 fontSize: "0.875rem",
+                flex: 1,
+                minWidth: 0
               }}
               placeholder="Nome"
             />
-            <Box
-              display="flex"
-              alignItems="center"
-              sx={{ color: "text.light" }}
-            >
-              <Divider orientation="vertical" flexItem />
-            </Box>
+            <Divider orientation="vertical" flexItem sx={{ height: '20px', alignSelf: 'center' }} />
             <InputBase
               value={inputDescription}
               onChange={(e) => setInputDescription(e.target.value)}
               onKeyDown={handleKeyDown}
               sx={{
                 fontSize: "0.875rem",
+                flex: 1,
+                minWidth: 0
               }}
               placeholder="Descrição (opcional)"
+            />
+            <CheckCircleIcon
+              onClick={confirmCreate}
+              sx={{
+                cursor: "pointer",
+                color: "text.light",
+                fontSize: "1.25rem",
+                ':hover': { color: 'secondary.main' },
+                flexShrink: 0
+              }}
             />
           </Stack>
         }

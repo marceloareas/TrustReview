@@ -27,32 +27,16 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      # Mapeia a pasta interna do contêiner (/app/uploads) 
-      # para uma nova pasta chamada 'uploads_api' no seu projeto local (host).
       - ./uploads:/app/uploads
-
-  app:
-    build: ./trustreview-app/app
-    container_name: trustreview_app
-    env_file:
-      - ./trustreview-app/app/.env
-    restart: always
-    depends_on:
-      - api
-    ports:
-      - "3000:5173"
-    environment:
-      - VITE_API_URL=http://localhost:8080/api/v1
 
   nginx:
     build:
-      context: ./trustreview-app
-      dockerfile: nginx/Dockerfile
+      context: .
+      dockerfile: ./trustreview-app/nginx/Dockerfile
     container_name: nginx-trustreview
     ports:
       - "80:80"
     depends_on:
-      - app
       - api
       - db
 

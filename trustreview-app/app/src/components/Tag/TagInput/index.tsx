@@ -75,7 +75,7 @@ const TagInput = ({ isCreating, setIsCreating, onCreate }: TagInputProps) => {
           justifyContent: "space-between",
         }}
         label={
-          <Stack direction="row" spacing={1} justifyContent={"space-between"} alignItems="center">
+          <Stack direction="row" spacing={1} justifyContent={"space-between"} alignItems="center" mr={1.4}>
             <InputBase
               inputRef={inputRef}
               value={inputName}
@@ -96,7 +96,7 @@ const TagInput = ({ isCreating, setIsCreating, onCreate }: TagInputProps) => {
               sx={{
                 fontSize: "0.875rem",
                 flex: 1,
-                minWidth: 0
+                minWidth: 0,
               }}
               placeholder="Descrição (opcional)"
             />

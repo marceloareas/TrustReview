@@ -59,8 +59,6 @@ const CreateProduct = ({
           image: data.image ?? null,
         };
 
-        console.log("Creating product: (component)", newProduct);
-
         const response = await createProduct(newProduct);
         reset();
         if (onCreated && response?.id) {

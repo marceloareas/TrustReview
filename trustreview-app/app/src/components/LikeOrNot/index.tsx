@@ -68,7 +68,7 @@ const LikeOrNot = ({
           borderTopRightRadius: 0,
           borderBottomRightRadius: 0,
           borderRight: "none",
-          color: isLike ? "#fff" : "inherit",
+          color: "#fff",
           backgroundColor: isLike ? "#E01B68" : "none",
           "&:hover": {
             backgroundColor: isLike ? "#E01B68" : "#251846ff",
@@ -84,7 +84,7 @@ const LikeOrNot = ({
         sx={{
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
-          color: isDislike ? "#fff" : "inherit",
+          color: "#fff",
           backgroundColor: isDislike ? "#E01B68" : "none",
           "&:hover": {
             backgroundColor: isDislike ? "#E01B68" : "#251846ff",

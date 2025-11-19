@@ -6,6 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import type { ITag } from "../../interfaces/Product";
 import TagsList from "../../components/Tag/TagList";
 import useProduct from "../../hooks/useProduct";
+import { getSearchedProductName } from "../../utils/getSearchedProductName";
 
 interface CreateProductReviewForm {
   name: string;
@@ -41,7 +42,7 @@ const CreateProduct = ({
 
   const { control, handleSubmit, reset } = useForm<CreateProductReviewForm>({
     defaultValues: {
-      name: "",
+      name: getSearchedProductName(),
       description: "",
       tags: [],
       image: null,
@@ -65,6 +66,7 @@ const CreateProduct = ({
         if (onCreated && response?.id) {
           onCreated(response.id);
         }
+        localStorage.removeItem('searchTerm');
       } catch (error) {
         console.error("Erro ao criar produto:", error);
       }
@@ -72,7 +74,7 @@ const CreateProduct = ({
     [createProduct, reset, onCreated, currentTagsList]
   );
 
-  const latestSubmitRef = useRef<() => void>(() => {});
+  const latestSubmitRef = useRef<() => void>(() => { });
 
   latestSubmitRef.current = useCallback(() => {
     void handleSubmit(onSubmit)();

@@ -49,8 +49,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const persistUser = (data: IUser | null) => {
     setUser(data);
-    if (data) localStorage.setItem("user", JSON.stringify(data));
-    else localStorage.removeItem("user");
+    if (data) {
+      localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("token", data.token);
+    } else {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token"); 
+    }
     setAuthorized(!!data);
   };
 
@@ -84,6 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const stored = localStorage.getItem("user");
     if (stored) {
       try {
+        console.log(stored);
         persistUser(JSON.parse(stored));
       } catch {
         localStorage.removeItem("user");

@@ -18,12 +18,14 @@ interface ReviewCardProps {
   review: IReview;
   setReviews: (value: React.SetStateAction<IReview[]>) => void;
   setIsReviewing: (isReviewing: boolean) => void;
+  isUserComment?: boolean;
 }
 
 const ReviewCard = ({
   review,
   setReviews,
   setIsReviewing,
+  isUserComment,
 }: ReviewCardProps) => {
   const [likes, setLikes] = useState<{
     [key: string]: { isLike: boolean; isDislike: boolean };
@@ -197,7 +199,7 @@ const ReviewCard = ({
             likesCount={review.likes}
             dislikesCount={review.dislikes}
           />
-          <Box>
+          <Box display={isUserComment ? "block" : "none"}>
             <CreateIcon
               sx={{ cursor: "pointer", ":hover": { transform: "scale(1.1)" } }}
               onClick={() => {

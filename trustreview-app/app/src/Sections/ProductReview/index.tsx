@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { IReview } from "../../interfaces/Product";
 import { reviewService } from "../../services";
 import ReviewCard from "../../components/ReviewCard";
+import { useAuth } from "../../hooks/useAuth";
 
 const ProductReviewSection = ({
   id,
@@ -13,6 +14,7 @@ const ProductReviewSection = ({
   reviewed: boolean;
   setIsReviewing: (isReviewing: boolean) => void;
 }) => {
+  const { user } = useAuth();
   const [reviews, setReviews] = useState<IReview[]>([]);
 
   useEffect(() => {
@@ -50,6 +52,7 @@ const ProductReviewSection = ({
                 review={review}
                 setReviews={setReviews}
                 setIsReviewing={setIsReviewing}
+                isUserComment={user?.id === review.userId}
               />
             </Grid>
           ))}

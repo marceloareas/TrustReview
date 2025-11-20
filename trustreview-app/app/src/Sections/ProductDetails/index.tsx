@@ -6,14 +6,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import {
-  type IReview,
-  type IProduct,
-  type ITag,
-} from "../../interfaces/Product";
+import { type IProduct, type ITag } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
 import { useEffect, useState } from "react";
-import { tagService, reviewService } from "../../services";
+import { tagService } from "../../services";
 import { useNavigate } from "react-router-dom";
 import ProductCardStackList from "../../components/Product/ProductCardStackList";
 import CreateReviewSection from "../CreateReview";
@@ -26,7 +22,6 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
   const navigate = useNavigate();
   const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
   const [productTags, setProductTags] = useState<ITag[]>([]);
-  const [review, setReview] = useState<IReview | null>(null);
   const [reviewed, setReviewed] = useState(false);
   const [isReviewing, setIsReviewing] = useState(false);
   const [product, setProduct] = useState<IProduct | null>(null);
@@ -101,18 +96,6 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
 
   const handleClickProduct = (id: string) => {
     navigate(`/products/${id}`);
-  };
-
-  const handleEditReview = async (isReviewing: boolean) => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    try {
-      const res = await reviewService.getReviewByIds(user.id, id ?? "");
-      setReview(res);
-    } catch (error) {
-      console.error("Error fetching user review:", error);
-    }
-    navigateIfAuthorized();
-    setIsReviewing(isReviewing);
   };
 
   return (
@@ -201,7 +184,7 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
           <ProductReviewSection
             id={id ? id : ""}
             reviewed={reviewed}
-            setIsReviewing={handleEditReview}
+            setIsReviewing={setIsReviewing}
           />
         )}
         {isReviewing && (

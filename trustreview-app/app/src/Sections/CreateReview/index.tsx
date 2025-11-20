@@ -14,7 +14,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { useParams } from "react-router-dom";
 import { useNotification } from "../../components/Snackbar/snackbar";
 import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
-import type { IReview } from "../../interfaces/Product";
 
 const CreateReviewSection = ({
   onReview,

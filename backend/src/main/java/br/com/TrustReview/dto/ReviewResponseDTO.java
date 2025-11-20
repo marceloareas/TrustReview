@@ -12,27 +12,30 @@ import java.util.UUID;
  * DTO de resposta para informações detalhadas de uma avaliação (Review).
  *
  * <p>
- * Esta classe é usada para transferir dados de avaliações entre o backend e o frontend,
+ * Esta classe é usada para transferir dados de avaliações entre o backend e o
+ * frontend,
  * representando a resposta da API sem expor diretamente a entidade JPA.
- * Inclui dados do usuário que avaliou, produto avaliado e informações descritivas.
+ * Inclui dados do usuário que avaliou, produto avaliado e informações
+ * descritivas.
  * </p>
  *
  * <ul>
- *   <li><b>userId</b>: Identificador do usuário que fez a avaliação.</li>
- *   <li><b>productId</b>: Identificador do produto avaliado.</li>
- *   <li><b>title</b>: Título resumido da avaliação.</li>
- *   <li><b>description</b>: Texto completo da avaliação.</li>
- *   <li><b>pros</b>: Lista de pontos positivos.</li>
- *   <li><b>con</b>: Lista de pontos negativos.</li>
- *   <li><b>rating</b>: Nota atribuída pelo usuário.</li>
- *   <li><b>likes</b>: Número de curtidas recebidas.</li>
- *   <li><b>dislikes</b>: Número de reações negativas.</li>
- *   <li><b>createdAt</b>: Data/hora de criação da avaliação.</li>
- *   <li><b>updatedAt</b>: Data/hora da última atualização.</li>
+ * <li><b>userId</b>: Identificador do usuário que fez a avaliação.</li>
+ * <li><b>productId</b>: Identificador do produto avaliado.</li>
+ * <li><b>title</b>: Título resumido da avaliação.</li>
+ * <li><b>description</b>: Texto completo da avaliação.</li>
+ * <li><b>pros</b>: Lista de pontos positivos.</li>
+ * <li><b>con</b>: Lista de pontos negativos.</li>
+ * <li><b>rating</b>: Nota atribuída pelo usuário.</li>
+ * <li><b>likes</b>: Número de curtidas recebidas.</li>
+ * <li><b>dislikes</b>: Número de reações negativas.</li>
+ * <li><b>createdAt</b>: Data/hora de criação da avaliação.</li>
+ * <li><b>updatedAt</b>: Data/hora da última atualização.</li>
  * </ul>
  *
  * <p>
- * Utiliza anotações do Swagger para documentação automática e Lombok para geração de métodos utilitários.
+ * Utiliza anotações do Swagger para documentação automática e Lombok para
+ * geração de métodos utilitários.
  * </p>
  *
  * @author Jean
@@ -46,6 +49,9 @@ public class ReviewResponseDTO {
 
     @Schema(description = "ID do usuário que realizou a avaliação.", example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
     private UUID userId;
+
+    @Schema(description = "Nome do usuário que realizou a avaliação.", example = "João Silva")
+    private String userName;
 
     @Schema(description = "ID do produto avaliado.", example = "d47f6a19-2b3f-4c9d-8d77-3e9c1b6f50a4")
     private UUID productId;

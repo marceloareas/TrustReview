@@ -8,12 +8,13 @@ import {
   Typography,
 } from "@mui/material";
 import Review from "../../assets/icons/Review.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { reviewService } from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { useParams } from "react-router-dom";
 import { useNotification } from "../../components/Snackbar/snackbar";
 import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
+import type { IReview } from "../../interfaces/Product";
 
 const CreateReviewSection = ({
   onReview,
@@ -27,6 +28,7 @@ const CreateReviewSection = ({
   const { user } = useAuth();
   const { id: routeId } = useParams<{ id: string }>();
   const id = productId || routeId;
+  const [isReviewUpdate, setIsReviewUpdate] = useState(false);
   const [rating, setRating] = useState<number | null>(0);
   const [title, setTitle] = useState<string>("");
   const [comment, setComment] = useState<string>("");
@@ -34,6 +36,26 @@ const CreateReviewSection = ({
   const [cons, setCons] = useState<string>("");
   const { showNotification } = useNotification();
   const { navigateIfAuthorized } = useNavigateIfAuthorized();
+
+  useEffect(() => {
+    const fetchExistingReview = async () => {
+      if (!user || !id) return;
+      try {
+        const res = await reviewService.getReviewByIds(user.id || "", id ?? "");
+        console.log("Fetched existing review:", res);
+        setRating(res.rating);
+        setTitle(res.title || "");
+        setComment(res.description || "");
+        setPros(res.pros?.join("\n") || "");
+        setCons(res.con?.join("\n") || "");
+        setIsReviewUpdate(true);
+      } catch (error) {
+        console.error("Error fetching user review:", error);
+      }
+    };
+
+    fetchExistingReview();
+  }, []);
 
   const handleSave = async () => {
     navigateIfAuthorized();
@@ -73,7 +95,15 @@ const CreateReviewSection = ({
         : [],
       rating: rating || 0,
     };
+
     try {
+      if (isReviewUpdate) {
+        await reviewService.updateReview(user?.id || "", id, payload);
+        showNotification("Review atualizada com sucesso!", "success");
+        onReview();
+        return;
+      }
+
       await reviewService.postReview(payload);
       if (setReviewed) setReviewed(true);
       showNotification("Review publicado com sucesso!", "success");

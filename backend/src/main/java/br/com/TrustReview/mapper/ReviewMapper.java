@@ -16,19 +16,25 @@ import java.util.UUID;
  * e seus respectivos DTOs de requisição e resposta.
  *
  * <p>
- * Centraliza a lógica de transformação entre entidades do domínio e objetos de transferência de dados (DTOs),
+ * Centraliza a lógica de transformação entre entidades do domínio e objetos de
+ * transferência de dados (DTOs),
  * facilitando a conversão de dados entre as camadas da aplicação.
  * </p>
  *
  * <ul>
- *   <li><b>toReview(ReviewRequestDTO)</b>: Converte um {@link ReviewRequestDTO} em uma entidade {@link Review}.</li>
- *   <li><b>toReview(ReviewResponseDTO)</b>: Converte um {@link ReviewResponseDTO} em uma entidade {@link Review}.</li>
- *   <li><b>toResponse(Review)</b>: Converte uma entidade {@link Review} em um {@link ReviewResponseDTO}.</li>
- *   <li><b>toResponse(ReviewRequestDTO)</b>: Converte um {@link ReviewRequestDTO} em um {@link ReviewResponseDTO}.</li>
+ * <li><b>toReview(ReviewRequestDTO)</b>: Converte um {@link ReviewRequestDTO}
+ * em uma entidade {@link Review}.</li>
+ * <li><b>toReview(ReviewResponseDTO)</b>: Converte um {@link ReviewResponseDTO}
+ * em uma entidade {@link Review}.</li>
+ * <li><b>toResponse(Review)</b>: Converte uma entidade {@link Review} em um
+ * {@link ReviewResponseDTO}.</li>
+ * <li><b>toResponse(ReviewRequestDTO)</b>: Converte um {@link ReviewRequestDTO}
+ * em um {@link ReviewResponseDTO}.</li>
  * </ul>
  *
  * <p>
- * Esta classe não realiza persistência ou validações de negócio — apenas a transformação de dados.
+ * Esta classe não realiza persistência ou validações de negócio — apenas a
+ * transformação de dados.
  * </p>
  *
  * @author Jean
@@ -117,7 +123,10 @@ public class ReviewMapper {
 
         UUID userId = (review.getUserId() != null) ? review.getUserId().getId() : null;
         UUID productId = (review.getProductId() != null) ? review.getProductId().getId() : null;
+        String userName = (review.getUserId() != null) ? review.getUserId().getName() : null;
+
         response.setUserId(userId);
+        response.setUserName(userName);
         response.setProductId(productId);
         response.setTitle(review.getTitle());
         response.setDescription(review.getDescription());
@@ -136,7 +145,8 @@ public class ReviewMapper {
      * Converte um ReviewRequestDTO em um ReviewResponseDTO.
      *
      * <p>
-     * Útil para retornar a mesma avaliação criada sem precisar buscar novamente do banco.
+     * Útil para retornar a mesma avaliação criada sem precisar buscar novamente do
+     * banco.
      * </p>
      *
      * @param request DTO de requisição da avaliação.

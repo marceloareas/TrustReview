@@ -6,10 +6,14 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import type { IProduct, ITag } from "../../interfaces/Product";
+import {
+  type IReview,
+  type IProduct,
+  type ITag,
+} from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
 import { useEffect, useState } from "react";
-import { tagService } from "../../services";
+import { tagService, reviewService } from "../../services";
 import { useNavigate } from "react-router-dom";
 import ProductCardStackList from "../../components/Product/ProductCardStackList";
 import CreateReviewSection from "../CreateReview";
@@ -18,14 +22,11 @@ import TagsList from "../../components/Tag/TagList";
 import useProduct from "../../hooks/useProduct";
 import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
 
-const ProductDetailsSection = ({
-  id,
-}: {
-  id: string;
-}) => {
+const ProductDetailsSection = ({ id }: { id: string }) => {
   const navigate = useNavigate();
   const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
   const [productTags, setProductTags] = useState<ITag[]>([]);
+  const [review, setReview] = useState<IReview | null>(null);
   const [reviewed, setReviewed] = useState(false);
   const [isReviewing, setIsReviewing] = useState(false);
   const [product, setProduct] = useState<IProduct | null>(null);
@@ -100,6 +101,18 @@ const ProductDetailsSection = ({
 
   const handleClickProduct = (id: string) => {
     navigate(`/products/${id}`);
+  };
+
+  const handleEditReview = async (isReviewing: boolean) => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    try {
+      const res = await reviewService.getReviewByIds(user.id, id ?? "");
+      setReview(res);
+    } catch (error) {
+      console.error("Error fetching user review:", error);
+    }
+    navigateIfAuthorized();
+    setIsReviewing(isReviewing);
   };
 
   return (
@@ -177,7 +190,7 @@ const ProductDetailsSection = ({
               size="large"
               onClick={() => {
                 navigateIfAuthorized();
-                setIsReviewing(true)
+                setIsReviewing(true);
               }}
             >
               Fazer Review
@@ -185,13 +198,17 @@ const ProductDetailsSection = ({
           </Box>
         )}
         {!isReviewing && (
-          <ProductReviewSection id={id ? id : ""} reviewed={reviewed} />
+          <ProductReviewSection
+            id={id ? id : ""}
+            reviewed={reviewed}
+            setIsReviewing={handleEditReview}
+          />
         )}
         {isReviewing && (
           <CreateReviewSection
             onReview={() => {
               navigateIfAuthorized();
-              setIsReviewing(false)
+              setIsReviewing(false);
             }}
             setReviewed={setReviewed}
           />

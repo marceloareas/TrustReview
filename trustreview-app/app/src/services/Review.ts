@@ -34,9 +34,20 @@ export default class ReviewService {
     return (response.data as { content: IReview[] }).content;
   }
 
+    async getReviewByIds(userId: string,productId: string): Promise<IReview> {
+    const response = await this.api.get(`/reviews/${userId}/${productId}`);
+    return response.data as IReview;
+  }
+
   async postReview(review: ReviewDTO): Promise<IReview> {
     console.log("Posted review response:", review);
     const response = await this.api.post("/reviews", review);
+    return response.data as IReview;
+  }
+
+
+  async updateReview(userId: string, productId: string, newReview: Partial<ReviewDTO>): Promise<IReview> {
+    const response = await this.api.patch(`/reviews/${userId}/${productId}`, newReview);
     return response.data as IReview;
   }
 }

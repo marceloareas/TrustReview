@@ -6,13 +6,16 @@ import br.com.TrustReview.dto.UserResponseDTO;
 import br.com.TrustReview.dto.UserResponseLoginDTO;
 import br.com.TrustReview.exception.InvalidCredentials;
 import br.com.TrustReview.exception.UserEmailAlreadyExists;
+import br.com.TrustReview.exception.UserInvalidPrivileges;
 import br.com.TrustReview.exception.UserNotFound;
 import br.com.TrustReview.mapper.UserMapper;
 import br.com.TrustReview.model.User;
+import br.com.TrustReview.model.UserTypeEnum;
 import br.com.TrustReview.repository.UserRepository;
 import br.com.TrustReview.security.JWTTokenService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.usertype.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -189,9 +192,25 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(UUID id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFound("User with id " + id + " not found"));
+    public void deleteUser(UUID id, UserRequestLoginDTO userRequestDTO) {
+        if (!emailRegexPattern.matcher(userRequestDTO.getEmail()).matches()) {
+            log.error("Invalid email");
+            throw new IllegalArgumentException("Invalid email pattern");
+        }
+
+        User user = userRepository.findByEmail(userRequestDTO.getEmail())
+                .orElseThrow(() -> new UserNotFound(
+                        "User with email " + userRequestDTO.getEmail() + " not found"
+                ));
+
+        if (!user.getId().equals(id) && user.getUserType() != UserTypeEnum.ADMIN) {
+            throw new UserInvalidPrivileges(
+                    "User with email " + userRequestDTO.getEmail() + " is trying to delete another user"
+            );
+        }
+
+//        User user = userRepository.findById(id)
+//                .orElseThrow(() -> new UserNotFound("User with id " + id + " not found"));
 
         userRepository.delete(user);
     }

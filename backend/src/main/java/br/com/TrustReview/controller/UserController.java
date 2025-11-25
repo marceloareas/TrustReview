@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -95,7 +96,7 @@ public class UserController {
 
     @Operation(summary = "Deleta Usuário pelo id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Usuário encontrado com sucesso",
+            @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso",
                     content = @Content(schema = @Schema(implementation = TagResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "Erro de validação",
                     content = @Content(schema = @Schema(implementation = ApiError.class))),
@@ -105,8 +106,8 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("userId") UUID userId) {
-        userService.deleteUser(userId);
+    public ResponseEntity<Void> deleteUser(@PathVariable("userId") UUID userId, @RequestBody UserRequestLoginDTO request) {
+        userService.deleteUser(userId, request);
         return ResponseEntity.noContent().build();
     }
 

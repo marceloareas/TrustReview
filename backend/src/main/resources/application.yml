@@ -25,3 +25,5 @@ server:
 logging:
   level:
     org.springframework: INFO
+jwt:
+  secret: ${JWT_KEY}

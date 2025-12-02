@@ -7,12 +7,12 @@ import { useAuth } from "../../hooks/useAuth";
 
 const ProductReviewSection = ({
   id,
-  reviewed,
-  setIsReviewing,
+  refreshKey,
+  setIsReviewOpen,
 }: {
   id: string;
-  reviewed: boolean;
-  setIsReviewing: (isReviewing: boolean) => void;
+  refreshKey: number;
+  setIsReviewOpen: (isOpen: boolean) => void;
 }) => {
   const { user } = useAuth();
   const [reviews, setReviews] = useState<IReview[]>([]);
@@ -23,6 +23,7 @@ const ProductReviewSection = ({
       try {
         const res = await reviewService.getReviews(id);
         setReviews(res);
+        console.log("Fetched reviews:", res);
       } catch (error) {
         console.error("Error fetching product:", error);
         setReviews([]);
@@ -30,7 +31,7 @@ const ProductReviewSection = ({
     };
 
     fetchReview();
-  }, [reviewed, id]);
+  }, [refreshKey, id]);
 
   return (
     <Stack spacing={4} justifyContent={"center"} width={"100%"}>
@@ -47,11 +48,11 @@ const ProductReviewSection = ({
       <Grid container spacing={4} pb={4}>
         {reviews.length > 0 &&
           reviews.map((review) => (
-            <Grid key={review.id} size={{ xs: 12, sm: 6, md: 4 }}>
+            <Grid key={review.productId + review.userId} size={{ xs: 12, sm: 6, md: 4 }}>
               <ReviewCard
                 review={review}
                 setReviews={setReviews}
-                setIsReviewing={setIsReviewing}
+                setIsReviewing={setIsReviewOpen} // mantém API do ReviewCard
                 isUserComment={user?.id === review.userId}
               />
             </Grid>

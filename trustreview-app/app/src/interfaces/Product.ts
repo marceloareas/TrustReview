@@ -48,11 +48,10 @@ export interface ReviewDTO {
 }
 
 export interface IReview {
-  id?: string;
-  title?: string;
-  userId: string;
   productId: string;
+  userId: string;
   userName: string;
+  title?: string;
   pros: string[];
   con: string[];
   rating: number;

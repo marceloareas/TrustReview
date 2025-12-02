@@ -22,8 +22,8 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
   const navigate = useNavigate();
   const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
   const [productTags, setProductTags] = useState<ITag[]>([]);
-  const [reviewed, setReviewed] = useState(false);
-  const [isReviewing, setIsReviewing] = useState(false);
+  const [reviewsRefreshKey, setReviewsRefreshKey] = useState(0); // incrementa para forçar reload
+  const [isReviewOpen, setIsReviewOpen] = useState(false); // controla a UI de escrever review
   const [product, setProduct] = useState<IProduct | null>(null);
   const { getProductById, getRelatedProducts, loading } = useProduct();
   const { navigateIfAuthorized } = useNavigateIfAuthorized();
@@ -41,7 +41,7 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
 
   useEffect(() => {
     fetchProduct();
-  }, [id, reviewed]);
+  }, [id, reviewsRefreshKey, isReviewOpen]);
 
   useEffect(() => {
     fetchRelatedProducts();
@@ -160,7 +160,7 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
             {product?.description}
           </Typography>
         </Stack>
-        {!isReviewing && (
+        {!isReviewOpen && (
           <Box
             width={"100%"}
             height={"100%"}
@@ -173,27 +173,28 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
               size="large"
               onClick={() => {
                 navigateIfAuthorized();
-                setIsReviewing(true);
+                setIsReviewOpen(true);
               }}
             >
               Fazer Review
             </Button>
           </Box>
         )}
-        {!isReviewing && (
+        {!isReviewOpen && (
           <ProductReviewSection
             id={id ? id : ""}
-            reviewed={reviewed}
-            setIsReviewing={setIsReviewing}
+            refreshKey={reviewsRefreshKey}
+            setIsReviewOpen={setIsReviewOpen}
           />
         )}
-        {isReviewing && (
+        {isReviewOpen && (
           <CreateReviewSection
+            productId={id}
             onReview={() => {
               navigateIfAuthorized();
-              setIsReviewing(false);
+              setIsReviewOpen(false);
+              setReviewsRefreshKey((k) => k + 1);
             }}
-            setReviewed={setReviewed}
           />
         )}
         <Stack spacing={2} sx={{ width: "100%" }}>

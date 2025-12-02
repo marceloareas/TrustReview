@@ -17,11 +17,9 @@ import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
 
 const CreateReviewSection = ({
   onReview,
-  setReviewed,
   productId,
 }: {
   onReview: () => void;
-  setReviewed?: (value: boolean) => void;
   productId?: string;
 }) => {
   const { user } = useAuth();
@@ -54,7 +52,7 @@ const CreateReviewSection = ({
     };
 
     fetchExistingReview();
-  }, []);
+  }, [user, id]);
 
   const handleSave = async () => {
     navigateIfAuthorized();
@@ -99,17 +97,15 @@ const CreateReviewSection = ({
       if (isReviewUpdate) {
         await reviewService.updateReview(user?.id || "", id, payload);
         showNotification("Review atualizada com sucesso!", "success");
-        onReview();
+        onReview(); // fecha + refresh
         return;
       }
 
       await reviewService.postReview(payload);
-      if (setReviewed) setReviewed(true);
       showNotification("Review publicado com sucesso!", "success");
+      onReview(); // fecha + refresh
     } catch (error) {
       showNotification(`Erro ao realizar o Review. ${error}`, "error");
-    } finally {
-      onReview();
     }
   };
 
@@ -191,7 +187,7 @@ const CreateReviewSection = ({
                 backgroundColor: "#e74545d2",
               },
             }}
-            onClick={onReview}
+            onClick={onReview} // apenas fecha sem publicar
           >
             Descartar Review
           </Button>

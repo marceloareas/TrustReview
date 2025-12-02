@@ -27,16 +27,15 @@ const ReviewCard = ({
   setIsReviewing,
   isUserComment,
 }: ReviewCardProps) => {
-  const [likes, setLikes] = useState<{
-    [key: string]: { isLike: boolean; isDislike: boolean };
-  }>({});
+  const [localReactions, setLocalReactions] = useState<{
+    isLike: boolean;
+    isDislike: boolean;
+  }>({ isLike: false, isDislike: false });
   const { navigateIfAuthorized } = useNavigateIfAuthorized();
 
   const handleClick = useCallback(
     async (review: IReview, opt: string) => {
-      const reviewId = review.id as string;
-      const current = likes[reviewId] || { isLike: false, isDislike: false };
-
+      const current = localReactions;
       let newLikes = review.likes || 0;
       let newDislikes = review.dislikes || 0;
 
@@ -60,57 +59,33 @@ const ReviewCard = ({
         }
       }
 
-      setLikes((prev) => {
-        if (opt === "like") {
-          return {
-            ...prev,
-            [reviewId]: {
-              isLike: !current.isLike,
-              isDislike: false,
-            },
-          };
-        }
-        if (opt === "dislike") {
-          return {
-            ...prev,
-            [reviewId]: {
-              isLike: false,
-              isDislike: !current.isDislike,
-            },
-          };
-        }
-        return prev;
-      });
-
-      setReviews((prev) =>
-        prev.map((r) =>
-          r.id === reviewId
-            ? { ...r, likes: newLikes, dislikes: newDislikes }
-            : r
-        )
-      );
+      // atualiza estado local do card
+      if (opt === "like") {
+        setLocalReactions({ isLike: !current.isLike, isDislike: false });
+      } else {
+        setLocalReactions({ isLike: false, isDislike: !current.isDislike });
+      }
 
       try {
+        // usa o id real do review para atualizar no backend
         await reviewService.updateReview(review.userId, review.productId, {
           likes: newLikes,
           dislikes: newDislikes,
         });
       } catch (error) {
         console.error("Erro ao atualizar review:", error);
-        setLikes((prev) => ({
-          ...prev,
-          [reviewId]: current,
-        }));
+        // rollback do estado local e da listagem
+        setLocalReactions(current);
         setReviews((prev) =>
           prev.map((r) =>
-            r.id === reviewId
+            r.userId === review.userId && r.productId === review.productId
               ? { ...r, likes: review.likes, dislikes: review.dislikes }
               : r
           )
         );
       }
     },
-    [likes]
+    [localReactions, setReviews]
   );
 
   return (
@@ -185,7 +160,7 @@ const ReviewCard = ({
             ` | ${new Date(review.updatedAt).toLocaleString("pt-BR")}`}
         </Typography>
       </CardContent>
-      <CardActions key={review.id}>
+      <CardActions key={review.productId + review.userId}>
         <Stack
           direction={"row"}
           justifyContent={"space-between"}
@@ -193,9 +168,12 @@ const ReviewCard = ({
           width={"100%"}
         >
           <LikeOrNot
-            onClick={(opt) => handleClick(review, opt)}
-            isLike={likes[review.id as string]?.isLike || false}
-            isDislike={likes[review.id as string]?.isDislike || false}
+            userId={review.userId as string}
+            onClick={(opt) => {
+              handleClick(review, opt);
+            }}
+            isLike={localReactions.isLike}
+            isDislike={localReactions.isDislike}
             likesCount={review.likes}
             dislikesCount={review.dislikes}
           />

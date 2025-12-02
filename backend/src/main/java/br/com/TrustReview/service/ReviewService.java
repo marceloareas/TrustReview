@@ -97,18 +97,8 @@ public class ReviewService {
         log.info("Avaliação criada com sucesso. userId={}, productId={}",
                 user.getId(), product.getId());
 
-        int totalReviews = reviewRepository.countByProductId(product);
-        if (totalReviews <= 0){
-
-        }
-        System.out.println(totalReviews);
-
-        product.updateOverallRating(totalReviews, request.getRating());
-
-        var timeOfUpdate = new Timestamp(System.currentTimeMillis());
-        product.setUpdatedAt(timeOfUpdate);
-
-        productRepository.save(product);
+        // Recalcula e atualiza a nota geral do produto após criação da review
+        recalculateProductOverallRating(product);
 
         return reviewMapper.toResponse(saved);
     }
@@ -205,6 +195,11 @@ public class ReviewService {
         Review updated = reviewRepository.save(existing);
         log.info("Avaliação atualizada com sucesso para userId={} productId={}", userId, productId);
 
+        // Se a nota foi atualizada (ou mesmo para garantir consistência), recalcula a nota geral do produto
+        if (request.getRating() != null) {
+            recalculateProductOverallRating(product);
+        }
+
         return reviewMapper.toResponse(updated);
     }
 
@@ -250,5 +245,27 @@ public class ReviewService {
         return reviews.stream()
                 .map(reviewMapper::toResponse)
                 .toList();
+    }
+
+    /**
+     * Recalcula a nota média (overallRating) do produto a partir de todas as reviews
+     * e persiste a alteração no ProductRepository.
+     */
+    private void recalculateProductOverallRating(Product product) {
+        try {
+            List<Review> all = reviewRepository.findByProductId(product);
+            double avg = all.stream()
+                    .filter(r -> r.getRating() != null)
+                    .mapToDouble(r -> r.getRating())
+                    .average()
+                    .orElse(0.0);
+
+            product.setOverallRating(avg);
+            product.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+            productRepository.save(product);
+            log.info("Nota geral do produto {} recalculada para {}", product.getId(), avg);
+        } catch (Exception e) {
+            log.error("Falha ao recalcular nota do produto {}: {}", product.getId(), e.getMessage());
+        }
     }
 }

@@ -1,5 +1,5 @@
 import { Container, Stack } from "@mui/material";
-import ProductTitle from "../../components/Product/ProductTitle";
+import StylizedTitle from "../../components/Product/StylizedTitle";
 import ProductCardList from "../../components/Product/ProductCardGridList";
 import Search from "../../components/Search";
 import { useSearch } from "../../hooks/useSearch";
@@ -51,7 +51,7 @@ const SearchedProducts = () => {
         alignItems={"flex-start"}
       >
         <Search value={searchTerm} onChange={handleSearchChange} />
-        <ProductTitle />
+        <StylizedTitle title={"Produtos"} />
         <ProductCardList
           productList={filteredItems}
           onClick={handleClickProduct}

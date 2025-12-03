@@ -1,32 +1,22 @@
-import {
-  Box,
-  Button,
-  Container,
-  Rating,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { type IProduct, type ITag } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
 import { useEffect, useState } from "react";
 import { tagService } from "../../services";
 import { useNavigate } from "react-router-dom";
-import ProductCardStackList from "../../components/Product/ProductCardStackList";
-import CreateReviewSection from "../CreateReview";
-import ProductReviewSection from "../ProductReview";
-import TagsList from "../../components/Tag/TagList";
+import ProductHeader from "./ProductHeader";
+import ProductMeta from "./ProductMeta";
+import ReviewSection from "./ReviewSection";
+import RelatedProducts from "./RelatedProducts";
 import useProduct from "../../hooks/useProduct";
-import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
 
 const ProductDetailsSection = ({ id }: { id: string }) => {
   const navigate = useNavigate();
   const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
   const [productTags, setProductTags] = useState<ITag[]>([]);
-  const [reviewsRefreshKey, setReviewsRefreshKey] = useState(0); // incrementa para forçar reload
-  const [isReviewOpen, setIsReviewOpen] = useState(false); // controla a UI de escrever review
+  const [reviewsRefreshKey, setReviewsRefreshKey] = useState(0);
   const [product, setProduct] = useState<IProduct | null>(null);
   const { getProductById, getRelatedProducts, loading } = useProduct();
-  const { navigateIfAuthorized } = useNavigateIfAuthorized();
 
   const fetchProduct = async () => {
     const fetchedProduct = await getProductById(id ?? "");
@@ -41,7 +31,7 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
 
   useEffect(() => {
     fetchProduct();
-  }, [id, reviewsRefreshKey, isReviewOpen]);
+  }, [id, reviewsRefreshKey]);
 
   useEffect(() => {
     fetchRelatedProducts();
@@ -94,9 +84,7 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
     );
   }
 
-  const handleClickProduct = (id: string) => {
-    navigate(`/products/${id}`);
-  };
+  const handleClickProduct = (id: string) => navigate(`/products/${id}`);
 
   return (
     <Container maxWidth="xl" sx={{ flex: 1 }}>
@@ -115,34 +103,8 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
             <ProductImage name={product?.name} imageUrl={product?.imageUrl} />
           </Box>
           <Stack spacing={2}>
-            <Typography variant="h4" fontWeight={100}>
-              {product?.name}
-            </Typography>
-            <Stack
-              direction={{ xs: "column", md: "row" }}
-              alignItems={"flex-start"}
-              spacing={1}
-            >
-              <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                <Rating
-                  name="Product rating"
-                  value={product.overallRating}
-                  precision={0.5}
-                  readOnly
-                />
-                <Typography variant="body2">
-                  {product?.overallRating?.toFixed(1)}
-                </Typography>
-              </Stack>
-
-              <Typography variant="body2" color="text.tertiary">
-                ({product?.reviewsCount} reviews)
-              </Typography>
-            </Stack>
-            <Typography variant="body1" fontWeight={600}>
-              Tags
-            </Typography>
-            <TagsList tags={productTags || []} />
+            <ProductHeader product={product} />
+            <ProductMeta product={product} tags={productTags || []} />
           </Stack>
         </Stack>
         <Stack spacing={2} sx={{ width: "100%" }}>
@@ -160,52 +122,12 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
             {product?.description}
           </Typography>
         </Stack>
-        {!isReviewOpen && (
-          <Box
-            width={"100%"}
-            height={"100%"}
-            display={"flex"}
-            justifyContent={"flex-end"}
-            alignItems={"flex-end"}
-          >
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => {
-                navigateIfAuthorized();
-                setIsReviewOpen(true);
-              }}
-            >
-              Fazer Review
-            </Button>
-          </Box>
-        )}
-        {!isReviewOpen && (
-          <ProductReviewSection
-            id={id ? id : ""}
-            refreshKey={reviewsRefreshKey}
-            setIsReviewOpen={setIsReviewOpen}
-          />
-        )}
-        {isReviewOpen && (
-          <CreateReviewSection
-            productId={id}
-            onReview={() => {
-              navigateIfAuthorized();
-              setIsReviewOpen(false);
-              setReviewsRefreshKey((k) => k + 1);
-            }}
-          />
-        )}
-        <Stack spacing={2} sx={{ width: "100%" }}>
-          <Typography variant="h4" fontWeight={100}>
-            Produtos Relacionados
-          </Typography>
-          <ProductCardStackList
-            productList={relatedProducts}
-            onClick={handleClickProduct}
-          />
-        </Stack>
+        <ReviewSection
+          id={id ? id : ""}
+          refreshKey={reviewsRefreshKey}
+          onReviewed={() => setReviewsRefreshKey((k) => k + 1)}
+        />
+  <RelatedProducts products={relatedProducts} onClick={handleClickProduct} />
       </Stack>
     </Container>
   );

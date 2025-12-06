@@ -7,13 +7,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import Review from "../../assets/icons/Review.svg";
+import Review from "../../../assets/icons/Review.svg";
 import { useEffect, useState } from "react";
-import { reviewService } from "../../services";
-import { useAuth } from "../../hooks/useAuth";
+import { reviewService } from "../../../services";
+import { useAuth } from "../../../hooks/useAuth";
 import { useParams } from "react-router-dom";
-import { useNotification } from "../../components/Snackbar/snackbar";
-import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
+import { useNotification } from "../../../components/Snackbar/snackbar";
+import useNavigateIfAuthorized from "../../../hooks/useNavigateIfAuthorized";
 
 const CreateReviewSection = ({
   onReview,

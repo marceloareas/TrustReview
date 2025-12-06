@@ -1,37 +1,18 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
 import type { IReview } from "../../interfaces/Product";
-import { reviewService } from "../../services";
 import ReviewCard from "../../components/ReviewCard";
 import { useAuth } from "../../hooks/useAuth";
 
 const ProductReviewSection = ({
-  id,
-  refreshKey,
+  reviews,
+  setReviews,
   setIsReviewOpen,
 }: {
-  id: string;
-  refreshKey: number;
+  reviews: IReview[];
+  setReviews: (value: React.SetStateAction<IReview[]>) => void;
   setIsReviewOpen: (isOpen: boolean) => void;
 }) => {
   const { user } = useAuth();
-  const [reviews, setReviews] = useState<IReview[]>([]);
-
-  useEffect(() => {
-    const fetchReview = async () => {
-      if (!id) return;
-      try {
-        const res = await reviewService.getReviews(id);
-        setReviews(res);
-        console.log("Fetched reviews:", res);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        setReviews([]);
-      }
-    };
-
-    fetchReview();
-  }, [refreshKey, id]);
 
   return (
     <Stack spacing={4} justifyContent={"center"} width={"100%"}>
@@ -48,11 +29,14 @@ const ProductReviewSection = ({
       <Grid container spacing={4} pb={4}>
         {reviews.length > 0 &&
           reviews.map((review) => (
-            <Grid key={review.productId + review.userId} size={{ xs: 12, sm: 6, md: 4 }}>
+            <Grid
+              key={review.productId + review.userId}
+              size={{ xs: 12, sm: 6, md: 4 }}
+            >
               <ReviewCard
                 review={review}
                 setReviews={setReviews}
-                setIsReviewing={setIsReviewOpen} // mantém API do ReviewCard
+                setIsReviewing={setIsReviewOpen}
                 isUserComment={user?.id === review.userId}
               />
             </Grid>

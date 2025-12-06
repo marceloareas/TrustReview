@@ -1,8 +1,14 @@
 import { Stack, Typography } from "@mui/material";
-import ProductCardStackList from "../../components/Product/ProductCardStackList";
-import { type IProduct } from "../../interfaces/Product";
+import ProductCardStackList from "../../../components/Product/ProductCardStackList";
+import type { IProduct } from "../../../interfaces/Product";
 
-const RelatedProducts = ({ products, onClick }: { products: IProduct[]; onClick: (id: string) => void }) => {
+const RelatedProducts = ({
+  products,
+  onClick,
+}: {
+  products: IProduct[];
+  onClick: (id: string) => void;
+}) => {
   return (
     <Stack spacing={2} sx={{ width: "100%" }}>
       <Typography variant="h4" fontWeight={100}>

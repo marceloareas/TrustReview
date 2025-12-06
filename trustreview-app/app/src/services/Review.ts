@@ -29,7 +29,7 @@ export default class ReviewService {
     this.api = api;
   }
 
-  async getReviews(productId: string): Promise<IReview[]> {
+  async getProductReviews(productId: string): Promise<IReview[]> {
     const response = await this.api.get(`/reviews/product/${productId}`);
     return (response.data as { content: IReview[] }).content;
   }

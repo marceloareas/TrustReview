@@ -53,7 +53,6 @@ const ProductImage = ({
         }}
         draggable={false}
         image={imageUrl || CardImage}
-        //image={CardImage}
         title={name}
       />
     </Card>

@@ -1,8 +1,8 @@
 import { Stack, Rating, Typography } from "@mui/material";
-import TagsList from "../../components/Tag/TagList";
-import { type ITag, type IProduct } from "../../interfaces/Product";
+import TagsList from "../Tag/TagList";
+import { type IProduct } from "../../interfaces/Product";
 
-const ProductMeta = ({ product, tags }: { product: IProduct; tags: ITag[] }) => {
+const ProductMeta = ({ product }: { product: IProduct }) => {
   return (
     <Stack spacing={2}>
       <Stack
@@ -17,7 +17,9 @@ const ProductMeta = ({ product, tags }: { product: IProduct; tags: ITag[] }) => 
             precision={0.5}
             readOnly
           />
-          <Typography variant="body2">{product?.overallRating?.toFixed(1)}</Typography>
+          <Typography variant="body2">
+            {product?.overallRating?.toFixed(1)}
+          </Typography>
         </Stack>
 
         <Typography variant="body2" color="text.tertiary">
@@ -28,7 +30,7 @@ const ProductMeta = ({ product, tags }: { product: IProduct; tags: ITag[] }) => 
       <Typography variant="body1" fontWeight={600}>
         Tags
       </Typography>
-      <TagsList tags={tags || []} />
+      <TagsList tags={product.tags || []} />
     </Stack>
   );
 };

@@ -23,7 +23,6 @@ export interface IProduct {
   overallRating?: number;
   imageUrl?: string;
   reviewsCount?: number;
-  reviews?: IReview[];
   createdAt?: string;
   updatedAt?: string;
 }

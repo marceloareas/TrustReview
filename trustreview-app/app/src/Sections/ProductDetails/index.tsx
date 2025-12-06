@@ -1,26 +1,28 @@
-import { Box, Container, Stack, Typography } from "@mui/material";
-import { type IProduct, type ITag } from "../../interfaces/Product";
+import { Box, Container, Stack } from "@mui/material";
+import { type IProduct } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
 import { useEffect, useState } from "react";
-import { tagService } from "../../services";
 import { useNavigate } from "react-router-dom";
-import ProductHeader from "./ProductHeader";
-import ProductMeta from "./ProductMeta";
-import ReviewSection from "./ReviewSection";
-import RelatedProducts from "./RelatedProducts";
+import ProductHeader from "../../components/ProductHeader";
+import ProductMeta from "../../components/ProductMeta";
+import ProductDescription from "../../components/Product/ProductDescription";
+import ReviewSection from "./components/ReviewSection";
 import useProduct from "../../hooks/useProduct";
+import RelatedProducts from "./components/RelatedProducts";
 
 const ProductDetailsSection = ({ id }: { id: string }) => {
   const navigate = useNavigate();
-  const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
-  const [productTags, setProductTags] = useState<ITag[]>([]);
-  const [reviewsRefreshKey, setReviewsRefreshKey] = useState(0);
   const [product, setProduct] = useState<IProduct | null>(null);
-  const { getProductById, getRelatedProducts, loading } = useProduct();
+  const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
+  const [reviewsRefreshKey, setReviewsRefreshKey] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const { getProductById, getRelatedProducts } = useProduct();
 
   const fetchProduct = async () => {
+    setLoading(true);
     const fetchedProduct = await getProductById(id ?? "");
     setProduct(fetchedProduct);
+    setLoading(false);
   };
 
   const fetchRelatedProducts = async () => {
@@ -31,24 +33,11 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
 
   useEffect(() => {
     fetchProduct();
-  }, [id, reviewsRefreshKey]);
+  }, [id, reviewsRefreshKey, getProductById]);
 
   useEffect(() => {
     fetchRelatedProducts();
-  }, [product?.id]);
-
-  useEffect(() => {
-    const fetchProductTags = async () => {
-      if (!product?.id) return;
-      try {
-        const res = await tagService.getTagsByProductId(product.id || "");
-        setProductTags(res);
-      } catch (error) {
-        console.error("Error fetching product tags:", error);
-      }
-    };
-    fetchProductTags();
-  }, [product?.id]);
+  }, [product?.id, getRelatedProducts]);
 
   if (loading) {
     return (
@@ -104,30 +93,19 @@ const ProductDetailsSection = ({ id }: { id: string }) => {
           </Box>
           <Stack spacing={2}>
             <ProductHeader product={product} />
-            <ProductMeta product={product} tags={productTags || []} />
+            <ProductMeta product={product} />
           </Stack>
         </Stack>
-        <Stack spacing={2} sx={{ width: "100%" }}>
-          <Typography variant="body2" color="text.tertiary">
-            {product?.createdAt &&
-              `Criado em: ${new Date(product.createdAt).toLocaleString("pt-BR")}`}
-            {product?.updatedAt &&
-              ` | Atualizado em: ${new Date(product.updatedAt).toLocaleString("pt-BR")}`}
-          </Typography>
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            sx={{ whiteSpace: "pre-line" }}
-          >
-            {product?.description}
-          </Typography>
-        </Stack>
+        <ProductDescription product={product} />
         <ReviewSection
           id={id ? id : ""}
           refreshKey={reviewsRefreshKey}
           onReviewed={() => setReviewsRefreshKey((k) => k + 1)}
         />
-  <RelatedProducts products={relatedProducts} onClick={handleClickProduct} />
+        <RelatedProducts
+          products={relatedProducts}
+          onClick={handleClickProduct}
+        />
       </Stack>
     </Container>
   );

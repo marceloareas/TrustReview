@@ -11,13 +11,33 @@ from contextlib import asynccontextmanager
 from api.Exception.LoadingModelException import LoadingModelException
 import schedule
 
+from api.service.sentimentalConsistency import consistencyService
 
+from model.HeadedModel import HeadedModel
+from model.BackBonedModel import BackBonedModel
+
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MODEL_PATH = "./model"
+HEADEDMODELS = ["NPLTOWN_BERT","PYSENTIMIENTO_ROBERTA"]
+BACKBONEDMODELS = ["all-MiniLM-L6-v2"]
 
 MODEL_PATHS = {
-    "FINETUNED":"./model/model-fine-tuning-classic",
-    "NPLTOWN_BERT":"nlptown/bert-base-multilingual-uncased-sentiment",
-    "PYSENTIMIENTO_ROBERTA":"pysentimiento/robertuito-sentiment-analysis"
+    "NPLTOWN_BERT":[
+        "nlptown/bert-base-multilingual-uncased-sentiment",
+        [
+            "1 star", "2 stars", "3 stars", "4 stars", "5 stars"
+        ]
+    ],
+    "PYSENTIMIENTO_ROBERTA":[
+        "pysentimiento/robertuito-sentiment-analysis",
+        [
+            "negative", "neutral", "positive"
+        ]
+    ],
+    "all-MiniLM-L6-v2":[
+        "sentence-transformers/all-MiniLM-L6-v2",
+        []
+    ]
 }
 MODEL = {}
 
@@ -26,29 +46,32 @@ MODEL = {}
 def load_models():
     for key,model_path in MODEL_PATHS.items():
         try:
-            tokenizer = AutoTokenizer.from_pretrained(model_path)
-            model = AutoModelForSequenceClassification.from_pretrained(model_path)
-            MODEL[key] = (tokenizer, model)
-
-            #MODEL[key] = [AutoTokenizer.from_pretrained(model), AutoModelForSequenceClassification.from_pretrained(model)]
+            if key in HEADEDMODELS:
+               MODEL[key] = HeadedModel(
+                    device=DEVICE,
+                    model_string=model_path[0],
+                    labels=model_path[1]
+                )
+            elif key in BACKBONEDMODELS:
+                MODEL[key] = BackBonedModel(
+                    device=DEVICE,
+                    model_string=model_path[0],
+                    labels=model_path[1]
+                )
         except Exception as e:
             print(f"[ERRO] Modelo {key} falhou ao carregar: {e}")
             raise LoadingModelException(model_path)
-        
-        finally:
-            print("Prosseguindo o carregamento dos outros modelos!")
-            continue
 
 
 
-# 🔹 Define o lifespan antes de criar a app
+# Define o lifespan antes de criar a app
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     def run_training_scheduler():
         schedule.every().day.at("02:00").do(
             lambda: subprocess.run(["python", "training/train.py"], check=True)
         )
-        print("⏳ Rotina diária de treinamento agendada para 02:00.")
+        print("Rotina diária de treinamento agendada para 02:00.")
         while True:
             schedule.run_pending()
             time.sleep(60)
@@ -59,12 +82,12 @@ async def lifespan(app: FastAPI):
     # Libera o app
     yield
 
-    print("🛑 Encerrando rotina de agendamento...")
+    print("Encerrando rotina de agendamento...")
 
-# 🔹 Cria a aplicação com o lifespan ativo
+# Cria a aplicação com o lifespan ativo
 app = FastAPI(lifespan=lifespan)
 
-# 🔹 Define o schema e as rotas
+# Define o schema e as rotas
 class Review(BaseModel):
     """{
     "userId":"669ba796-717a-4a70-845b-2d8c6aee5d86",
@@ -90,43 +113,17 @@ class Review(BaseModel):
 
 @app.post("/analyze")
 def analyze(review: Review):
-    result = {}
+    model_results = {}
     for k,v in MODEL.items():
-         # --- FINETUNED ---
-        if k == "FINETUNED":
-            tokens = v[0](review.description, return_tensors="pt", truncation=True, padding=True).to(v[1].device)
-            with torch.no_grad():
-                logits = v[1](**tokens).logits
-
-            preds = torch.argmax(logits, dim=1).cpu().numpy() + 1
-                    
-            result[k] = {
-                "rating_pred": int(preds[0]),
-                "description": review.description
-            }
+        if k in BACKBONEDMODELS:
             continue
-
-        # --- OUTROS MODELOS ---
-        inputs = v[0](review.description, return_tensors="pt", truncation=True)
-        with torch.no_grad():
-            logits = v[1](**inputs).logits
-
-        probs = torch.nn.functional.softmax(logits, dim=1)
-        sentiment_index = torch.argmax(probs).item()
-        num_labels = v[1].config.num_labels
-
-        # Seleciona labels conforme o modelo
-        if k == "NPLTOWN_BERT":
-            labels = ["1 star", "2 stars", "3 stars", "4 stars", "5 stars"]
-        elif k == "PYSENTIMIENTO_ROBERTA":
-            labels = ["negative", "neutral", "positive"]
-        else:
-            # fallback genérico
-            labels = [f"class_{i}" for i in range(num_labels)]
-
-        result[k] = {
-            "sentiment": labels[sentiment_index],
-            "scores": {labels[i]: float(probs[0][i]) for i in range(num_labels)}
-        }
-
-    return result
+        v.TokenizerInput(review.description)
+        model_results[k] = v.computeTokens()
+        consistency = consistencyService.SentimentConsistencyService.analyze(
+            rating=review.rating,
+            models_result=model_results
+        )
+    return {
+        "model_results": model_results,
+        "consistency": consistency
+    }

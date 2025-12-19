@@ -7,26 +7,25 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import Review from "../../assets/icons/Review.svg";
-import { useState } from "react";
-import { reviewService } from "../../services";
-import { useAuth } from "../../hooks/useAuth";
+import Review from "../../../assets/icons/Review.svg";
+import { useEffect, useState } from "react";
+import { reviewService } from "../../../services";
+import { useAuth } from "../../../hooks/useAuth";
 import { useParams } from "react-router-dom";
-import { useNotification } from "../../components/Snackbar/snackbar";
-import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
+import { useNotification } from "../../../components/Snackbar/snackbar";
+import useNavigateIfAuthorized from "../../../hooks/useNavigateIfAuthorized";
 
 const CreateReviewSection = ({
   onReview,
-  setReviewed,
   productId,
 }: {
   onReview: () => void;
-  setReviewed?: (value: boolean) => void;
   productId?: string;
 }) => {
   const { user } = useAuth();
   const { id: routeId } = useParams<{ id: string }>();
   const id = productId || routeId;
+  const [isReviewUpdate, setIsReviewUpdate] = useState(false);
   const [rating, setRating] = useState<number | null>(0);
   const [title, setTitle] = useState<string>("");
   const [comment, setComment] = useState<string>("");
@@ -34,6 +33,26 @@ const CreateReviewSection = ({
   const [cons, setCons] = useState<string>("");
   const { showNotification } = useNotification();
   const { navigateIfAuthorized } = useNavigateIfAuthorized();
+
+  useEffect(() => {
+    const fetchExistingReview = async () => {
+      if (!user || !id) return;
+      try {
+        const res = await reviewService.getReviewByIds(user.id || "", id ?? "");
+        console.log("Fetched existing review:", res);
+        setRating(res.rating);
+        setTitle(res.title || "");
+        setComment(res.description || "");
+        setPros(res.pros?.join("\n") || "");
+        setCons(res.con?.join("\n") || "");
+        setIsReviewUpdate(true);
+      } catch (error) {
+        console.error("Error fetching user review:", error);
+      }
+    };
+
+    fetchExistingReview();
+  }, [user, id]);
 
   const handleSave = async () => {
     navigateIfAuthorized();
@@ -47,7 +66,7 @@ const CreateReviewSection = ({
       console.error("Title and comment are required");
       showNotification(
         "É necessário preencher o Título e Comentário.",
-        "error",
+        "error"
       );
       return;
     }
@@ -61,26 +80,32 @@ const CreateReviewSection = ({
       dislikes: 0,
       pros: pros
         ? pros
-          .split("\n")
-          .map((s) => s.trim())
-          .filter(Boolean)
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean)
         : [],
       con: cons
         ? cons
-          .split("\n")
-          .map((s) => s.trim())
-          .filter(Boolean)
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean)
         : [],
       rating: rating || 0,
     };
+
     try {
+      if (isReviewUpdate) {
+        await reviewService.updateReview(user?.id || "", id, payload);
+        showNotification("Review atualizada com sucesso!", "success");
+        onReview(); // fecha + refresh
+        return;
+      }
+
       await reviewService.postReview(payload);
-      if (setReviewed) setReviewed(true);
       showNotification("Review publicado com sucesso!", "success");
+      onReview(); // fecha + refresh
     } catch (error) {
       showNotification(`Erro ao realizar o Review. ${error}`, "error");
-    } finally {
-      onReview();
     }
   };
 
@@ -118,7 +143,7 @@ const CreateReviewSection = ({
         </Stack>
 
         <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Comment</Typography>
+          <Typography>Comentário</Typography>
           <TextField
             multiline
             minRows={5}
@@ -127,7 +152,7 @@ const CreateReviewSection = ({
           />
         </Stack>
         <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Pros</Typography>
+          <Typography>Pros (utilize ENTER para separar os pros)</Typography>
           <TextField
             multiline
             minRows={5}
@@ -136,7 +161,9 @@ const CreateReviewSection = ({
           />
         </Stack>
         <Stack spacing={1} sx={{ width: "100%" }}>
-          <Typography>Cons</Typography>
+          <Typography>
+            Contras (utilize ENTER para separar os contras)
+          </Typography>
           <TextField
             multiline
             minRows={5}
@@ -160,7 +187,7 @@ const CreateReviewSection = ({
                 backgroundColor: "#e74545d2",
               },
             }}
-            onClick={onReview}
+            onClick={onReview} // apenas fecha sem publicar
           >
             Descartar Review
           </Button>

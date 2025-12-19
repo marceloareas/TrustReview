@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useCallback, useEffect, useState } from "react";
-import { productService } from "../services";
+import { productService, reviewService } from "../services";
 import type { IProduct } from "../interfaces/Product";
 
 interface ProductContextProps {
@@ -9,15 +11,20 @@ interface ProductContextProps {
   loadProducts: () => Promise<void>;
   searchProducts: (term: string) => Promise<IProduct[]>;
   getProductById: (id: string) => Promise<IProduct | null>;
+  getProductReviewsById: (id: string) => Promise<any>;
   getRelatedProducts: (id: string) => Promise<IProduct[]>;
   createProduct: (product: Partial<IProduct>) => Promise<IProduct>;
 }
 
 export const ProductContext = createContext<ProductContextProps | undefined>(
-  undefined,
+  undefined
 );
 
-export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
+export const ProductProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -51,7 +58,6 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   }, []);
 
   const getProductById = useCallback(async (id: string) => {
-    setLoading(true);
     setError(null);
     try {
       const data = await productService.getProductById(id);
@@ -59,13 +65,21 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     } catch (e: any) {
       setError(e?.message || "Erro ao obter produto");
       return null;
-    } finally {
-      setLoading(false);
+    }
+  }, []);
+
+  const getProductReviewsById = useCallback(async (id: string) => {
+    setError(null);
+    try {
+      const data = await reviewService.getProductReviews(id);
+      return data || null;
+    } catch (e: any) {
+      setError(e?.message || "Erro ao obter produto");
+      return null;
     }
   }, []);
 
   const getRelatedProducts = useCallback(async (id: string) => {
-    setLoading(true);
     setError(null);
     try {
       const data = await productService.getRelatedProducts(id);
@@ -73,8 +87,6 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     } catch (e: any) {
       setError(e?.message || "Erro ao obter produtos relacionados");
       return [];
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -94,7 +106,6 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   }, []);
 
   useEffect(() => {
-    // initial load
     loadProducts();
   }, [loadProducts]);
 
@@ -107,6 +118,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         loadProducts,
         searchProducts,
         getProductById,
+        getProductReviewsById,
         getRelatedProducts,
         createProduct,
       }}

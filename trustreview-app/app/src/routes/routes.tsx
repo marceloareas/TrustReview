@@ -30,6 +30,7 @@ import ProductPage from "../pages/ProductPage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import CreateProductPage from "../pages/CreateProductPage";
+import CompareProductsPage from "../pages/CompareProductsPage";
 
 const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
         path: "/createProduct",
         element: <CreateProductPage />,
       },
+      {
+        path: '/compare',
+        element: <CompareProductsPage />,
+      }
     ],
   },
 ]);

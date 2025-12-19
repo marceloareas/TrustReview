@@ -44,31 +44,47 @@
 import { Chip, Stack } from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
+import { useAuth } from "../../hooks/useAuth";
+import { useNotification } from "../Snackbar/snackbar";
 
 const LikeOrNot = ({
+  userId,
   isLike,
   isDislike,
   likesCount = 0,
   dislikesCount = 0,
   onClick,
 }: {
+  userId: string;
   isLike: boolean;
   isDislike: boolean;
   likesCount?: number;
   dislikesCount?: number;
   onClick: (opt: "like" | "dislike") => void;
 }) => {
+  const { user } = useAuth();
+  const { showNotification } = useNotification();
+
+  const handleEvaluationClick = (opt: "like" | "dislike") => {
+    if (user?.id === userId) {
+      showNotification("Você não pode avaliar sua própria review.", "warning");
+      return;
+    }
+
+    onClick(opt);
+  };
+
   return (
     <Stack direction="row" spacing={0.5}>
       <Chip
         icon={<ThumbUpOffAltIcon />}
-        onClick={() => onClick("like")}
+        onClick={() => handleEvaluationClick("like")}
         label={likesCount}
         sx={{
           borderTopRightRadius: 0,
           borderBottomRightRadius: 0,
           borderRight: "none",
-          color: isLike ? "#fff" : "inherit",
+          color: "#fff",
           backgroundColor: isLike ? "#E01B68" : "none",
           "&:hover": {
             backgroundColor: isLike ? "#E01B68" : "#251846ff",
@@ -79,12 +95,12 @@ const LikeOrNot = ({
 
       <Chip
         icon={<ThumbDownOffAltIcon />}
-        onClick={() => onClick("dislike")}
+        onClick={() => handleEvaluationClick("dislike")}
         label={dislikesCount}
         sx={{
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
-          color: isDislike ? "#fff" : "inherit",
+          color: "#fff",
           backgroundColor: isDislike ? "#E01B68" : "none",
           "&:hover": {
             backgroundColor: isDislike ? "#E01B68" : "#251846ff",

@@ -6,6 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import type { ITag } from "../../interfaces/Product";
 import TagsList from "../../components/Tag/TagList";
 import useProduct from "../../hooks/useProduct";
+import { getSearchedProductName } from "../../utils/getSearchedProductName";
 
 interface CreateProductReviewForm {
   name: string;
@@ -24,7 +25,7 @@ const CreateProduct = ({
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
   const [tags, setTags] = useState<ITag[]>([]);
   const [currentTagsList, setCurrentTagsList] = useState<ITag[]>([]);
-  const {createProduct} = useProduct();
+  const { createProduct } = useProduct();
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -41,35 +42,37 @@ const CreateProduct = ({
 
   const { control, handleSubmit, reset } = useForm<CreateProductReviewForm>({
     defaultValues: {
-      name: "",
+      name: getSearchedProductName(),
       description: "",
       tags: [],
       image: null,
     },
   });
 
-  const onSubmit = useCallback(async (data: CreateProductReviewForm) => {
-    try {
-      const newProduct = {
-        name: data.name,
-        description: data.description,
-        tags: currentTagsList,
-        image: data.image ?? null,
-      };
+  const onSubmit = useCallback(
+    async (data: CreateProductReviewForm) => {
+      try {
+        const newProduct = {
+          name: data.name,
+          description: data.description,
+          tags: currentTagsList,
+          image: data.image ?? null,
+        };
 
-      console.log("Creating product: (component)", newProduct);
-
-      const response = await createProduct(newProduct);
-      reset();
-      if (onCreated && response?.id) {
-        onCreated(response.id);
+        const response = await createProduct(newProduct);
+        reset();
+        if (onCreated && response?.id) {
+          onCreated(response.id);
+        }
+        localStorage.removeItem('searchTerm');
+      } catch (error) {
+        console.error("Erro ao criar produto:", error);
       }
-    } catch (error) {
-      console.error("Erro ao criar produto:", error);
-    }
-  }, [createProduct, reset, onCreated, currentTagsList]);
+    },
+    [createProduct, reset, onCreated, currentTagsList]
+  );
 
-  const latestSubmitRef = useRef<() => void>(() => {});
+  const latestSubmitRef = useRef<() => void>(() => { });
 
   latestSubmitRef.current = useCallback(() => {
     void handleSubmit(onSubmit)();
@@ -140,7 +143,7 @@ const CreateProduct = ({
           </Stack>
 
           <Stack spacing={1} sx={{ width: "100%" }}>
-            <Typography>Description</Typography>
+            <Typography>Descrição</Typography>
             <Controller
               name="description"
               control={control}

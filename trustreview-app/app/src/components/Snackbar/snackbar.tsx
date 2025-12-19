@@ -59,7 +59,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
           onClose={closeNotification}
           variant="filled"
           severity={severity}
-          sx={{ width: "80%" }}
+          sx={{ width: "80%", color: 'primary.contrastText' }}
         >
           {message}
         </Alert>

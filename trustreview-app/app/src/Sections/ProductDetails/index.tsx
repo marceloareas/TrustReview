@@ -1,40 +1,28 @@
-import {
-  Box,
-  Button,
-  Container,
-  Rating,
-  Stack,
-  Typography,
-} from "@mui/material";
-import type { IProduct, ITag } from "../../interfaces/Product";
+import { Box, Container, Stack } from "@mui/material";
+import { type IProduct } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";
 import { useEffect, useState } from "react";
-import { tagService } from "../../services";
 import { useNavigate } from "react-router-dom";
-import ProductCardStackList from "../../components/Product/ProductCardStackList";
-import CreateReviewSection from "../CreateReview";
-import ProductReviewSection from "../ProductReview";
-import TagsList from "../../components/Tag/TagList";
+import ProductHeader from "../../components/ProductHeader";
+import ProductMeta from "../../components/ProductMeta";
+import ProductDescription from "../../components/Product/ProductDescription";
+import ReviewSection from "./components/ReviewSection";
 import useProduct from "../../hooks/useProduct";
-import useNavigateIfAuthorized from "../../hooks/useNavigateIfAuthorized";
+import RelatedProducts from "./components/RelatedProducts";
 
-const ProductDetailsSection = ({
-  id,
-}: {
-  id: string;
-}) => {
+const ProductDetailsSection = ({ id }: { id: string }) => {
   const navigate = useNavigate();
-  const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
-  const [productTags, setProductTags] = useState<ITag[]>([]);
-  const [reviewed, setReviewed] = useState(false);
-  const [isReviewing, setIsReviewing] = useState(false);
   const [product, setProduct] = useState<IProduct | null>(null);
-  const { getProductById, getRelatedProducts, loading } = useProduct();
-  const { navigateIfAuthorized } = useNavigateIfAuthorized();
+  const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
+  const [reviewsRefreshKey, setReviewsRefreshKey] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const { getProductById, getRelatedProducts } = useProduct();
 
   const fetchProduct = async () => {
+    setLoading(true);
     const fetchedProduct = await getProductById(id ?? "");
     setProduct(fetchedProduct);
+    setLoading(false);
   };
 
   const fetchRelatedProducts = async () => {
@@ -45,24 +33,11 @@ const ProductDetailsSection = ({
 
   useEffect(() => {
     fetchProduct();
-  }, [id, reviewed]);
+  }, [id, reviewsRefreshKey, getProductById]);
 
   useEffect(() => {
     fetchRelatedProducts();
-  }, [product?.id]);
-
-  useEffect(() => {
-    const fetchProductTags = async () => {
-      if (!product?.id) return;
-      try {
-        const res = await tagService.getTagsByProductId(product.id || "");
-        setProductTags(res);
-      } catch (error) {
-        console.error("Error fetching product tags:", error);
-      }
-    };
-    fetchProductTags();
-  }, [product?.id]);
+  }, [product?.id, getRelatedProducts]);
 
   if (loading) {
     return (
@@ -98,9 +73,7 @@ const ProductDetailsSection = ({
     );
   }
 
-  const handleClickProduct = (id: string) => {
-    navigate(`/products/${id}`);
-  };
+  const handleClickProduct = (id: string) => navigate(`/products/${id}`);
 
   return (
     <Container maxWidth="xl" sx={{ flex: 1 }}>
@@ -119,92 +92,20 @@ const ProductDetailsSection = ({
             <ProductImage name={product?.name} imageUrl={product?.imageUrl} />
           </Box>
           <Stack spacing={2}>
-            <Typography variant="h4" fontWeight={100}>
-              {product?.name}
-            </Typography>
-            <Stack
-              direction={{ xs: "column", md: "row" }}
-              alignItems={"flex-start"}
-              spacing={1}
-            >
-              <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                <Rating
-                  name="Product rating"
-                  value={product.overallRating}
-                  precision={0.5}
-                  readOnly
-                />
-                <Typography variant="body2">
-                  {product?.overallRating?.toFixed(1)}
-                </Typography>
-              </Stack>
-
-              <Typography variant="body2" color="text.tertiary">
-                ({product?.reviewsCount} reviews)
-              </Typography>
-            </Stack>
-            <Typography variant="body1" fontWeight={600}>
-              Tags
-            </Typography>
-            <TagsList tags={productTags || []} />
+            <ProductHeader product={product} />
+            <ProductMeta product={product} />
           </Stack>
         </Stack>
-        <Stack spacing={2} sx={{ width: "100%" }}>
-          <Typography variant="body2" color="text.tertiary">
-            {product?.createdAt &&
-              `Criado em: ${new Date(product.createdAt).toLocaleString("pt-BR")}`}
-            {product?.updatedAt &&
-              ` | Atualizado em: ${new Date(product.updatedAt).toLocaleString("pt-BR")}`}
-          </Typography>
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            sx={{ whiteSpace: "pre-line" }}
-          >
-            {product?.description}
-          </Typography>
-        </Stack>
-        {!isReviewing && (
-          <Box
-            width={"100%"}
-            height={"100%"}
-            display={"flex"}
-            justifyContent={"flex-end"}
-            alignItems={"flex-end"}
-          >
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => {
-                navigateIfAuthorized();
-                setIsReviewing(true)
-              }}
-            >
-              Fazer Review
-            </Button>
-          </Box>
-        )}
-        {!isReviewing && (
-          <ProductReviewSection id={id ? id : ""} reviewed={reviewed} />
-        )}
-        {isReviewing && (
-          <CreateReviewSection
-            onReview={() => {
-              navigateIfAuthorized();
-              setIsReviewing(false)
-            }}
-            setReviewed={setReviewed}
-          />
-        )}
-        <Stack spacing={2} sx={{ width: "100%" }}>
-          <Typography variant="h4" fontWeight={100}>
-            Produtos Relacionados
-          </Typography>
-          <ProductCardStackList
-            productList={relatedProducts}
-            onClick={handleClickProduct}
-          />
-        </Stack>
+        <ProductDescription product={product} />
+        <ReviewSection
+          id={id ? id : ""}
+          refreshKey={reviewsRefreshKey}
+          onReviewed={() => setReviewsRefreshKey((k) => k + 1)}
+        />
+        <RelatedProducts
+          products={relatedProducts}
+          onClick={handleClickProduct}
+        />
       </Stack>
     </Container>
   );

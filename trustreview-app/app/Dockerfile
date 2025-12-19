@@ -1,22 +1,16 @@
-FROM node:latest
-#FROM --platform=linux/amd64 node:18-alpine
+FROM node:latest AS builder
 
-WORKDIR /tmp/react
+WORKDIR /app
 
-COPY . .
-
-RUN rm -rf node_modules
-
+COPY package*.json ./
 RUN npm install
 
+COPY . .
 RUN npm run build
 
-RUN mkdir -p /var/www/html
+# Segunda stage apenas para servir os arquivos estáticos
+FROM nginx:alpine
 
-RUN mv dist/* /var/www/html
+COPY --from=builder /app/dist /var/www/html
 
-VOLUME /var/www/html
-
-WORKDIR /
-
-RUN rm -rf /tmp/react
+# Não precisa de configuração do nginx aqui, o nginx service cuida disso

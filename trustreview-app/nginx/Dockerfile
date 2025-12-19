@@ -1,26 +1,23 @@
-# Multi-stage Dockerfile: first stage builds the frontend, second stage serves it with nginx
+# Build do app React
+FROM node:latest AS builder
 
-# Build frontend
-FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Install build dependencies
-COPY app/package*.json ./
-RUN npm ci --silent
+COPY trustreview-app/app/package*.json ./
+RUN npm install
 
-# Copy source and build
-COPY app/ ./
+COPY trustreview-app/app .
 RUN npm run build
 
-# Nginx stage
+# Nginx servindo os arquivos
 FROM nginx:alpine
 
-# Remove default config and add custom one
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
-
-# Copy built files from builder
+# Copia o build do React
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Ensure correct permissions
-RUN chown -R nginx:nginx /usr/share/nginx/html
+# Copia a configuração do nginx
+COPY trustreview-app/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

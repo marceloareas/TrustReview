@@ -33,11 +33,13 @@ export function useSearch<T>(
   const [searchTerm, setSearchTerm] = useState(initialSearch || "");
 
   const filteredItems = useMemo(() => {
-    return items.filter((item) =>
+    const filteredItems = items.filter((item) =>
       keys.some((key) =>
         String(item[key]).toLowerCase().includes(searchTerm.toLowerCase()),
       ),
     );
+    localStorage.setItem('searchTerm', searchTerm);
+    return filteredItems;
   }, [items, searchTerm, keys]);
 
   return { searchTerm, setSearchTerm, filteredItems };

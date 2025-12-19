@@ -26,7 +26,7 @@
 import { Box, Typography } from "@mui/material";
 import titleBg from "../../../assets/images/titleBg.svg";
 
-const ProductTitle = () => {
+const StylizedTitle = ({ title }: { title: string }) => {
   return (
     <Box sx={{ position: "relative", width: "100%" }}>
       <Box
@@ -51,10 +51,10 @@ const ProductTitle = () => {
           color: "primary.contrastText",
         }}
       >
-        Produtos
+        {title}
       </Typography>
     </Box>
   );
 };
 
-export default ProductTitle;
+export default StylizedTitle;

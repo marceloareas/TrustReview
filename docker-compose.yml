@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 2s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: ./backend
+    container_name: trustreview
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./uploads:/app/uploads
+
+  sentimental_analysis:
+    build:
+      context: ./sentimental_analysis
+      dockerfile: Dockerfile.api
+    container_name: sentimental_analysis
+    # NVIDEA apenas, para AMD só comentar
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./sentimental_analysis:/workspace
+    #restart: always
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./trustreview-app/nginx/Dockerfile
+    container_name: nginx-trustreview
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+      - db
+
+volumes:
+  postgres_data:

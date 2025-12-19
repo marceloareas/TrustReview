@@ -1,8 +1,12 @@
 # Dockerfile
 # NVIDEA
-FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime 
+# FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime 
 # AMD
-# FROM rocm/pytorch:latest 
+#FROM rocm/pytorch:latest 
+# CPU
+FROM python:3.11-slim
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
 
 # Diretório de trabalho principal
 WORKDIR /workspace

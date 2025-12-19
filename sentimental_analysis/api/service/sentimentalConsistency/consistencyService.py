@@ -29,7 +29,7 @@ class SentimentConsistencyService:
 
     @staticmethod
     def is_contradiction(rating_score: float, sentiment_score: float) -> bool:
-        return rating_score * sentiment_score < -CONTRADICTION_THRESHOLD
+        return rating_score * sentiment_score < CONTRADICTION_THRESHOLD
 
     @classmethod
     def analyze(cls, rating: float, models_result: dict) -> dict:

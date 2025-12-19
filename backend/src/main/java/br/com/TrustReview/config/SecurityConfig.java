@@ -45,21 +45,21 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.csrf(csrf -> csrf.disable())  // desabilita CSRF para testes
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/h2-console/**").permitAll()
-//                        .anyRequest().permitAll())  // libera tudo
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))   // fica stateless
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/api/v1/tags").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/user/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()
-                        //.requestMatchers(HttpMethod.DELETE, "./user").hasRole("ADMIN")  //for test
-                        .anyRequest().authenticated())
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .headers(headers -> headers.frameOptions().disable());
-        return http.build();
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))   // fica stateless
+        .authorizeHttpRequests(authorize -> authorize
+            // Libera todos os recursos estáticos
+            .requestMatchers("/**").permitAll()
+            .requestMatchers("/uploads/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/tags").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/v1/user/login").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()
+            //.requestMatchers(HttpMethod.DELETE, "./user").hasRole("ADMIN")  //for test
+            .anyRequest().authenticated())
+        .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+        .headers(headers -> headers.frameOptions().disable());
+    return http.build();
     }
 
     @Bean

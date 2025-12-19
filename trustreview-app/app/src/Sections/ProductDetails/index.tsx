@@ -1,3 +1,5 @@
+
+
 import { Box, Container, Stack, Typography } from "@mui/material";
 import { type IProduct, type ITag } from "../../interfaces/Product";
 import ProductImage from "../../components/Product/ProductImage";

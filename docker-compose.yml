@@ -27,7 +27,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./uploads:/app/uploads
+      - ./backend/uploads:/app/uploads
 
   nginx:
     build:
@@ -35,7 +35,7 @@ services:
       dockerfile: ./trustreview-app/nginx/Dockerfile
     container_name: nginx-trustreview
     ports:
-      - "80:80"
+      - "8081:80"
     depends_on:
       - api
       - db

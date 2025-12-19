@@ -16,7 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ImageStorageService {
     
-    private final Path uploadDir = Paths.get("uploads");
+    // Salva as imagens em src/main/resources/static
+    private final Path uploadDir = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "static");
 
     public ImageStorageService() throws IOException {
         try {
@@ -33,12 +34,18 @@ public class ImageStorageService {
 
     public String saveImage(MultipartFile file) {
         try {
+            log.info("[saveImage] Recebendo arquivo: originalFilename={}, size={} bytes, isEmpty={}",
+                    file.getOriginalFilename(), file.getSize(), file.isEmpty());
+
             String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
             Path destination = uploadDir.resolve(filename);
+            log.info("[saveImage] Salvando arquivo em: {}", destination.toAbsolutePath());
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-            log.info("Imagem salva com sucesso: " + filename + " em " + destination.toAbsolutePath());
-            return "/uploads/" + filename; // caminho público ou relativo
+            log.info("[saveImage] Imagem salva com sucesso: {} em {}", filename, destination.toAbsolutePath());
+            // Retorna apenas o nome do arquivo, pois estará disponível em /<filename> via static
+            return "/" + filename;
         } catch (IOException e) {
+            log.error("[saveImage] Erro ao salvar imagem", e);
             throw new RuntimeException("Erro ao salvar imagem", e);
         }
     }

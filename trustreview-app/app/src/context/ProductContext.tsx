@@ -17,6 +17,22 @@ export const ProductContext = createContext<ProductContextProps | undefined>(
   undefined,
 );
 
+const getFullImageUrl = (url?: string) => {
+  if (!url) return undefined;
+  const apiBase = import.meta.env.VITE_API_URL?.replace(/\/api\/v1$/, '') || '';
+  if (url.startsWith('http')) return url;
+  return `${apiBase}${url}`;
+};
+
+// Função utilitária para garantir que a imagem do produto sempre tenha a URL completa
+const mapProductImageUrl = (product: IProduct): IProduct => ({
+  ...product,
+  imageUrl: getFullImageUrl(product.imageUrl),
+});
+
+const mapProductsImageUrl = (products: IProduct[]): IProduct[] =>
+  products.map(mapProductImageUrl);
+
 export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -27,7 +43,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     setError(null);
     try {
       const data = await productService.getProducts();
-      setProducts(data || []);
+      setProducts(data ? mapProductsImageUrl(data) : []);
     } catch (e: any) {
       setError(e?.message || "Erro ao carregar produtos");
     } finally {
@@ -40,8 +56,9 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     setError(null);
     try {
       const data = await productService.getProductsByTerm(term);
-      setProducts(data || []);
-      return data || [];
+      const mapped = data ? mapProductsImageUrl(data) : [];
+      setProducts(mapped);
+      return mapped;
     } catch (e: any) {
       setError(e?.message || "Erro ao buscar produtos");
       return [];
@@ -55,7 +72,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     setError(null);
     try {
       const data = await productService.getProductById(id);
-      return data || null;
+      return data ? mapProductImageUrl(data) : null;
     } catch (e: any) {
       setError(e?.message || "Erro ao obter produto");
       return null;
@@ -69,7 +86,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     setError(null);
     try {
       const data = await productService.getRelatedProducts(id);
-      return data || [];
+      return data ? mapProductsImageUrl(data) : [];
     } catch (e: any) {
       setError(e?.message || "Erro ao obter produtos relacionados");
       return [];
@@ -83,8 +100,9 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     setError(null);
     try {
       const created = await productService.createProduct(product);
-      setProducts((prev) => (created ? [created, ...prev] : prev));
-      return created;
+      const mapped = created ? mapProductImageUrl(created) : created;
+      setProducts((prev) => (mapped ? [mapped, ...prev] : prev));
+      return mapped;
     } catch (e: any) {
       setError(e?.message || "Erro ao criar produto");
       throw e;

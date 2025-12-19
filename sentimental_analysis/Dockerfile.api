@@ -1,5 +1,8 @@
 # Dockerfile
-FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime
+# NVIDEA
+FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime 
+# AMD
+# FROM rocm/pytorch:latest 
 
 # Diretório de trabalho principal
 WORKDIR /workspace

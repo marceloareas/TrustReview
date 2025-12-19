@@ -34,6 +34,7 @@ services:
       context: ./sentimental_analysis
       dockerfile: Dockerfile.api
     container_name: sentimental_analysis
+    # NVIDEA apenas, para AMD só comentar
     runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all

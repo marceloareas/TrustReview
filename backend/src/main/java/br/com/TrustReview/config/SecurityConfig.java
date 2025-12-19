@@ -50,12 +50,22 @@ public class SecurityConfig {
 //                        .anyRequest().permitAll())  // libera tudo
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))   // fica stateless
                 .authorizeHttpRequests(authorize -> authorize
+                        // Endpoints aplicação
                         .requestMatchers(HttpMethod.GET, "/api/v1/tags").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/user/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()
+
+                        // Swagger
+                        .requestMatchers(
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/v3/api-docs.yaml"
+                        ).permitAll()
                         //.requestMatchers(HttpMethod.DELETE, "./user").hasRole("ADMIN")  //for test
+                        // Qualquer outra coisa
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers.frameOptions().disable());

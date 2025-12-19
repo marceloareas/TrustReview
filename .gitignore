@@ -41,6 +41,6 @@ node_modules
 uploads/
 
 #Sentimental Analysis Stuff
-sentimental_analysis/model
+sentimental_analysis/model/model-fine-tuning-classic
 sentimental_analysis/training/data
 sentimental_analysis/tmp_trainer

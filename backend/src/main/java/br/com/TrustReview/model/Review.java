@@ -141,4 +141,13 @@ public class Review {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")
     @Schema(description = "Data e hora da última atualização da avaliação.", example = "2025-10-15T15:12:30.000Z")
     private Timestamp updatedAt;
+
+    @Schema(description = "Indica se a análise de sentimento foi realizada.")
+    private boolean analyzed;
+
+    @Schema(description = "Sentimento geral da avaliação após análise.")
+    private boolean contradictory;
+
+    @Schema(description = "Pontuação de confiança da análise de sentimento.")  
+    private double confidenceScore;
 }

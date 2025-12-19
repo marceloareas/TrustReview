@@ -5,6 +5,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     hikari:
       initialization-fail-timeout: -1
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -12,15 +13,21 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-# ----------------------------
-# Configuração de upload de arquivo
-# ----------------------------
+
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
 server:
   port: 8080
+
+# ----------------------------
+# Serviço de Análise de Sentimento
+# ----------------------------
+sentiment:
+  service:
+    url: ${SENTIMENT_SERVICE_URL}
 
 logging:
   level:

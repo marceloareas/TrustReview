@@ -84,4 +84,13 @@ public class ReviewResponseDTO {
     @Schema(description = "Data e hora da última atualização da avaliação.", example = "2025-10-15T15:12:30.000Z")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")
     private Timestamp updatedAt;
+
+    @Schema(description = "Indica se a avaliação foi analisada pelo sistema de sentimento.", example = "true")
+    private Boolean analyzed;
+
+    @Schema(description = "Indica se a avaliação é contraditória segundo a análise de sentimento.", example = "false")
+    private Boolean contradictory;
+
+    @Schema(description = "Pontuação de confiança da análise de sentimento.", example = "0.85")
+    private Double confidenceScore;
 }

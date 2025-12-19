@@ -23,7 +23,21 @@ public class SecurityFilter extends OncePerRequestFilter {
     UserRepository userRepository;
 
     public void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
+        String path = req.getServletPath();
+        // 🔹 IGNORA ROTAS PÚBLICAS E SWAGGER
+        if (path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.equals("/swagger-ui.html")
+                || path.startsWith("/h2-console")
+                || path.equals("/api/v1/user/login")
+                || path.equals("/api/v1/user")) {
+
+            chain.doFilter(req, res);
+            return;
+        }
+        
         var tk = this.recoverToken(req);
+    
         if (tk!=null) {
             var subject = jwtTokenService.validateToken(tk);
             UserDetails user = userRepository.findByEmail(subject)

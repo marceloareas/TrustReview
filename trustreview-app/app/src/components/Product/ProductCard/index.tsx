@@ -74,8 +74,8 @@ const ProductCard = ({
           p: 1,
         }}
         draggable={false}
-        // image={productData?.imageUrl || CardImage}
-        image={CardImage}
+        image={productData?.imageUrl || CardImage}
+        //image={CardImage}
         title={productData?.name}
       />
       <CardContent

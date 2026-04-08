@@ -115,7 +115,7 @@ public class Review {
     /**
      * Quantidade de curtidas recebidas na avaliação.
      */
-    @Column(name = "likes", nullable = false, updatable = false)
+    @Column(name = "likes", nullable = false, updatable = true)
     @Schema(description = "Quantidade de curtidas recebidas na avaliação.", example = "42")
     private Integer likes;
 

@@ -32,3 +32,6 @@ sentiment:
 logging:
   level:
     org.springframework: INFO
+
+app:
+  base-url: http://localhost:8080

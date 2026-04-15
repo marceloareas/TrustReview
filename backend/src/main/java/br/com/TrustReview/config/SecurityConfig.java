@@ -17,6 +17,25 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
+/**
+ * Configuração de segurança da aplicação.
+ *
+ * <p>
+ * Esta classe define as regras de segurança para as requisições HTTP utilizando Spring Security.
+ * No momento, todas as rotas estão liberadas (sem autenticação) e o CSRF está desabilitado,
+ * facilitando testes e o acesso ao console do H2.
+ * </p>
+ *
+ * <ul>
+ *   <li>Desabilita CSRF para facilitar testes.</li>
+ *   <li>Permite acesso irrestrito ao console do H2.</li>
+ *   <li>Liberado acesso a todas as demais rotas.</li>
+ *   <li>Desabilita frameOptions para permitir o uso do H2-console.</li>
+ * </ul>
+ *
+ * @author HeraniFilho
+ */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig implements WebMvcConfigurer {
@@ -30,9 +49,8 @@ public class SecurityConfig implements WebMvcConfigurer {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
-                // 2. REGRA DE PERMISSÃO PARA UPLOADS (Adicione antes do anyRequest)
-                .requestMatchers("/uploads/**").permitAll() 
                 
+                .requestMatchers("/uploads/**").permitAll() 
                 .requestMatchers(HttpMethod.GET, "/api/v1/tags").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()

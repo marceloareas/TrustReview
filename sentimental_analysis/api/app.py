@@ -114,15 +114,18 @@ class Review(BaseModel):
 @app.post("/analyze")
 def analyze(review: Review):
     model_results = {}
-    for k,v in MODEL.items():
+    for k, v in MODEL.items():
         if k in BACKBONEDMODELS:
             continue
         v.TokenizerInput(review.description)
         model_results[k] = v.computeTokens()
-        consistency = consistencyService.SentimentConsistencyService.analyze(
-            rating=review.rating,
-            models_result=model_results
-        )
+
+    # Movido para fora do loop
+    consistency = consistencyService.SentimentConsistencyService.analyze(
+        rating=review.rating,
+        models_result=model_results
+    )
+
     return {
         "model_results": model_results,
         "consistency": consistency

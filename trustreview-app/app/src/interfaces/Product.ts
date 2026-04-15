@@ -59,4 +59,7 @@ export interface IReview {
   dislikes?: number;
   createdAt?: string;
   updatedAt?: string;
+  analyzed?: boolean;
+  contradictory?: boolean;
+  confidenceScore?: number;
 }

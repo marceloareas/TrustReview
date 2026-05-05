@@ -117,6 +117,7 @@ public class ProductMapper {
         response.setDescription(product.getDescription());
         response.setOverallRating(product.getOverallRating());
         response.setImageUrl(product.getImageUrl());
+        response.setSummary(product.getSummary());
 
         if (product.getTags() != null && Hibernate.isInitialized(product.getTags())) {
             Set<TagResponseDTO> tagDTOs = product.getTags()

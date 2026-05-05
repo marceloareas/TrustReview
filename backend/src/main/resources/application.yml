@@ -35,3 +35,10 @@ logging:
 
 app:
   base-url: http://localhost:8080
+
+# -----------------------------
+# Serviço de Resumo de Produtos
+# -----------------------------
+groq:
+  api:
+    key: ${GROQ_API_KEY}

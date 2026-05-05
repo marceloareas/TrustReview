@@ -76,6 +76,10 @@ public class Product {
     @Column(name = "image_url", length = 500, nullable = true, updatable = true)
     private String imageUrl;
 
+    @Column(name = "summary", length = 2000, nullable = true, updatable = true)
+    @Schema(description = "Resumo gerado por IA com base nas avaliações do produto")
+    private String summary;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")
     private Timestamp createdAt;

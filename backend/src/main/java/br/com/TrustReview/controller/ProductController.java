@@ -121,14 +121,18 @@ public class ProductController {
          */
         @Operation(summary = "Busca todos os produtos")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Produtos encontrados com sucesso", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProductResponseDTO.class)))),
-                        @ApiResponse(responseCode = "404", description = "Produtos não encontrados", content = @Content(schema = @Schema(implementation = ApiError.class))),
-                        @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content(schema = @Schema(implementation = ApiError.class)))
+                @ApiResponse(responseCode = "200", description = "Produtos encontrados com sucesso",
+                        content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProductResponseDTO.class)))),
+                @ApiResponse(responseCode = "404", description = "Produtos não encontrados",
+                        content = @Content(schema = @Schema(implementation = ApiError.class))),
+                @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                        content = @Content(schema = @Schema(implementation = ApiError.class)))
         })
         @GetMapping
         public ResponseEntity<List<ProductResponseDTO>> getAll(
-                        @RequestParam(name = "includeTags", required = false, defaultValue = "false") boolean include) {
-                return ResponseEntity.ok(service.getAll(include));
+                @RequestParam(name = "includeTags", required = false, defaultValue = "false") boolean include,
+                @RequestParam(name = "tagIds", required = false) List<UUID> tagIds) {
+        return ResponseEntity.ok(service.getAll(include, tagIds));
         }
 
         /**

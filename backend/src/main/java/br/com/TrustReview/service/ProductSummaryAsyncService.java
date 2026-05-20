@@ -71,18 +71,40 @@ public class ProductSummaryAsyncService {
                 cons
             );
 
-            if (!StringUtils.hasText(summary)) {
+            String prosSummary = resumoService.summarizeAspects(
+                managedProduct.getName(), "pontos positivos", pros
+            );
+
+            String consSummary = resumoService.summarizeAspects(
+                managedProduct.getName(), "pontos negativos", cons
+            );
+
+            boolean changed = false;
+
+            if (StringUtils.hasText(summary)) {
+                managedProduct.setSummary(summary.trim());
+                changed = true;
+            }
+            if (StringUtils.hasText(prosSummary)) {
+                managedProduct.setProsSummary(prosSummary.trim());
+                changed = true;
+            }
+            if (StringUtils.hasText(consSummary)) {
+                managedProduct.setConsSummary(consSummary.trim());
+                changed = true;
+            }
+
+            if (!changed) {
                 log.warn(
-                    "⚠️ Resumo não gerado (vazio/nulo). Mantendo valor atual. produtoId={}",
+                    "⚠️ Nenhum resumo gerado (vazio/nulo). Mantendo valores atuais. produtoId={}",
                     managedProduct.getId()
                 );
                 return;
             }
 
-            managedProduct.setSummary(summary.trim());
             productRepository.save(managedProduct);
 
-            log.info("Resumo do produto {} atualizado.", managedProduct.getId());
+            log.info("Resumos do produto {} atualizados.", managedProduct.getId());
 
         } catch (Exception e) {
             log.error("❌ Erro ao gerar resumo do produto {}.", product.getId(), e);

@@ -1,8 +1,14 @@
-import { Stack, Rating, Typography } from "@mui/material";
+import { Stack, Rating, Typography, Link } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import TagsList from "../Tag/TagList";
 import { type IProduct } from "../../interfaces/Product";
 
-const ProductMeta = ({ product }: { product: IProduct }) => {
+interface ProductMetaProps {
+  product: IProduct;
+  reviewsLink?: boolean;
+}
+
+const ProductMeta = ({ product, reviewsLink = false }: ProductMetaProps) => {
   return (
     <Stack spacing={2}>
       <Stack
@@ -22,9 +28,20 @@ const ProductMeta = ({ product }: { product: IProduct }) => {
           </Typography>
         </Stack>
 
-        <Typography variant="body2" color="text.tertiary">
-          ({product?.reviewsCount} reviews)
-        </Typography>
+        {reviewsLink && product.id ? (
+          <Link
+            component={RouterLink}
+            to={`/products/${product.id}`}
+            variant="body2"
+            sx={{ fontWeight: 600 }}
+          >
+            Ver reviews
+          </Link>
+        ) : (
+          <Typography variant="body2" color="text.tertiary">
+            ({product?.reviewsCount} reviews)
+          </Typography>
+        )}
       </Stack>
 
       <Typography variant="body1" fontWeight={600}>

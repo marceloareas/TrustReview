@@ -4,9 +4,13 @@ import { type IProduct } from "../../../interfaces/Product";
 
 interface ProductDescriptionProps {
   product: IProduct;
+  showDescription?: boolean;
 }
 
-const ProductDescription = ({ product }: ProductDescriptionProps) => {
+const ProductDescription = ({
+  product,
+  showDescription = true,
+}: ProductDescriptionProps) => {
   return (
     <Stack spacing={2} sx={{ width: "100%" }}>
       <Typography variant="body2" color="text.tertiary">
@@ -52,13 +56,15 @@ const ProductDescription = ({ product }: ProductDescriptionProps) => {
         </Paper>
       ) : null}
 
-      <Typography
-        variant="body1"
-        color="text.secondary"
-        sx={{ whiteSpace: "pre-line" }}
-      >
-        {product?.description}
-      </Typography>
+      {showDescription && (
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          sx={{ whiteSpace: "pre-line" }}
+        >
+          {product?.description}
+        </Typography>
+      )}
     </Stack>
   );
 };

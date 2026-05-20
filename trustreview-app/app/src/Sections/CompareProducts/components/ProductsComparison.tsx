@@ -20,8 +20,8 @@ const ComparisonItem = ({ product }: ComparisonItemProps) => {
         <Stack spacing={2}>
           <ProductImage imageUrl={product.imageUrl || ""} name={product.name} />
           <ProductHeader product={product} />
-          <ProductMeta product={product} />
-          <ProductDescription product={product} />
+          <ProductMeta product={product} reviewsLink />
+          <ProductDescription product={product} showDescription={false} />
           <ProsCons product={product} />
         </Stack>
       </Stack>

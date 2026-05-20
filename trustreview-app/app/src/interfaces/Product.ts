@@ -20,6 +20,8 @@ export interface IProduct {
   name: string;
   description: string;
   summary?: string;
+  prosSummary?: string;
+  consSummary?: string;
   tags?: ITag[];
   overallRating?: number;
   imageUrl?: string;

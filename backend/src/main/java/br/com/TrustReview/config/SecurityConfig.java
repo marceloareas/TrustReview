@@ -1,5 +1,6 @@
 package br.com.TrustReview.config;
 
+import br.com.TrustReview.security.JwtAuthenticationEntryPoint;
 import br.com.TrustReview.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -43,11 +44,15 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Autowired
     SecurityFilter securityFilter;
 
+    @Autowired
+    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
             .authorizeHttpRequests(authorize -> authorize
                 
                 .requestMatchers("/uploads/**").permitAll() 

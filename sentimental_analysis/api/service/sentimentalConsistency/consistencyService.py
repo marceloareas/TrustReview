@@ -32,7 +32,7 @@ class SentimentConsistencyService:
 
     @staticmethod
     def is_contradiction(rating_score: float, sentiment_score: float) -> bool:
-        return rating_score * sentiment_score < CONTRADICTION_THRESHOLD
+        return rating_score * sentiment_score < -CONTRADICTION_THRESHOLD
 
     @staticmethod
     def analyze(rating: float, models_result: dict) -> dict:
@@ -64,8 +64,9 @@ class SentimentConsistencyService:
                 "error":         error,
             }
 
-        has_inconsistency = len(inconsistent_models) > 0
-        all_inconsistent  = len(inconsistent_models) == len(models_result)
+        rating_score    = SentimentConsistencyService.normalize_rating(rating)
+        sentiment_score = SentimentConsistencyService.ensemble(models_result)
+        contradictory   = SentimentConsistencyService.is_contradiction(rating_score, sentiment_score)
 
         confidence_score = compute_confidence_score(
             models_result=models_result,
@@ -77,14 +78,15 @@ class SentimentConsistencyService:
             "details": details,
             "summary": {
                 "expected_sentiment":  expected_sentiment,
-                "has_inconsistency":   has_inconsistency,
-                "all_inconsistent":    all_inconsistent,
+                "rating_score":        round(rating_score, 4),
+                "sentiment_score":     round(sentiment_score, 4),
+                "contradictory":       contradictory,
                 "inconsistent_models": inconsistent_models,
-                "alert": _build_alert(has_inconsistency, all_inconsistent, inconsistent_models),
+                "alert": _build_alert(contradictory, rating_score, sentiment_score),
             },
             "review_patch": {
                 "analyzed":        True,
-                "contradictory":   has_inconsistency,
+                "contradictory":   contradictory,
                 "confidenceScore": confidence_score,
             }
         }
@@ -97,9 +99,13 @@ def _safe_normalize(model_name: str, raw_label: str) -> str | None:
         return None
 
 
-def _build_alert(has_inconsistency: bool, all_inconsistent: bool, inconsistent_models: list) -> dict | None:
-    if not has_inconsistency:
+def _build_alert(contradictory: bool, rating_score: float, sentiment_score: float) -> dict | None:
+    if not contradictory:
         return None
-    if all_inconsistent:
-        return {"level": "critical", "message": "Todos os modelos divergem do rating informado."}
-    return {"level": "warning", "message": f"Os modelos {inconsistent_models} divergem do rating informado."}
+    return {
+        "level": "warning",
+        "message": (
+            f"O texto da avaliação diverge da nota informada "
+            f"(nota={rating_score:+.2f}, texto={sentiment_score:+.2f})."
+        ),
+    }

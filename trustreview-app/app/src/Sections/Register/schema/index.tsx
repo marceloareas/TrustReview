@@ -18,7 +18,11 @@ export const createUserSchema = yup.object({
     .string()
     .required("A senha é obrigatória")
     .min(8, "A senha deve ter pelo menos 8 caracteres")
-    .max(50, "A senha deve ter no máximo 50 caracteres"),
+    .max(50, "A senha deve ter no máximo 50 caracteres")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
+      "A senha deve conter ao menos uma letra maiúscula, uma minúscula e um símbolo",
+    ),
 
   confirmPassword: yup
     .string()

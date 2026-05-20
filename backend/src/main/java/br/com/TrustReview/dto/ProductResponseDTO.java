@@ -59,6 +59,12 @@ public class ProductResponseDTO {
     @Schema(description = "Resumo gerado por IA com base nas avaliações do produto")
     private String summary;
 
+    @Schema(description = "Resumo gerado por IA dos pontos positivos das avaliações do produto")
+    private String prosSummary;
+
+    @Schema(description = "Resumo gerado por IA dos pontos negativos das avaliações do produto")
+    private String consSummary;
+
     @Schema(description = "Tags associadas ao produto")
     private Set<TagResponseDTO> tags;
 

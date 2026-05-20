@@ -8,7 +8,7 @@ RATING_SENTIMENT_INTERVALS = [
 
 def rating_to_sentiment(rating: float) -> str:
     for lower, upper, label in RATING_SENTIMENT_INTERVALS:
-        if lower <= rating < upper:
+        if lower < rating <= upper:
             return label
     # Edge case: rating == 0.0 (PositiveFloat não permite, mas por segurança)
     return "negative"

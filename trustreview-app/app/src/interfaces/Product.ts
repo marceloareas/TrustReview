@@ -19,6 +19,7 @@ export interface IProduct {
   id?: string;
   name: string;
   description: string;
+  summary?: string;
   tags?: ITag[];
   overallRating?: number;
   imageUrl?: string;

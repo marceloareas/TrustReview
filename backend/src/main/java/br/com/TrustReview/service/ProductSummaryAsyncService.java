@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -49,7 +50,15 @@ public class ProductSummaryAsyncService {
                 cons
             );
 
-            managedProduct.setSummary(summary);
+            if (!StringUtils.hasText(summary)) {
+                log.warn(
+                    "⚠️ Resumo não gerado (vazio/nulo). Mantendo valor atual. produtoId={}",
+                    managedProduct.getId()
+                );
+                return;
+            }
+
+            managedProduct.setSummary(summary.trim());
             productRepository.save(managedProduct);
 
             log.info("✅ Resumo do produto {} atualizado.", managedProduct.getId());

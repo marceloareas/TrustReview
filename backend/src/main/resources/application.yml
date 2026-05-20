@@ -41,4 +41,4 @@ app:
 # -----------------------------
 groq:
   api:
-    key: ${GROQ_API_KEY}
+    key: ${GROQ_API_KEY:}

@@ -42,3 +42,6 @@ app:
 groq:
   api:
     key: ${GROQ_API_KEY:}
+
+summary:
+  min-reviews: 1

@@ -72,4 +72,13 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
             @Param("productId") UUID productId,
             Pageable pageable
     );
+
+    /**
+     * Retorna produtos que possuem pelo menos uma das tags informadas.
+     *
+     * @param tagIds Lista de UUIDs das tags
+     * @return Lista de produtos (sem duplicatas)
+     */
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.tags t WHERE t.id IN :tagIds")
+    List<Product> findByTagIds(@Param("tagIds") List<UUID> tagIds);
 }

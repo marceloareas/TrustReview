@@ -180,16 +180,22 @@ public class ProductService {
     /**
      * Busca todos os produtos cadastrados no sistema.
      * Permite opcionalmente incluir as tags associadas a cada produto.
+     * Quando tagIds for informado, filtra os produtos pelas tags e retorna com tags incluídas.
      *
+     * @param includeTags Se true, inclui as tags na resposta (ignorado quando tagIds for informado)
+     * @param tagIds      Lista de UUIDs de tags para filtrar os produtos (opcional)
      * @return Lista de DTO com todos os produtos
      * @throws ProductNotFound se não encontrar nenhum produto
      */
-    public List<ProductResponseDTO> getAll(boolean includeTags) {
-        List<Product> all = null;
-        if (includeTags) {
+    public List<ProductResponseDTO> getAll(boolean includeTags, List<UUID> tagIds) {
+        List<Product> all;
+
+        if (tagIds != null && !tagIds.isEmpty()) {
+            log.info("Buscando todos os produtos filtrados pelas tags: {}", tagIds);
+            all = productRepository.findByTagIds(tagIds);
+        } else if (includeTags) {
             log.info("Buscando todos os produtos com tags.");
             all = productRepository.findAllWithTags();
-
         } else {
             log.info("Buscando todos os produtos.");
             all = productRepository.findAll();
@@ -199,6 +205,7 @@ public class ProductService {
             log.error("Nenhum produto encontrado!");
             throw new ProductNotFound("Nenhum produto encontrado!");
         }
+
         return all.stream()
                 .map(productMapper::toResponse)
                 .toList();

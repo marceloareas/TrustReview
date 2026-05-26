@@ -26,9 +26,10 @@
  *  - Depende de @mui/material, @mui/icons-material e react-router-dom.
  *  - A11y: melhorar `aria-label`s (ex.: "Voltar", "Abrir perfil").
  */
-import vsIcon from "../../assets/icons/vs.png";
+//import vsIcon from "../../assets/icons/vs.png";
 import MuiAppBar from "@mui/material/AppBar";
-import { Avatar, Box, IconButton, Stack, Tooltip } from "@mui/material";
+//import { Box } from "@mui/material";
+import { Avatar, IconButton, Stack, Tooltip } from "@mui/material";
 import { ArrowBack, Logout, Login } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
@@ -96,9 +97,10 @@ export default function AppBar() {
             <>
               <Tooltip title={"Compare produtos"}>
                 <IconButton size="large" aria-label="Compare Products" color="inherit" onClick={() => navigate('/compare')}>
-                  <Box component={'img'} src={vsIcon} alt={"Versus Icon"} sx={{ width: 30, height: 30 }} />
-                </IconButton>
-              </Tooltip>
+                  {/*<Box component={'img'} src={vsIcon} alt={"Versus Icon"} sx={{ width: 30, height: 30 }} />*/}
+                  Compare produtos
+                </IconButton> 
+              </Tooltip> 
 
               <Tooltip title={user.name || "Usuário"}>
                 <IconButton size="large" aria-label="Avatar" color="inherit">

@@ -53,12 +53,12 @@ const ProsCons = ({ product }: { product: IProduct }) => {
       alignItems="stretch"
     >
       <AspectCard
-        title="Prós segundo a IA"
+        title="Prós"
         text={product.prosSummary}
         color="success"
       />
       <AspectCard
-        title="Contras segundo a IA"
+        title="Contras"
         text={product.consSummary}
         color="error"
       />

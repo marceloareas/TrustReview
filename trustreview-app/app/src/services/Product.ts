@@ -53,6 +53,13 @@ export default class ProductService {
     return response.data as IProduct;
   }
 
+  async getProductsByTags(tagIds: string[]): Promise<IProduct[]> {
+    const response = await this.api.get("/products", {
+      params: { tagIds },
+    });
+    return response.data as IProduct[];
+  }
+
   async getRelatedProducts(productId: string): Promise<IProduct[]> {
     const response = await this.api.get(`/products/${productId}/related`);
     const data = response.data as { content: IProduct[] };

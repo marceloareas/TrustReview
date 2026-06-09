@@ -24,7 +24,7 @@ services:
     restart: always
     depends_on:
       - db
-      - sentimental-analysis  # ✅ adicionar dependência
+      - sentimental-analysis  
     env_file:
       - ./backend/.env
     ports:
@@ -32,7 +32,7 @@ services:
     volumes:
       - ./uploads:/app/uploads
     networks:
-      - trustreview-network  # ✅ adicionar rede
+      - trustreview-network  
 
   sentimental-analysis:
     build:
@@ -47,8 +47,7 @@ services:
     volumes:
       - ./sentimental_analysis:/workspace
     networks:
-      - trustreview-network  # ✅ adicionar rede
-
+      - trustreview-network  
   nginx:
     build:
       context: .
@@ -60,7 +59,7 @@ services:
       - api
       - db
     networks:
-      - trustreview-network  # ✅ adicionar rede
+      - trustreview-network  
 
 networks:
   trustreview-network:

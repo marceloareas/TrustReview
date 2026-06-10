@@ -79,7 +79,7 @@ export default class ProductService {
         comment: (product as any).comment,
         pros: (product as any).pros,
         cons: (product as any).cons,
-        tags: product.tags,
+        tags: product.tags?.map((tag) => ({ id: tag.id, name: tag.name })),
       }),
     ]);
 

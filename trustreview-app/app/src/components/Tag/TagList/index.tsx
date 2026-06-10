@@ -46,12 +46,14 @@ const TagsList = ({
   setCurrentTagsList,
   isEdit,
   showDialog = true,
+  onCreateTag,
 }: {
   tags: ITag[];
   currentTagsList?: ITag[];
   setCurrentTagsList?: Dispatch<SetStateAction<ITag[]>>;
   isEdit?: boolean;
   showDialog?: boolean;
+  onCreateTag?: (tag: ITag) => void;
 }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showInlineCreator, setShowInlineCreator] = useState(false);
@@ -72,6 +74,14 @@ const TagsList = ({
 
   const removeTagByName = (tagName: string) => {
     setCurrentTagsList?.((prev) => prev.filter((tag) => tag.name !== tagName));
+  };
+
+  const handleCreateTag = (tag: ITag) => {
+    if (onCreateTag) {
+      onCreateTag(tag);
+    } else {
+      addTagToSelection(tag);
+    }
   };
 
   return (
@@ -126,7 +136,7 @@ const TagsList = ({
         <DialogTag
           open={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
-          onCreateTag={(tag) => addTagToSelection(tag)}
+          onCreateTag={handleCreateTag}
           onSelectTag={(tag) => toggleTagSelection(tag)}
           tags={[
             ...tags,

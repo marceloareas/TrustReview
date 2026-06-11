@@ -28,7 +28,7 @@ const CompareProductsSection = ({ products }: { products: IProduct[] }) => {
             maxWidth: "60ch",
           }}
         >
-          O resumo, prós e contras dos produtos foram gerados por IA com base
+          O resumo, prós e contras dos produtos são gerados por IA com base
           nas opiniões dos usuários.
         </Typography>
       </Stack>

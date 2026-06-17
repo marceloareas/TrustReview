@@ -74,11 +74,18 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     );
 
     /**
-     * Retorna produtos que possuem pelo menos uma das tags informadas.
+     * Retorna produtos que possuem TODAS as tags informadas (AND).
      *
      * @param tagIds Lista de UUIDs das tags
+     * @param tagCount Quantidade de tags distintas a casar
      * @return Lista de produtos (sem duplicatas)
      */
-    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.tags t WHERE t.id IN :tagIds")
-    List<Product> findByTagIds(@Param("tagIds") List<UUID> tagIds);
+    @Query("""
+        SELECT p FROM Product p
+        JOIN p.tags t
+        WHERE t.id IN :tagIds
+        GROUP BY p.id, p.name, p.description, p.overallRating, p.imageUrl, p.summary, p.prosSummary, p.consSummary, p.createdAt, p.updatedAt
+        HAVING COUNT(DISTINCT t.id) = :tagCount
+        """)
+    List<Product> findByTagIds(@Param("tagIds") List<UUID> tagIds, @Param("tagCount") long tagCount);
 }

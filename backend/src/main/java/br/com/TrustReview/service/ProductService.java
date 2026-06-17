@@ -192,7 +192,7 @@ public class ProductService {
 
         if (tagIds != null && !tagIds.isEmpty()) {
             log.info("Buscando todos os produtos filtrados pelas tags: {}", tagIds);
-            all = productRepository.findByTagIds(tagIds);
+            all = productRepository.findByTagIds(tagIds, new HashSet<>(tagIds).size());
         } else if (includeTags) {
             log.info("Buscando todos os produtos com tags.");
             all = productRepository.findAllWithTags();

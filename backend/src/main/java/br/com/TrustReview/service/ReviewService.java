@@ -181,6 +181,10 @@ public class ReviewService {
 
         Review updated = reviewRepository.save(existing);
 
+        if (request.getDescription() != null || request.getRating() != null) {
+            reviewSentimentAsyncService.analyzeReviewAsync(updated);
+        }
+
         if (request.getRating() != null) {
             recalculateProductOverallRating(product);
         }

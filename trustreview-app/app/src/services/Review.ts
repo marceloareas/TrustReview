@@ -50,4 +50,8 @@ export default class ReviewService {
     const response = await this.api.patch(`/reviews/${userId}/${productId}`, newReview);
     return response.data as IReview;
   }
+
+  async deleteReview(userId: string, productId: string): Promise<void> {
+    await this.api.delete(`/reviews/${userId}/${productId}`);
+  }
 }

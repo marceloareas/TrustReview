@@ -75,6 +75,8 @@ abstract class ApiClient implements IApiClient {
   protected http: AxiosInstance;
   private baseConfig: CreateAxiosDefaults;
 
+  protected prefix = "/api/v1";
+
   constructor(baseConfig: CreateAxiosDefaults) {
     this.baseConfig = baseConfig;
     this.http = axios.create(this.baseConfig);
@@ -88,14 +90,23 @@ abstract class ApiClient implements IApiClient {
       return response;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-  // Log full response for debugging in dev
-  // eslint-disable-next-line no-console
-  console.error("ApiClient.execute - axios error response:", error.response);
-  const msg = error.response?.data?.message ?? JSON.stringify(error.response?.data) ?? "Erro de comunicação com a API";
-  throw new Error(msg);
+        console.error("ApiClient.execute - axios error response:", error.response);
+        console.error("URL:", config.url);
+        console.error("BaseURL:", this.baseConfig.baseURL);
+
+        const msg =
+          error.response?.data?.message ??
+          JSON.stringify(error.response?.data) ??
+          "Erro de comunicação com a API";
+        throw new Error(msg);
       }
       throw error;
     }
+  }
+
+  private buildUrl(url: string): string {
+    if (url.startsWith(this.prefix)) return url;
+    return `${this.prefix}${url}`;
   }
 
   get<T = unknown, D = unknown>(
@@ -104,7 +115,7 @@ abstract class ApiClient implements IApiClient {
   ): Promise<AxiosResponse<T, D>> {
     return this.execute<T, D>({
       method: "GET",
-      url,
+      url: this.buildUrl(url),
       ...config,
     });
   }
@@ -116,7 +127,7 @@ abstract class ApiClient implements IApiClient {
   ): Promise<AxiosResponse<T, D>> {
     return this.execute<T, D>({
       method: "POST",
-      url,
+      url: this.buildUrl(url),
       data,
       ...config,
     });
@@ -129,7 +140,7 @@ abstract class ApiClient implements IApiClient {
   ): Promise<AxiosResponse<T, D>> {
     return this.execute<T, D>({
       method: "PUT",
-      url,
+      url: this.buildUrl(url),
       data,
       ...config,
     });
@@ -141,7 +152,7 @@ abstract class ApiClient implements IApiClient {
   ): Promise<AxiosResponse<T, D>> {
     return this.execute<T, D>({
       method: "DELETE",
-      url,
+      url: this.buildUrl(url),
       ...config,
     });
   }
@@ -153,7 +164,7 @@ abstract class ApiClient implements IApiClient {
   ): Promise<AxiosResponse<T, Partial<D>>> {
     return this.execute<T, Partial<D>>({
       method: "PATCH",
-      url,
+      url: this.buildUrl(url),
       data,
       ...config,
     });
@@ -161,3 +172,4 @@ abstract class ApiClient implements IApiClient {
 }
 
 export default ApiClient;
+

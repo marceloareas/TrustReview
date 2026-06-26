@@ -11,6 +11,7 @@ interface ProductContextProps {
   loadProducts: () => Promise<void>;
   searchProducts: (term: string) => Promise<IProduct[]>;
   getProductById: (id: string) => Promise<IProduct | null>;
+  loadProductsByTags: (tagIds: string[]) => Promise<void>;
   getProductReviewsById: (id: string) => Promise<any>;
   getRelatedProducts: (id: string) => Promise<IProduct[]>;
   createProduct: (product: Partial<IProduct>) => Promise<IProduct>;
@@ -105,6 +106,19 @@ export const ProductProvider = ({
     }
   }, []);
 
+  const loadProductsByTags = useCallback(async (tagIds: string[]) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await productService.getProductsByTags(tagIds);
+      setProducts(data || []);
+    } catch (e: any) {
+      setError(e?.message || "Erro ao filtrar produtos por tags");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
@@ -116,6 +130,7 @@ export const ProductProvider = ({
         loading,
         error,
         loadProducts,
+        loadProductsByTags,
         searchProducts,
         getProductById,
         getProductReviewsById,

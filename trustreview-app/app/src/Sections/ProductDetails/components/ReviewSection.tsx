@@ -70,7 +70,6 @@ const ReviewSection = ({
         <CreateReviewSection
           productId={productId}
           onReview={() => {
-            navigateIfAuthorized();
             setIsReviewOpen(false);
             if (onReviewed) onReviewed();
           }}

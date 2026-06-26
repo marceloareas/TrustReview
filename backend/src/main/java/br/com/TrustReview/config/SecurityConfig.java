@@ -1,5 +1,6 @@
 package br.com.TrustReview.config;
 
+import br.com.TrustReview.security.JwtAuthenticationEntryPoint;
 import br.com.TrustReview.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -34,55 +36,61 @@ import java.util.Arrays;
  *
  * @author HeraniFilho
  */
+
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
+
     @Autowired
     SecurityFilter securityFilter;
 
-    // No momento está sem autenticação
+    @Autowired
+    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(csrf -> csrf.disable())  // desabilita CSRF para testes
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/h2-console/**").permitAll()
-//                        .anyRequest().permitAll())  // libera tudo
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))   // fica stateless
-                .authorizeHttpRequests(authorize -> authorize
-                        // Endpoints aplicação
-                        .requestMatchers(HttpMethod.GET, "/api/v1/tags").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/user/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()
-
-                        // Swagger
-                        .requestMatchers(
-                            "/v3/api-docs/**",
-                            "/swagger-ui/**",
-                            "/swagger-ui.html",
-                            "/v3/api-docs.yaml"
-                        ).permitAll()
-                        //.requestMatchers(HttpMethod.DELETE, "./user").hasRole("ADMIN")  //for test
-                        // Qualquer outra coisa
-                        .anyRequest().authenticated())
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .headers(headers -> headers.frameOptions().disable());
+        http.csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+            .authorizeHttpRequests(authorize -> authorize
+                
+                .requestMatchers("/uploads/**").permitAll() 
+                .requestMatchers(HttpMethod.GET, "/api/v1/tags").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/user/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()
+                .requestMatchers(
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/v3/api-docs.yaml"
+                ).permitAll()
+                .anyRequest().authenticated())
+            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+            .headers(headers -> headers.frameOptions(frame -> frame.disable()));
+        
         return http.build();
+    }
+
+    // 3. O MÉTODO addResourceHandlers AGORA SERÁ RECONHECIDO
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:./uploads/");
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-    // permissive CORS for development/docker: allow any origin and headers/methods
-    configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-    configuration.setAllowedMethods(Arrays.asList("*"));
-    configuration.setAllowedHeaders(Arrays.asList("*"));
-    configuration.setAllowCredentials(true);
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
+    
 }

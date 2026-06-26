@@ -95,32 +95,53 @@ public class ReviewSentimentAsyncService {
             );
 
         client.analyze(request)
-            .subscribe(response -> {
+        .subscribe(response -> {
 
-                Map<String, Object> consistency =
-                    (Map<String, Object>) response.get("consistency");
+            Map<String, Object> consistency =
+                (Map<String, Object>) response.get("consistency");
 
-                if (consistency != null) {
+            if (consistency != null) {
 
-                    Object contradiction = consistency.get("contradiction");
-                    Object confidence = consistency.get("confidence");
+                // Navega até review_patch
+                Map<String, Object> reviewPatch =
+                    (Map<String, Object>) consistency.get("review_patch");
 
+                // Navega até summary para pegar o alerta
+                Map<String, Object> summary =
+                    (Map<String, Object>) consistency.get("summary");
+
+                if (reviewPatch != null) {
                     review.setAnalyzed(true);
-                    review.setContradictory(Boolean.TRUE.equals(contradiction));
+                    review.setContradictory(
+                        Boolean.TRUE.equals(reviewPatch.get("contradictory"))
+                    );
 
+                    Object confidence = reviewPatch.get("confidenceScore");
                     if (confidence instanceof Number number) {
                         review.setConfidenceScore(number.doubleValue());
                     }
 
                     reviewRepository.save(review);
 
+                    // Loga o alerta se houver inconsistência
+                    if (summary != null) {
+                        Object alert = summary.get("alert");
+                        if (alert != null) {
+                            log.warn("⚠️ Inconsistência detectada na review: {}", alert);
+                        }
+                    }
+
                     log.info("✅ Análise de sentimento concluída para a review.");
                 } else {
-                    log.warn("⚠️ Resposta sem bloco 'consistency'");
+                    log.warn("⚠️ Resposta sem bloco 'review_patch'");
                 }
 
-            }, error -> {
-                log.error("❌ Erro ao analisar sentimento da review.", error);
-            });
+            } else {
+                log.warn("⚠️ Resposta sem bloco 'consistency'");
+            }
+
+        }, error -> {
+            log.error("❌ Erro ao analisar sentimento da review.", error);
+        });
     }
 }

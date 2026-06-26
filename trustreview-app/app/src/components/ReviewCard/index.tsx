@@ -6,7 +6,9 @@ import {
   Rating,
   Box,
   CardActions,
+  Tooltip,
 } from "@mui/material";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import LikeOrNot from "../LikeOrNot";
 import type { IReview } from "../../interfaces/Product";
 import { useState, useCallback } from "react";
@@ -117,6 +119,17 @@ const ReviewCard = ({
               readOnly
               size="small"
             />
+            {review.analyzed && review.contradictory && (
+              <Tooltip
+                title="Nosso sistema acredita que a nota pode não condizer com a descrição"
+                arrow
+              >
+                <WarningAmberIcon
+                  fontSize="small"
+                  sx={{ color: "warning.main", cursor: "pointer" }}
+                />
+              </Tooltip>
+            )}
           </Stack>
         </Stack>
         <Typography variant="h5" fontWeight={700}>

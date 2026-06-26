@@ -138,6 +138,15 @@ const CreateProduct = ({
                 isEdit={true}
                 currentTagsList={currentTagsList}
                 setCurrentTagsList={setCurrentTagsList}
+                onCreateTag={async (tag) => {
+                  try {
+                    const created = await tagService.createTag(tag.name);
+                    setCurrentTagsList((prev) => [...prev, created]);
+                    setTags((prev) => [...prev, created]); // atualiza lista disponível também
+                  } catch (error) {
+                    console.error("Erro ao criar tag:", error);
+                  }
+                }}
               />
             </Stack>
           </Stack>

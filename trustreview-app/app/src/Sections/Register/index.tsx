@@ -139,7 +139,10 @@ const RegisterSection = () => {
                       type="password"
                       fullWidth
                       error={!!errors.password}
-                      helperText={errors.password?.message}
+                      helperText={
+                        errors.password?.message ||
+                        "Mínimo 8 caracteres, com letra maiúscula, minúscula e símbolo"
+                      }
                     />
                   )}
                 />

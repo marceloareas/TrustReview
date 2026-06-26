@@ -32,3 +32,16 @@ sentiment:
 logging:
   level:
     org.springframework: INFO
+
+app:
+  base-url: http://localhost:8080
+
+# -----------------------------
+# Serviço de Resumo de Produtos
+# -----------------------------
+groq:
+  api:
+    key: ${GROQ_API_KEY:}
+
+summary:
+  min-reviews: 1

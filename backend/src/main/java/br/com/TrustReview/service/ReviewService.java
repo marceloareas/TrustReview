@@ -42,6 +42,8 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ReviewSentimentAsyncService reviewSentimentAsyncService;
+    private final ResumoService resumoService;
+    private final ProductSummaryAsyncService productSummaryAsyncService;
 
     /**
      * Cria uma nova avaliação (Review).
@@ -98,6 +100,8 @@ public class ReviewService {
 
         // Atualiza nota geral do produto
         recalculateProductOverallRating(product);
+
+        productSummaryAsyncService.updateProductSummaryAsync(product);
 
         return reviewMapper.toResponse(saved);
     }
@@ -177,9 +181,15 @@ public class ReviewService {
 
         Review updated = reviewRepository.save(existing);
 
+        if (request.getDescription() != null || request.getRating() != null) {
+            reviewSentimentAsyncService.analyzeReviewAsync(updated);
+        }
+
         if (request.getRating() != null) {
             recalculateProductOverallRating(product);
         }
+
+        productSummaryAsyncService.updateProductSummaryAsync(product);
 
         return reviewMapper.toResponse(updated);
     }
@@ -204,6 +214,9 @@ public class ReviewService {
             );
 
         reviewRepository.delete(review);
+
+        recalculateProductOverallRating(product);
+        productSummaryAsyncService.updateProductSummaryAsync(product);
     }
 
     private void recalculateProductOverallRating(Product product) {

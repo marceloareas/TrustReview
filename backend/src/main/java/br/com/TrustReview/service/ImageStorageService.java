@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ImageStorageService {
-    
+
+    @Value("${app.base-url}")
+    private String baseUrl;
+
     private final Path uploadDir = Paths.get("uploads");
 
     public ImageStorageService() throws IOException {
@@ -28,7 +32,6 @@ public class ImageStorageService {
             log.error("Erro ao criar diretório de upload de imagens", e);
             throw e;
         }
-        
     }
 
     public String saveImage(MultipartFile file) {
@@ -37,7 +40,7 @@ public class ImageStorageService {
             Path destination = uploadDir.resolve(filename);
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
             log.info("Imagem salva com sucesso: " + filename + " em " + destination.toAbsolutePath());
-            return "/uploads/" + filename; // caminho público ou relativo
+            return baseUrl + "/uploads/" + filename;
         } catch (IOException e) {
             throw new RuntimeException("Erro ao salvar imagem", e);
         }

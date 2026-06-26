@@ -109,6 +109,21 @@ const CreateReviewSection = ({
     }
   };
 
+  const handleDiscard = async () => {
+    if (!isReviewUpdate || !user?.id || !id) {
+      onReview();
+      return;
+    }
+    try {
+      await reviewService.deleteReview(user.id, id);
+      showNotification("Review descartada com sucesso!", "success");
+    } catch (error) {
+      showNotification(`Erro ao descartar a review. ${error}`, "error");
+    } finally {
+      onReview();
+    }
+  };
+
   return (
     <Container maxWidth={false} disableGutters>
       <Stack
@@ -187,7 +202,7 @@ const CreateReviewSection = ({
                 backgroundColor: "#e74545d2",
               },
             }}
-            onClick={onReview} // apenas fecha sem publicar
+            onClick={handleDiscard}
           >
             Descartar Review
           </Button>

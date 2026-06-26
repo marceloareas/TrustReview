@@ -19,6 +19,9 @@ export interface IProduct {
   id?: string;
   name: string;
   description: string;
+  summary?: string;
+  prosSummary?: string;
+  consSummary?: string;
   tags?: ITag[];
   overallRating?: number;
   imageUrl?: string;
@@ -59,4 +62,7 @@ export interface IReview {
   dislikes?: number;
   createdAt?: string;
   updatedAt?: string;
+  analyzed?: boolean;
+  contradictory?: boolean;
+  confidenceScore?: number;
 }
